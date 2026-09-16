@@ -340,6 +340,87 @@ tbody tr:hover{background:#FBFCFD}
   .whrow{flex-direction:column}
   .dis-g{grid-template-columns:1fr}
 }
+/* ─────────────── expressions de besoin ─────────────── */
+.eb-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px 14px}
+.eb-ok    td:first-child{box-shadow:inset 3px 0 0 var(--ok)}
+.eb-partiel td:first-child{box-shadow:inset 3px 0 0 var(--warn)}
+.eb-rupture td:first-child{box-shadow:inset 3px 0 0 #B8203C}
+.eb-corrige td:first-child{box-shadow:inset 3px 0 0 var(--warn)}
+.eb-sub{display:block;font-size:11px;color:var(--warn)}
+.eb-sub s{color:var(--faint)}
+th.r,td.r{text-align:right}
+.eb-wh{display:block;font-size:10.5px;color:var(--faint);font-family:var(--mono);margin-top:3px;white-space:nowrap}
+.lien{color:var(--orange-d);font-size:11.5px;font-weight:500;text-decoration:none}
+.lien:hover{text-decoration:underline}
+
+/* dépôt du fichier */
+.depot{border:1.5px dashed var(--line);border-radius:8px;padding:13px 15px;display:flex;align-items:center;gap:13px;cursor:pointer;background:var(--canvas)}
+.depot:hover,.depot.survol{border-color:var(--orange);background:#FFF7EF}
+.depot:focus-visible{outline:2px solid var(--orange);outline-offset:1px}
+.depot .ic{width:30px;height:38px;flex:none;border:1.5px solid var(--muted);border-radius:3px;background:var(--surface);position:relative}
+.depot .ic::after{content:"PDF";position:absolute;bottom:4px;left:-1px;right:-1px;text-align:center;font-family:var(--mono);font-size:8px;font-weight:700;color:var(--muted)}
+.depot.plein .ic{border-color:var(--orange)}
+.depot.plein .ic::after{color:var(--orange)}
+.depot .txt{font-size:12.5px;color:var(--muted);line-height:1.4}
+.depot .txt b{display:block;color:var(--ink);font-weight:500}
+.depot .rm{margin-left:auto}
+
+/* panneau de lecture automatique */
+.lecture{border:1px solid var(--line);border-radius:8px;margin-top:13px;overflow:hidden}
+.lecture-h{padding:10px 14px;background:#FFF7EF;border-bottom:1px solid var(--line-s);display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:12.5px}
+.lecture-h b{font-weight:600}
+.barre{height:3px;background:var(--line-s)}
+.barre i{display:block;height:100%;width:0;background:var(--orange);transition:width .25s}
+.lecture-b{padding:13px 14px}
+.props{border:1px solid var(--line-s);border-radius:7px;overflow:hidden}
+.prop{display:grid;grid-template-columns:165px 1fr;gap:10px;font-size:12.5px;padding:6px 11px;border-bottom:1px solid var(--line-s)}
+.prop:last-child{border-bottom:0}
+.prop .k{color:var(--muted);font-size:11.5px}
+.prop .v{font-weight:500}
+.prop .v.vide{color:var(--faint);font-weight:400}
+
+/* substitution */
+.modal{position:fixed;inset:0;background:rgba(7,27,47,.48);z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:50px 18px;overflow:auto}
+.modal[hidden]{display:none}
+.modal-c{background:var(--surface);border-radius:11px;width:100%;max-width:680px;box-shadow:0 16px 48px rgba(7,27,47,.26)}
+.modal-c h3{margin:0;font-size:13px;font-weight:600;padding:13px 17px;border-bottom:1px solid var(--line-s)}
+.modal-b{padding:16px 17px}
+.sub-orig{background:#FCEBEF;border-left:3px solid #B8203C;border-radius:0 6px 6px 0;padding:9px 12px;font-size:12.5px;margin-bottom:15px}
+.sub-orig b{display:block;font-weight:600;margin-bottom:2px}
+.sub-list{border:1px solid var(--line);border-radius:7px;overflow:hidden;margin-bottom:15px}
+.sub-t{font-size:11.5px;color:var(--muted);padding:7px 12px;background:var(--canvas);border-bottom:1px solid var(--line-s)}
+.sub-list button{display:flex;width:100%;gap:12px;align-items:center;text-align:left;background:none;border:0;border-bottom:1px solid var(--line-s);font:inherit;font-size:12.5px;padding:8px 12px;cursor:pointer}
+.sub-list button:last-child{border-bottom:0}
+.sub-list button:hover{background:#FFF6EE}
+
+/* Le tableau des bons est large : la colonne d'action reste accessible sans
+   défilement horizontal, sinon le bouton d'étape se retrouve hors écran. */
+#ebBons th:last-child,#ebBons td:last-child{
+  position:sticky;right:0;background:var(--surface);
+  box-shadow:-8px 0 10px -8px rgba(7,27,47,.22)
+}
+#ebBons th:last-child{z-index:3}
+#ebBons td:last-child{z-index:2}
+#ebBons tbody tr:hover td:last-child{background:#FBFCFD}
+/* Colonnes compactées pour limiter la largeur totale. */
+#ebBons td,#ebBons th{padding:8px 8px}
+#ebBons .jauge i{width:7px;height:7px}
+
+/* filtre de période */
+.filtre-mois{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+
+/* avancement */
+.jauge{display:inline-flex;gap:2px}
+.jauge i{width:8px;height:8px;background:var(--line);border-radius:2px;display:block}
+.jauge i.on{background:var(--orange)}
+.chrono{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--line-s);border-bottom:1px solid var(--line-s)}
+.pas{background:#FBFCFD;padding:10px 11px;color:var(--faint)}
+.pas.on{background:var(--surface);color:var(--ink)}
+.pas-l{font-size:11px;line-height:1.3;min-height:28px}
+.pas-d{font-size:13px;font-weight:600;margin-top:4px}
+.pas-j{font-size:11px;color:var(--orange-d);font-weight:500;min-height:15px}
+@media (max-width:900px){.chrono{grid-template-columns:repeat(2,1fr)}}
+
 </style>
 </head>
 <body>
@@ -351,14 +432,15 @@ tbody tr:hover{background:#FBFCFD}
       <p>PÔLE TECHNIQUE · SGSD</p>
     </div>
     <div class="navlist">
-      <button class="navbtn on" data-tab="accords"><span class="n">01</span> Accords</button>
-      <button class="navbtn" data-tab="reception"><span class="n">02</span> Réceptions</button>
-      <button class="navbtn" data-tab="retour"><span class="n">03</span> Retours</button>
-      <button class="navbtn" data-tab="transmission"><span class="n">04</span> Transmission</button>
-      <button class="navbtn" data-tab="dispatch"><span class="n">05</span> À dispatcher <span class="badge" id="badgeDis">0</span></button>
-      <button class="navbtn" data-tab="etat"><span class="n">06</span> État de stock</button>
-      <button class="navbtn" data-tab="histo"><span class="n">07</span> Historique</button>
-      <button class="navbtn" data-tab="users" id="navUsers" hidden><span class="n">08</span> Utilisateurs</button>
+      <button class="navbtn on" data-tab="eb"><span class="n">01</span> Expressions de besoin</button>
+      <button class="navbtn" data-tab="suivi"><span class="n">02</span> Suivi EB <span class="badge" id="badgeEb">0</span></button>
+      <button class="navbtn" data-tab="reception"><span class="n">03</span> Réceptions</button>
+      <button class="navbtn" data-tab="retour"><span class="n">04</span> Retours</button>
+      <button class="navbtn" data-tab="transmission"><span class="n">05</span> Transmission</button>
+      <button class="navbtn" data-tab="dispatch"><span class="n">06</span> À dispatcher <span class="badge" id="badgeDis">0</span></button>
+      <button class="navbtn" data-tab="etat"><span class="n">07</span> État de stock</button>
+      <button class="navbtn" data-tab="histo"><span class="n">08</span> Historique</button>
+      <button class="navbtn" data-tab="users" id="navUsers" hidden><span class="n">09</span> Utilisateurs</button>
     </div>
     <div class="railfoot">
       <div class="me" id="me" hidden>
@@ -372,8 +454,8 @@ tbody tr:hover{background:#FBFCFD}
   <div class="main">
     <header class="topbar">
       <div>
-        <h2 id="pgTitle">Accords sur bons</h2>
-        <div class="sub" id="pgSub">Rechercher un article, vérifier la disponibilité, servir une activité</div>
+        <h2 id="pgTitle">Expressions de besoin</h2>
+        <div class="sub" id="pgSub">Charger un EB, contrôler la disponibilité, accorder le bon</div>
       </div>
       <div class="spacer"></div>
       <div class="stamp">Dernière transmission · <span id="lastTx">—</span></div>
@@ -381,14 +463,100 @@ tbody tr:hover{background:#FBFCFD}
 
     <div class="wrap">
 
-      <!-- ================= ACCORDS ================= -->
-      <section class="panel on" id="p-accords">
-        <div class="searchbar">
-          <span class="ico">⌕</span>
-          <input id="q" type="text" placeholder="Code article (110 160 1) ou libellé…" autocomplete="off" spellcheck="false">
-          <div class="results" id="res" hidden></div>
+      <!-- ================= EXPRESSIONS DE BESOIN ================= -->
+      <section class="panel on" id="p-eb">
+        <div class="banner info"><span>↧</span><div>Charge l'EB reçu par mail, l'outil le lit et contrôle la disponibilité activité par activité. L'accord décrémente le stock, alimente l'Historique et ouvre le suivi des délais.</div></div>
+
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-h"><h3>En-tête de l'EB</h3><span class="note" style="margin:0">la référence du bon est générée à l'accord</span></div>
+          <div class="card-b">
+            <div class="eb-grid">
+              <label class="fld"><span>Libellé du projet</span><input class="inp" id="ebProjet" list="ebProjets" placeholder="Densification FTTX"></label>
+              <datalist id="ebProjets"></datalist>
+              <label class="fld"><span>Activité servie</span><select class="inp" id="ebAct"></select></label>
+              <label class="fld"><span>EDL (prestataire)</span><input class="inp" id="ebEdl" list="ebEdls" placeholder="GNANZOUKY"></label>
+              <datalist id="ebEdls"></datalist>
+              <label class="fld"><span>N° EB d'origine</span><input class="inp" id="ebNum" placeholder="DENS2026-075"></label>
+              <label class="fld"><span>Situation géographique</span><input class="inp" id="ebSite" placeholder="ABIDJAN"></label>
+              <label class="fld"><span>Service du demandeur</span><input class="inp" id="ebDem" placeholder="BroadBand Factory"></label>
+              <label class="fld"><span>Centre de coût</span><input class="inp" id="ebCout" placeholder="40IN120"></label>
+              <label class="fld"><span>Code projet</span><input class="inp" id="ebCodeP" placeholder="FB240201"></label>
+              <label class="fld"><span>Date de validation</span><input class="inp" id="ebValid" type="date"></label>
+              <label class="fld"><span>Date de réception</span><input class="inp" id="ebRecep" type="date"></label>
+            </div>
+
+            <div style="margin-top:15px">
+              <div class="fld"><span>Pièce jointe — l'EB reçu par mail</span></div>
+              <div class="depot" id="ebDepot" tabindex="0" role="button" aria-label="Déposer le PDF de l'EB">
+                <span class="ic"></span>
+                <span class="txt" id="ebDepotTxt"><b>Déposer le PDF de l'EB</b>ou cliquer pour choisir — PDF, JPG ou PNG</span>
+                <button class="btn sm rm" id="ebRmPiece" hidden>Retirer</button>
+              </div>
+              <input type="file" id="ebFile" accept=".pdf,.jpg,.jpeg,.png" hidden>
+
+              <div class="lecture" id="ebLecture" hidden>
+                <div class="lecture-h">
+                  <b id="ebLTitre">Lecture du document</b>
+                  <span id="ebLEtat" style="color:var(--muted)"></span>
+                  <span style="flex:1"></span>
+                  <button class="btn sm primary" id="ebRepr" hidden>Reprendre ces lignes</button>
+                  <button class="btn sm ghost" id="ebFermerL">Fermer</button>
+                </div>
+                <div class="barre"><i id="ebLBarre"></i></div>
+                <div class="lecture-b" id="ebLCorps"></div>
+              </div>
+            </div>
+            <div class="note">Le projet retenu est mémorisé avec son activité : la prochaine fois, saisir le projet suffit à pré-remplir l'activité.</div>
+          </div>
         </div>
-        <div id="fiche"></div>
+
+        <div class="card">
+          <div class="card-h"><h3>Lignes demandées</h3><span class="note" style="margin:0">chercher par code ou par libellé</span>
+            <div style="flex:1"></div><span id="ebResume" style="display:flex;gap:6px;flex-wrap:wrap"></span></div>
+          <div class="card-b">
+            <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap">
+              <label class="fld" style="flex:1;min-width:240px;position:relative"><span>Article</span>
+                <input class="inp" id="ebQ" autocomplete="off" spellcheck="false" placeholder="101 812 7 ou « câble aer »">
+                <div class="results" id="ebRes" hidden></div></label>
+              <label class="fld" style="width:150px"><span>Quantité demandée</span><input class="inp" id="ebQte" type="number" min="1" step="1"></label>
+              <button class="btn" id="ebAdd">Ajouter la ligne</button>
+            </div>
+            <div class="tscroll" style="margin-top:15px;max-height:400px"><table id="ebTab"></table></div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:15px">
+              <button class="btn primary" id="ebAccorder">Accorder le bon</button>
+              <button class="btn ghost" id="ebVider">Vider la saisie</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SUIVI EB ================= -->
+      <section class="panel" id="p-suivi">
+        <div class="filtre-mois">
+          <label class="fld" style="margin:0;max-width:230px"><span>Période</span>
+            <select class="inp" id="ebMois"></select></label>
+          <div style="flex:1"></div>
+          <span id="ebPortee" class="note" style="margin:0"></span>
+        </div>
+        <div class="kpis" id="ebKpis"></div>
+
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-h"><h3>Bons</h3><span class="note" style="margin:0">chaque changement d'étape est horodaté</span>
+            <div style="flex:1"></div><button class="btn sm dark" id="ebExpSuivi">Exporter le suivi</button></div>
+          <div class="tscroll" style="max-height:none"><table id="ebBons"></table></div>
+        </div>
+
+        <div class="card" id="ebDetail" hidden style="margin-bottom:16px">
+          <div class="card-h"><h3 id="ebDTitre">Détail</h3></div>
+          <div class="chrono" id="ebChrono"></div>
+          <div class="tscroll"><table id="ebDTab"></table></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><h3>Reliquats</h3><span class="note" style="margin:0">quantités demandées et non servies, rattachées à leur bon</span>
+            <div style="flex:1"></div><button class="btn sm" id="ebExpRel">Exporter les reliquats</button></div>
+          <div class="tscroll" style="max-height:none"><table id="ebRel"></table></div>
+        </div>
       </section>
 
       <!-- ================= RECEPTION ================= -->
@@ -413,9 +581,15 @@ tbody tr:hover{background:#FBFCFD}
               </label>
             </div>
             <div class="row">
-              <label class="fld"><span>Référence (BL, commande…)</span><input class="inp" id="rcRef" placeholder="Facultatif"></label>
-              <label class="fld"><span>Date</span><input class="inp" id="rcDate" type="date"></label>
+              <label class="fld"><span>Bon de commande</span><input class="inp mono" id="rcBc" placeholder="Ex. 4500123456"></label>
+              <label class="fld"><span>Shipment</span><input class="inp mono" id="rcShip" placeholder="N° d'expédition"></label>
             </div>
+            <div class="row">
+              <label class="fld"><span>Fournisseur</span><input class="inp" id="rcFour" list="rcFours" placeholder="Nom du fournisseur"></label>
+              <datalist id="rcFours"></datalist>
+              <label class="fld"><span>Date de réception</span><input class="inp" id="rcDate" type="date"></label>
+            </div>
+            <label class="fld"><span>Référence complémentaire (BL…)</span><input class="inp" id="rcRef" placeholder="Facultatif"></label>
             <button class="btn primary" id="rcGo" disabled>Enregistrer la réception</button>
           </div>
         </div>
@@ -583,6 +757,22 @@ tbody tr:hover{background:#FBFCFD}
     <div class="gate-note" id="gateNote"></div>
   </div>
 </div>
+<div class="modal" id="modalSub" hidden>
+  <div class="modal-c">
+    <h3>Substituer un article en rupture</h3>
+    <div class="modal-b">
+      <div class="sub-orig" id="subOrig"></div>
+      <div class="sub-list" id="subSugg"></div>
+      <label class="fld" style="position:relative"><span>Ou chercher un autre article</span>
+        <input class="inp" id="subQ" autocomplete="off" spellcheck="false" placeholder="code ou libellé">
+        <div class="results" id="subRes" hidden></div></label>
+      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+        <button class="btn ghost" id="subAnnuler">Annuler</button>
+        <button class="btn sm" id="subRetirer" hidden>Retirer la substitution</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <script id="seedData" type="application/json">[{"i":1,"code":"104 558 1","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Attache plastique n° 4 gris","att":0.0,"a":[0.0,0.0,0.0,118117.0,0.0,349283.0,0.0]},{"i":2,"code":"107 163 4","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Attache plastique n° 4 ivoire","att":0.0,"a":[0.0,0.0,0.0,25510.0,0.0,551790.0,0.0]},{"i":3,"code":"109 503 6","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Attache plastique n° 5 gris","att":0.0,"a":[0.0,0.0,0.0,66300.0,0.0,116600.0,0.0]},{"i":4,"code":"104 817 9","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Attache plastique n° 5 ivoire","att":0.0,"a":[0.0,0.0,0.0,173850.0,0.0,416750.0,0.0]},{"i":5,"code":"109 456 5","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Attache plastique n°6 gris","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,483000.0,0.0]},{"i":6,"code":"100 831 9","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Bouchon polyéthylène 42/45","att":0.0,"a":[0.0,805.0,130.0,2383.0,108.0,0.0,0.0]},{"i":7,"code":"107 147 4","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Cheville plastique n° 8","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":8,"code":"104 934 3","cle":"CO02","fam":"Matériels de lignes","cls":"B","lib":"Clavette 5/37","att":0.0,"a":[0.0,12835.0,0.0,2191.0,1928.0,9709.0,3287.0]},{"i":9,"code":"104 325 9","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Colle pr tuyau PVC","att":0.0,"a":[0.0,343.0,0.0,0.0,59.0,0.0,145.0]},{"i":10,"code":"103 867 5","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Décapant pr tuyau PVC","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":11,"code":"105 242 8","cle":"CO05","fam":"Pièces de rechanges","cls":"B","lib":"Dispositif de suspension JHC","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":12,"code":"104 055 5","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Dispositif de suspension JHC1520","att":0.0,"a":[0.0,2310.0,0.0,2487.0,2603.0,0.0,0.0]},{"i":13,"code":"104 037 1","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Etiquette Plastique Verte","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":14,"code":"105 736 2","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Semelle Équerre","att":0.0,"a":[0.0,484.0,0.0,0.0,73.0,7828.0,0.0]},{"i":15,"code":"106 115 4","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Semelle traverse 8 trous","att":0.0,"a":[0.0,5410.0,0.0,0.0,377.0,6243.0,0.0]},{"i":16,"code":"107 636 3","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Traverse 5/15 13 trous","att":0.0,"a":[0.0,1990.0,0.0,0.0,0.0,1650.0,0.0]},{"i":17,"code":"109 665 1","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Etiquette plastique orange","att":0.0,"a":[0.0,0.0,8604.0,9697.0,7508.0,0.0,6551.0]},{"i":18,"code":"108 825 0","cle":"CO05","fam":"Pièces de rechanges","cls":"B","lib":"Fil nylon","att":0.0,"a":[0.0,63500.0,13737.0,38615.0,74718.0,0.0,59430.0]},{"i":19,"code":"108 807 6","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Gaine fendue orange","att":0.0,"a":[63400.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":20,"code":"106 934 1","cle":"CO05","fam":"Pièces de rechanges","cls":"B","lib":"Gaine Verte","att":0.0,"a":[113600.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":21,"code":"107 345 4","cle":"CO02","fam":"Matériels de lignes","cls":"B","lib":"Grillage avertisseur vert","att":0.0,"a":[16800.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":22,"code":"105 657 0","cle":"CO05","fam":"Pièces de rechanges","cls":"A","lib":"kit piton 5mm pour paroi beton","att":0.0,"a":[129398.0,0.0,57.0,95.0,0.0,31850.0,0.0]},{"i":23,"code":"101 145 6","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Pigtail","att":0.0,"a":[0.0,0.0,0.0,2170.0,0.0,0.0,0.0]},{"i":24,"code":"106 715 6","cle":"CO05","fam":"Pièces de rechanges","cls":"A","lib":"Pince d'ancrage FO ADSS6","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":25,"code":"102 526 2","cle":"CO05","fam":"Pièces de rechanges","cls":"A","lib":"Pince d'ancrage FO ADSS8","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":26,"code":"104 840 7","cle":"CO05","fam":"Pièces de rechanges","cls":"A","lib":"Pince d'ancrage FO ADSS10","att":0.0,"a":[0.0,3598.0,0.0,0.0,875.0,0.0,897.0]},{"i":27,"code":"109 767 2","cle":"CO05","fam":"Pièces de rechanges","cls":"B","lib":"Pince d'ancrage FO ADSS12","att":0.0,"a":[0.0,17932.0,0.0,0.0,0.0,0.0,0.0]},{"i":28,"code":"103 316 8","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Pince d'ancrage FO AC ADSS14","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":29,"code":"106 082 9","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"pince Arobase","att":0.0,"a":[200.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":30,"code":"100 198 3","cle":"CO02","fam":"Matériels de lignes","cls":"A","lib":"Poteau métallique 7m","att":0.0,"a":[0.0,6814.0,8.0,34.0,44.0,7508.0,109.0]},{"i":31,"code":"103 189 8","cle":"CO02","fam":"Matériels de lignes","cls":"A","lib":"Poteau métallique 8m","att":0.0,"a":[0.0,196.0,213.0,0.0,98.0,3190.0,160.0]},{"i":32,"code":"101 815 8","cle":"CO05","fam":"Pièces de rechanges","cls":"A","lib":"Rehausse métallique 1,20m","att":0.0,"a":[0.0,0.0,142.0,0.0,98.0,2867.0,437.0]},{"i":33,"code":"105 996 0","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Sleeve (Smoov) 60mm","att":0.0,"a":[0.0,81250.0,0.0,66650.0,0.0,0.0,0.0]},{"i":34,"code":"104 166 8","cle":"CO05","fam":"Pièces de rechanges","cls":"B","lib":"Sleeve (Smoov) 40mm","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,283300.0,0.0]},{"i":35,"code":"101 018 3","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Tiroir de rangement  19 pouces","att":0.0,"a":[0.0,25.0,0.0,0.0,22.0,0.0,0.0]},{"i":36,"code":"105 138 4","cle":"CO05","fam":"Pièces de rechanges","cls":"B","lib":"Tiroir optique 19\"  FC/PC  24FO","att":0.0,"a":[0.0,2.0,8.0,21.0,6.0,0.0,30.0]},{"i":37,"code":"104 775 2","cle":"CO05","fam":"Pièces de rechanges","cls":"B","lib":"Tiroir optique 19\"  FC/PC 6FO","att":0.0,"a":[0.0,0.0,22.0,0.0,4.0,0.0,0.0]},{"i":38,"code":"104 747 9","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Tiroir optique 19\" FC/PC  48FO","att":0.0,"a":[0.0,0.0,66.0,0.0,4.0,0.0,9.0]},{"i":39,"code":"103 388 5","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Tiroir optique 19\" FC/PC 12FO","att":0.0,"a":[0.0,0.0,19.0,5.0,195.0,0.0,17.0]},{"i":40,"code":"106 643 2","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Tiroir optique 19\" FC/PC 36FO","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":41,"code":"101 558 4","cle":"CO02","fam":"Matériels de lignes","cls":"A","lib":"Tuyau PVC 6m,D42/45 (45*1,8)","att":0.0,"a":[89265.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":42,"code":"104 527 7","cle":"CO02","fam":"Matériels de lignes","cls":"B","lib":"Tuyau PVC 6m,D75/80 (80*2,5)","att":0.0,"a":[11405.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":43,"code":"104 899 5","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Tuyau PVC 6m,D33*1,5","att":0.0,"a":[4697.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":44,"code":"105 322 7","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Manchon D40 PEHD","att":0.0,"a":[644.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":45,"code":"101 140 1","cle":"CO05","fam":"Pièces de rechanges","cls":"B","lib":"Tuyau PEHD","att":0.0,"a":[3085.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":46,"code":"103 638 1","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Poteau béton armé 9/200","att":0.0,"a":[0.0,529.0,0.0,0.0,0.0,0.0,0.0]},{"i":47,"code":"105 540 5","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Poteau béton armé 12/400","att":0.0,"a":[0.0,193.0,0.0,0.0,0.0,0.0,0.0]},{"i":48,"code":"108 526 6","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Poteau béton armé 10/400","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":49,"code":"102 920 8","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Poteau Octogonal béton 8m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":50,"code":"108 100 8","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Poteau Octogonal béton 9m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":51,"code":"109 679 8","cle":"CO02","fam":"Matériels de lignes","cls":"A","lib":"Trappe béton L3T","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":52,"code":"100 109 9","cle":"CO02","fam":"Matériels de lignes","cls":"B","lib":"Trappe béton L5T","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":53,"code":"106 751 4","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Tuyau PVC 6m 32x1,5","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":54,"code":"107 512 0","cle":"CO05","fam":"Pièces de rechanges","cls":"A","lib":"Traverse 5/14","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":55,"code":"107 404 8","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Vis à bois 4x35","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,8270.0,0.0]},{"i":56,"code":"100 590 5","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Embase cheville de 8","att":0.0,"a":[0.0,2794.0,0.0,0.0,75472.0,0.0,1684.0]},{"i":57,"code":"101 986 5","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Entretoise variable 20/11","att":0.0,"a":[0.0,0.0,0.0,452.0,451.0,0.0,0.0]},{"i":58,"code":"102 275 9","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Boulon d'assemblage 1/12 25mm","att":0.0,"a":[0.0,1907.0,0.0,1000.0,0.0,102276.0,0.0]},{"i":59,"code":"103 463 9","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Boucle feuillard inox 20x0,7mm","att":0.0,"a":[0.0,53864.0,0.0,0.0,4547.0,25847.0,142.0]},{"i":60,"code":"104 958 9","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Peigne double 5 tuyaux D45mm","att":0.0,"a":[624.0,0.0,0.0,24.0,360.0,0.0,0.0]},{"i":61,"code":"105 104 9","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Coude PVC D42/45mm 90° R210mm","att":0.0,"a":[0.0,1545.0,467.0,0.0,136.0,0.0,133.0]},{"i":62,"code":"105 771 4","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Manchon PVC pour tuyau D 45","att":0.0,"a":[0.0,0.0,150.0,0.0,797.0,0.0,0.0]},{"i":63,"code":"105 971 7","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Bouchon polyét pr tuy 75-77/80","att":0.0,"a":[0.0,323.0,32.0,386.0,192.0,0.0,51.0]},{"i":64,"code":"106 153 6","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Collier RISLAN 9/92","att":0.0,"a":[0.0,0.0,0.0,11500.0,5500.0,60300.0,0.0]},{"i":65,"code":"107 367 6","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Boulon TH galva CL6,8 8x20","att":0.0,"a":[0.0,5698.0,5606.0,2556.0,606.0,5466.0,0.0]},{"i":66,"code":"109 587 6","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"KIT INSTAL PARABOL LNB + CABLE","att":0.0,"a":[217.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":67,"code":"105 019 6","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"PARABOLE ACIER 60CM + SUP FIX","att":0.0,"a":[290.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":68,"code":"107 503 8","cle":"CO05","fam":"Pièces de rechanges","cls":"B","lib":"Entraxe 5/33","att":0.0,"a":[0.0,5366.0,2800.0,3083.0,2617.0,0.0,0.0]},{"i":69,"code":"107 704 9","cle":"CO05","fam":"Pièces de rechanges","cls":"B","lib":"Semelle à goupille 7/05","att":0.0,"a":[0.0,12046.0,12102.0,0.0,4988.0,12029.0,0.0]},{"i":70,"code":"107 942 5","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Peigne double 5 tuyaux D80mm","att":0.0,"a":[151.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":71,"code":"108 047 6","cle":"CO05","fam":"Pièces de rechanges","cls":"B","lib":"Collier RISLAN 9/42","att":0.0,"a":[0.0,64900.0,24000.0,29333.0,0.0,47567.0,0.0]},{"i":72,"code":"108 132 9","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Câble prise de terre 16mm² v/j","att":0.0,"a":[0.0,0.0,0.0,0.0,260.0,0.0,0.0]},{"i":73,"code":"108 239 5","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Peigne simple 5 tuyaux D80mm","att":0.0,"a":[145.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":74,"code":"109 492 3","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Collier RISLAN 9/62","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":75,"code":"109 849 5","cle":"CO02","fam":"Matériels de lignes","cls":"B","lib":"Feuillard inox 20x0,7 (rl 50m)","att":0.0,"a":[0.0,1452.0,0.0,0.0,0.0,274.0,84.0]},{"i":76,"code":"109 908 9","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Console universelle","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":77,"code":"103 106 5","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Anneau de tirage acier galva","att":0.0,"a":[0.0,158.0,0.0,154.0,140.0,0.0,0.0]},{"i":78,"code":"105 981 6","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Console à flasque L 45cm 2,8kg","att":0.0,"a":[0.0,0.0,0.0,0.0,38.0,0.0,0.0]},{"i":79,"code":"101 184 5","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Console à flasque L35cm 2,4kgs","att":0.0,"a":[0.0,220.0,0.0,162.0,50.0,0.0,0.0]},{"i":80,"code":"107 449 9","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Dispositif horizont  L1T 430mm","att":0.0,"a":[95.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":81,"code":"102 667 2","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Dispositif horizont L2T 1060mm","att":0.0,"a":[0.0,267.0,0.0,0.0,140.0,0.0,0.0]},{"i":82,"code":"102 312 1","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Dispositif horizont L3T 1200mm","att":0.0,"a":[0.0,186.0,78.0,107.0,48.0,0.0,0.0]},{"i":83,"code":"102 231 5","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Echelle 6 échelons 1.25m","att":0.0,"a":[0.0,0.0,0.0,0.0,2.0,0.0,0.0]},{"i":84,"code":"109 295 0","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Equerre mobile GM L 240mm","att":0.0,"a":[0.0,0.0,181.0,170.0,143.0,0.0,0.0]},{"i":85,"code":"101 102 9","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Equerre mobile PM L 120mm","att":0.0,"a":[956.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":86,"code":"105 067 7","cle":"CO05","fam":"Pièces de rechanges","cls":"A","lib":"Gaine 1/2 tube lg.2m (lumière)","att":0.0,"a":[0.0,3764.0,494.0,0.0,800.0,0.0,106.0]},{"i":87,"code":"106 733 0","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Semelle ALPAX 5/17","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":88,"code":"107 054 5","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Trappe fonte K2C","att":0.0,"a":[0.0,10.0,20.0,10.0,20.0,0.0,19.0]},{"i":89,"code":"108 583 9","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Trappe fonte L1T","att":0.0,"a":[0.0,0.0,0.0,9.0,0.0,0.0,0.0]},{"i":90,"code":"106 754 5","cle":"CO02","fam":"Matériels de lignes","cls":"B","lib":"Trappe fonte L2T","att":0.0,"a":[0.0,117.0,0.0,0.0,0.0,0.0,0.0]},{"i":91,"code":"104 953 4","cle":"CO02","fam":"Matériels de lignes","cls":"A","lib":"Trappe fonte L3T","att":0.0,"a":[0.0,59.0,0.0,0.0,0.0,0.0,0.0]},{"i":92,"code":"108 203 6","cle":"CO02","fam":"Matériels de lignes","cls":"A","lib":"Trappe fonte L5T","att":0.0,"a":[0.0,154.0,24.0,32.0,13.0,0.0,20.0]},{"i":93,"code":"100 080 1","cle":"CO02","fam":"Matériels de lignes","cls":"B","lib":"Trappe fonte L6T","att":0.0,"a":[0.0,0.0,0.0,0.0,23.0,0.0,0.0]},{"i":94,"code":"109 705 4","cle":"CO02","fam":"Matériels de lignes","cls":"B","lib":"Trappe fonte M2T","att":0.0,"a":[0.0,0.0,0.0,32.0,0.0,0.0,0.0]},{"i":95,"code":"100 908 8","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Tuyau acier D66x76","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":96,"code":"101 762 5","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Tuyau acier D80x90","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":97,"code":"108 332 3","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Tuyau acier D102*114","att":0.0,"a":[0.0,0.0,0.0,0.0,19.0,0.0,0.0]},{"i":98,"code":"109 753 5","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Dispositif de suspension fibre optique 05-8mm","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,217669.0,0.0]},{"i":99,"code":"109 164 9","cle":"CO02","fam":"Matériels de lignes","cls":"C","lib":"Semelle console","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,1009.0,0.0]},{"i":100,"code":"110 001 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"RFO -Ferme 2M - 6 Niveaux +Acc","att":0.0,"a":[0.0,330.0,0.0,0.0,0.0,0.0,0.0]},{"i":101,"code":"110 002 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"RFO Chassis 12 Plateaux 144 FO","att":0.0,"a":[0.0,778.0,0.0,0.0,222.0,0.0,0.0]},{"i":102,"code":"110 003 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"RFO Modules préco 4 Cpleur 2X2 SC/APC","att":0.0,"a":[0.0,85.0,0.0,0.0,0.0,0.0,0.0]},{"i":103,"code":"110 004 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"RFO Modules préco 12 SC/APC","att":0.0,"a":[0.0,2058.0,0.0,809.0,0.0,3000.0,0.0]},{"i":104,"code":"110 005 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"RFO boit éclt Deecam D18 pr tube D5X3","att":0.0,"a":[0.0,563.0,0.0,0.0,0.0,0.0,0.0]},{"i":105,"code":"110 006 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Tube de protection FO D5X3 blanc","att":0.0,"a":[0.0,5348.0,0.0,252.0,0.0,0.0,0.0]},{"i":106,"code":"110 007 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Boitier d'épissurage BPEO T0 avec support","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":107,"code":"110 008 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Boitier d'épissurage BPEO T2  CDP 28 Pas","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":108,"code":"110 009 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Boitier d'épissurage BPEO T2 EDP 28 Pas","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":109,"code":"110 010 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Boitier d'épissurage BPEO T2 BDP 28 Pas","att":0.0,"a":[0.0,696.0,0.0,0.0,0.0,0.0,0.0]},{"i":110,"code":"110 011 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Boitier d'épissurage BPEO T1 EDP 12 Pas","att":0.0,"a":[0.0,378.0,256.0,311.0,0.0,0.0,697.0]},{"i":111,"code":"110 012 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Boitier d'épissurage BPEO T1,5 EDP BRANCH","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":112,"code":"110 013 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Boitier d'étage + K7","att":0.0,"a":[0.0,185.0,0.0,0.0,0.0,0.0,0.0]},{"i":113,"code":"110 014 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Boitier de point de branchmt Aérien+ K7","att":0.0,"a":[0.0,6313.0,0.0,1515.0,0.0,0.0,0.0]},{"i":114,"code":"110 015 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Boitier transition immeuble + K7","att":0.0,"a":[0.0,361.0,0.0,0.0,0.0,0.0,0.0]},{"i":115,"code":"110 016 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Boitier transition immeuble préco + K7","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":116,"code":"110 017 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Prise Term Optique (PTO) 1 SC/APC","att":0.0,"a":[0.0,0.0,0.0,201.0,0.0,64567.0,0.0]},{"i":117,"code":"110 019 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Boitier de démarcation","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,1506.0,0.0]},{"i":118,"code":"110 020 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Valise de montage pr Fiberlock + Cleaveuse","att":0.0,"a":[3.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":119,"code":"110 021 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Epissure mécaniq Fiberlock","att":0.0,"a":[4000.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":120,"code":"110 022 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Armoire de rue 22U + Kit de pose et  d'installation","att":0.0,"a":[0.0,10.0,0.0,0.0,0.0,0.0,0.0]},{"i":121,"code":"110 023 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Armoire de rue 14U + Kit de pose et  d'installation","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":122,"code":"110 024 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Tiroir Optique 144 SC/APC 19\" 3U","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":123,"code":"110 025 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Tiroir Optique 72 SC/APC 19\" 1.5U","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":124,"code":"110 026 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Tiroir Optique 48 SC/APC 19\" 1.5U","att":0.0,"a":[0.0,94.0,0.0,0.0,0.0,0.0,0.0]},{"i":125,"code":"110 027 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Tiroir Optique 24 SC/APC 19\" 1U","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":126,"code":"110 028 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Cassette 1 slot 12 fusions","att":0.0,"a":[0.0,11789.0,3631.0,5973.0,2783.0,4375.0,2077.0]},{"i":127,"code":"110 029 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Tube de protection FO D5X3 bleu","att":0.0,"a":[0.0,1700.0,0.0,0.0,0.0,0.0,0.0]},{"i":128,"code":"110 030 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Tiroir Optique avec 4 coupleur 1x32 - 128 SC/APC 19\" 3U","att":0.0,"a":[0.0,0.0,5.0,0.0,0.0,0.0,0.0]},{"i":129,"code":"110 031 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Module optique d'Immeuble 36 SC/APC 100 mm","att":0.0,"a":[152.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":130,"code":"110 032 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Module optique d'Immeuble 48 SC/APC 150 mm","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":131,"code":"110 035 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Tiroir Optique 48 SC/APC 19\" 1.5U pivotant à droite","att":0.0,"a":[0.0,0.0,11.0,0.0,0.0,0.0,0.0]},{"i":132,"code":"110 036 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Tiroir Optique 144 SC/APC 19\" 4U","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":133,"code":"110 037 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Tiroir Optique 48 SC/APC 19\" 2U","att":0.0,"a":[0.0,0.0,0.0,0.0,14.0,0.0,0.0]},{"i":134,"code":"110 038 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Tiroir  Optique avec 1 coupleur 1x32 - 32 SC /APC 19\" 1U pivotant à droite","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":135,"code":"110 040 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Prise Term Optique (PTO) 2 SC/APC","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":136,"code":"110 041 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Prise Term Optique  (PTO) précablé 1 SC/APC 30 M","att":0.0,"a":[0.0,0.0,0.0,10.0,0.0,0.0,0.0]},{"i":137,"code":"110 043 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Tiroir Optique avec 4 coupleur 1x32 - 128 SC/APC 19\" 3U pivotant à droite","att":0.0,"a":[0.0,41.0,19.0,70.0,0.0,7.0,0.0]},{"i":138,"code":"110 044 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Armoire de rue 28U + Kit de pose et  d'installation","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":139,"code":"110 046 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"BAEP universel 1/24 tubes 5mm","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":140,"code":"110 059 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Breakout 72 FO modulo 12 LC/UPC 50m","att":0.0,"a":[0.0,9.0,0.0,0.0,0.0,0.0,0.0]},{"i":141,"code":"110 060 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Breakout 72 FO modulo 12 LC/UPC 100m","att":0.0,"a":[0.0,224.0,0.0,0.0,0.0,0.0,0.0]},{"i":142,"code":"110 064 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Breakout 72 FO modulo 12 SC/UPC 50m","att":0.0,"a":[0.0,0.0,53.0,0.0,0.0,0.0,0.0]},{"i":143,"code":"110 065 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Breakout 72 FO modulo 12 SC/UPC 100m","att":0.0,"a":[0.0,183.0,0.0,0.0,57.0,0.0,0.0]},{"i":144,"code":"110 068 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"ECAM Simple 5/18 Evol","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":145,"code":"110 069 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"ECAM Double D5-20 Evol","att":0.0,"a":[0.0,308.0,293.0,1017.0,0.0,911.0,0.0]},{"i":146,"code":"110 070 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"ECAM Double D5-27 Evol","att":0.0,"a":[0.0,1987.0,0.0,0.0,0.0,0.0,0.0]},{"i":147,"code":"110 073 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"ECAM S12-4/12 Evol","att":0.0,"a":[0.0,734.0,394.0,1362.0,220.0,1082.0,2320.0]},{"i":148,"code":"110 074 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"ECAM S9 5-3,5/9,5 Evol","att":0.0,"a":[0.0,1105.0,4702.0,3900.0,2988.0,1768.0,0.0]},{"i":149,"code":"110 075 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Jarret SC/APC Simplex - monomode Blc l1,5m d 3mm","att":0.0,"a":[0.0,0.0,0.0,694.0,0.0,700.0,0.0]},{"i":150,"code":"110 076 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Jarret LC/SC Simplex - monomode Blc l1,5m d 3mm","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":151,"code":"110 077 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Jarret SC/APC Simplex - monomode orange l2,5m d 2mm","att":0.0,"a":[0.0,0.0,2045.0,0.0,0.0,0.0,0.0]},{"i":152,"code":"110 078 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Jarret LC/APC Simplex - monomode Jaun l4,5m d 2mm","att":0.0,"a":[0.0,2259.0,0.0,299.0,0.0,1760.0,0.0]},{"i":153,"code":"110 079 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Module optique d'Immeuble 72 SC/APC 200 mm","att":0.0,"a":[0.0,9.0,0.0,0.0,0.0,0.0,0.0]},{"i":154,"code":"110 080 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Jarret SC/APC Simplex - monomode Orange l3,5m d 2mm","att":0.0,"a":[0.0,0.0,67.0,0.0,0.0,159.0,0.0]},{"i":155,"code":"110 081 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Tiroir Optique avec 2 coupleur 1x32 - 64 SC/APC 19\" 1.5U","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":156,"code":"110 082 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Tiroir  Optique avec 1 coupleur 1x32 - 32 SC /APC 19\" 1U","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":157,"code":"110 083 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"BAEP pour Loose tube 1/12 tubes 5mm","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":158,"code":"110 085 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Jarret SC/APC Simplex - monomode Jaun l1,5m d 2mm","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":159,"code":"110 086 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Tiroir Optique 24 SC/APC 19\" 1U pivotant à droite","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":160,"code":"110 087 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"BPEO T1,5 FDP DROPS","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":161,"code":"110 088 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"BPEO T1,5 FDP BRANCH","att":0.0,"a":[0.0,338.0,335.0,630.0,492.0,0.0,0.0]},{"i":162,"code":"110 089 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"BPEO T1 CDP","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":163,"code":"110 092 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Jarret SC/APC-LC/UPC  Simplex - monomode Bch l1,5m d 2mm","att":0.0,"a":[0.0,0.0,219.0,0.0,0.0,18179.0,0.0]},{"i":164,"code":"110 093 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Jarret SC/APC Simplex - monomode Jn l2,5m d 2mm","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":165,"code":"110 094 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Jarret SC/APC Simplex - monomode Bch l2,5m d 2mm","att":0.0,"a":[0.0,2367.0,293.0,8625.0,0.0,5384.0,0.0]},{"i":166,"code":"110 095 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Jarret SC/APC Simplex - monomode Jn l3,5m d 2mm","att":0.0,"a":[0.0,1200.0,0.0,533.0,0.0,167.0,0.0]},{"i":167,"code":"110 096 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Jarret SC/APC Simplex - monomode Bch l3,5m d 2mm","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":168,"code":"110 106 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"ECAM S7 – 3/7 EVOL","att":0.0,"a":[0.0,3912.0,0.0,0.0,0.0,3317.0,0.0]},{"i":169,"code":"110 108 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Breakout 72 FO modulo 4 SC/UPC 50m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":170,"code":"110 109 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Breakout 72 FO modulo 4 SC/UPC 100m","att":0.0,"a":[0.0,1.0,0.0,0.0,0.0,0.0,0.0]},{"i":171,"code":"110 110 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Boitier d'épissurage BPEO T1 FDP BRANCH","att":0.0,"a":[0.0,14.0,0.0,0.0,74.0,16.0,0.0]},{"i":172,"code":"110 128 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Prise Term Opt (PTO) 4 SC/APC","att":0.0,"a":[0.0,0.0,3341.0,182.0,0.0,0.0,0.0]},{"i":173,"code":"110 129 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Jrt SC/APC Splx mde L3m D3 ivo","att":0.0,"a":[21090.0,0.0,0.0,0.0,0.0,250.0,0.0]},{"i":174,"code":"110 130 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Jrt SC/APC Splx mde L1 D2 bc","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":175,"code":"110 131 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Support de fixation PBO T2","att":0.0,"a":[0.0,1040.0,0.0,0.0,0.0,0.0,0.0]},{"i":176,"code":"110 132 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"K7 pour BPEO 5mm 12 fusions","att":0.0,"a":[0.0,30247.0,3230.0,3059.0,0.0,4912.0,0.0]},{"i":177,"code":"110 133 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Coupleur PLC 1x8 40x4x4mm 250µ","att":0.0,"a":[0.0,7192.0,0.0,983.0,0.0,0.0,0.0]},{"i":178,"code":"110 134 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Cassette pour coupleur PLC 1*8","att":0.0,"a":[0.0,6003.0,0.0,0.0,0.0,0.0,0.0]},{"i":179,"code":"110 135 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Kit ECAM D18 Evol","att":0.0,"a":[0.0,1430.0,0.0,0.0,0.0,500.0,0.0]},{"i":180,"code":"110 136 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"ECAM Double D18-15/18","att":0.0,"a":[0.0,1823.0,0.0,145.0,302.0,0.0,0.0]},{"i":181,"code":"110 141 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Boitier d'épissurage BPEO T1 EOC avc acc","att":0.0,"a":[0.0,497.0,0.0,0.0,0.0,0.0,0.0]},{"i":182,"code":"110 145 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"ONT I-010G-U","att":0.0,"a":[0.0,0.0,2580.0,0.0,0.0,0.0,0.0]},{"i":183,"code":"110 146 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Jar mnde simp SC/APC-SC/APC 3m","att":0.0,"a":[0.0,1007.0,882.0,1010.0,0.0,0.0,0.0]},{"i":184,"code":"110 150 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Jar mnde simp SC/APC SC/APC 4,5M JAUN","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":185,"code":"110 151 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Jar SC/APC simp mmde 5m d2 jau","att":0.0,"a":[0.0,511.0,0.0,0.0,0.0,0.0,0.0]},{"i":186,"code":"110 152 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"RFO BEC DEECAM + Equerre fixat","att":0.0,"a":[0.0,300.0,0.0,0.0,0.0,0.0,0.0]},{"i":187,"code":"110 153 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"RFO Chassis + 12Mod SC/APC 144","att":0.0,"a":[16.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":188,"code":"110 154 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"RFO Ferme 2M 6 Niv + Acc IXIO","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":189,"code":"110 155 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"HUB-BOX  1 core  1:8 BPE","att":0.0,"a":[0.0,78.0,0.0,87.0,0.0,0.0,0.0]},{"i":190,"code":"110 156 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Splitter 1 core 1:8 BPE","att":0.0,"a":[0.0,1951.0,0.0,106.0,0.0,0.0,0.0]},{"i":191,"code":"110 157 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"HUB-BOX  2 core 1:8 BPE","att":0.0,"a":[0.0,24.0,0.0,260.0,0.0,0.0,0.0]},{"i":192,"code":"110 158 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Splitter 2 core in 1:8 BPE","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":193,"code":"110 159 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"HUB-BOX  1 core in 1:16 BPE","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":194,"code":"110 160 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"SUB-BOX  1 core Cable aer 1:8","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":195,"code":"110 161 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"END-BOX 1 core Cable aer 1:8","att":0.0,"a":[0.0,279.0,0.0,284.0,0.0,337.0,0.0]},{"i":196,"code":"110 162 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"SUB-BOX 1 core Cable duc 1:8","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":197,"code":"110 163 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"END-BOX 1 core Cable duc 1:8","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":198,"code":"110 164 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"SUB-BOX 1 core Cable mix 1:16","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":199,"code":"110 165 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"END-BOX 1 core Cable mix 1:16","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":200,"code":"110 166 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"SUB-BOX  2 core Cable mix 1:8","att":0.0,"a":[0.0,1261.0,0.0,0.0,0.0,0.0,0.0]},{"i":201,"code":"110 167 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"END-BOX  2 core Cable mix 1:8","att":0.0,"a":[0.0,0.0,0.0,1508.0,0.0,0.0,0.0]},{"i":202,"code":"110 168 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"HUB-BOX  Indr 1 core 1:8 BPE","att":0.0,"a":[0.0,56.0,0.0,52.0,0.0,0.0,0.0]},{"i":203,"code":"110 169 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"SUB-BOX Indr 1:9 PLC 10m cable","att":0.0,"a":[0.0,238.0,0.0,214.0,0.0,0.0,0.0]},{"i":204,"code":"110 170 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"END-BOX Indr 1:9 PLC 10m cable","att":0.0,"a":[0.0,257.0,0.0,0.0,0.0,0.0,0.0]},{"i":205,"code":"110 171 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in duc 15m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":206,"code":"110 172 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in duc 25m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":207,"code":"110 173 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in duc 50m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":208,"code":"110 174 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in duc 80m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":209,"code":"110 175 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in duc 100m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":210,"code":"110 176 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in duc 120m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":211,"code":"110 177 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in duc 150m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":212,"code":"110 178 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in duc 180m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":213,"code":"110 179 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in duc 200m","att":0.0,"a":[0.0,57.0,0.0,8.0,0.0,0.0,0.0]},{"i":214,"code":"110 180 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in duc 250m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":215,"code":"110 181 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in duc 300m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":216,"code":"110 182 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in duc 350m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":217,"code":"110 183 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in aer 50m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":218,"code":"110 184 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Dis Cable 1 core in aer 60m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":219,"code":"110 185 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in aer 80m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":220,"code":"110 186 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Dis Cable 1 core in aer 100m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":221,"code":"110 187 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in aer 120m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":222,"code":"110 188 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Dis Cable 1 core in aer 150m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":223,"code":"110 189 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in aer 180m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":224,"code":"110 190 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Dis Cable 1 core in aer 200m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":225,"code":"110 191 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Dis Cable 1 core in aer 250m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":226,"code":"110 192 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in aer 300m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,86.0,0.0]},{"i":227,"code":"110 193 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in aer 350m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":228,"code":"110 194 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Dis Cable 1 core in aer 400m","att":0.0,"a":[0.0,62.0,0.0,0.0,0.0,160.0,0.0]},{"i":229,"code":"110 195 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Dis Cable 1 core in aer 500m","att":0.0,"a":[0.0,103.0,0.0,0.0,0.0,387.0,0.0]},{"i":230,"code":"110 196 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in aer 600m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":231,"code":"110 197 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Dis Cable 2 core in mix 60m","att":0.0,"a":[0.0,109.0,0.0,1339.0,0.0,208.0,0.0]},{"i":232,"code":"110 198 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Dis Cable 2 core in mix 100m","att":0.0,"a":[0.0,1928.0,0.0,435.0,0.0,1020.0,0.0]},{"i":233,"code":"110 199 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Dis Cable 2 core in mix 150m","att":0.0,"a":[0.0,0.0,0.0,1185.0,0.0,181.0,0.0]},{"i":234,"code":"110 200 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Dis Cable 2 core in mix 250m","att":0.0,"a":[0.0,4549.0,0.0,0.0,0.0,0.0,0.0]},{"i":235,"code":"110 201 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Dis Cable 2 core in mix 300m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,1.0,0.0]},{"i":236,"code":"110 202 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 2 core in mix 350m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":237,"code":"110 203 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Dis Cable 2 core in mix 400m","att":0.0,"a":[0.0,222.0,0.0,0.0,0.0,142.0,0.0]},{"i":238,"code":"110 204 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Dis Cable 2 core in mix 500m","att":0.0,"a":[0.0,390.0,0.0,212.0,0.0,282.0,0.0]},{"i":239,"code":"110 205 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Dis Cable 2 core in mix 600m","att":0.0,"a":[0.0,89.0,0.0,203.0,0.0,176.0,0.0]},{"i":240,"code":"110 206 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Drop Cable 1 connectr 15m","att":0.0,"a":[0.0,2600.0,0.0,0.0,0.0,2395.0,0.0]},{"i":241,"code":"110 207 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Drop Cable 1 connectr 30m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":242,"code":"110 208 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Drop Cable 1 connectr 50m","att":0.0,"a":[0.0,0.0,0.0,16.0,0.0,0.0,0.0]},{"i":243,"code":"110 209 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Drop Cable 1 connectr 60m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":244,"code":"110 210 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Drop Cable 1 connectr 80m","att":0.0,"a":[0.0,1.0,0.0,0.0,0.0,0.0,0.0]},{"i":245,"code":"110 211 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Drop Cable 1 connectr 100m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,45.0,0.0]},{"i":246,"code":"110 212 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Drop Cable 1 connectr 180m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,5.0,0.0]},{"i":247,"code":"110 213 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Drop Cable 1 connectr 200m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":248,"code":"110 214 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Drop Cable 1 connectr 250m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":249,"code":"110 215 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Drop Cable 1 connectr 350m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":250,"code":"110 216 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Drop Cable 1 connectr duc 250m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":251,"code":"110 217 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Drop Cable 1 connectr duc 350m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":252,"code":"110 218 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Drop Cable indr 1 connectr 10m","att":0.0,"a":[0.0,4592.0,0.0,0.0,0.0,0.0,0.0]},{"i":253,"code":"110 219 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Drop Cable indr 1 connectr 20m","att":0.0,"a":[0.0,3936.0,0.0,636.0,0.0,0.0,0.0]},{"i":254,"code":"110 220 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Drop Cable indr 1 connectr 30m","att":0.0,"a":[0.0,624.0,0.0,1308.0,0.0,0.0,0.0]},{"i":255,"code":"110 221 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Drop Cable indr 1 connectr 40m","att":0.0,"a":[0.0,1165.0,0.0,1017.0,0.0,0.0,0.0]},{"i":256,"code":"110 222 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Drop Cable indr 1 connectr 50m","att":0.0,"a":[0.0,4973.0,0.0,210.0,0.0,0.0,0.0]},{"i":257,"code":"110 223 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Drop Cable indr 1 connectr 60m","att":0.0,"a":[0.0,6.0,0.0,792.0,0.0,1330.0,0.0]},{"i":258,"code":"110 224 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Pole hoop clamp anchor conectr","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":259,"code":"110 225 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Access Termination Box (ATB)","att":0.0,"a":[0.0,10000.0,0.0,4106.0,0.0,0.0,0.0]},{"i":260,"code":"110 226 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Clamping Dis Cbl on the ple/wl","att":0.0,"a":[0.0,9108.0,9000.0,0.0,0.0,163994.0,0.0]},{"i":261,"code":"110 227 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Plum ring hook fix tool fr pol","att":0.0,"a":[0.0,18479.0,9902.0,0.0,0.0,0.0,0.0]},{"i":262,"code":"110 228 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Fast Conec Closur fr 1 cor cbl","att":0.0,"a":[0.0,699.0,0.0,700.0,0.0,806.0,0.0]},{"i":263,"code":"110 229 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Fast Conec Closur fr 2 cor cbl","att":0.0,"a":[0.0,1240.0,0.0,0.0,0.0,0.0,0.0]},{"i":264,"code":"110 230 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Steel belt to fix BPE, PBO","att":0.0,"a":[0.0,0.0,0.0,1756.0,0.0,3152.0,429.0]},{"i":265,"code":"110 231 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Steel belt to fix BPE","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":266,"code":"110 232 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Clampg Drop Cbl on the wal","att":0.0,"a":[0.0,26298.0,0.0,0.0,0.0,61272.0,0.0]},{"i":267,"code":"110 233 1","cle":"CO08","fam":"Equipements FTTH","cls":"A","lib":"Clampg Drop Cbl on the pol/wal","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,2800.0,0.0]},{"i":268,"code":"110 234 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in mix 150m","att":0.0,"a":[0.0,111.0,0.0,0.0,0.0,0.0,0.0]},{"i":269,"code":"110 235 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in mix 250m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,1.0,0.0]},{"i":270,"code":"110 236 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Dis Cable 1 core in mix 350m","att":0.0,"a":[0.0,52.0,0.0,0.0,0.0,0.0,0.0]},{"i":271,"code":"110 237 1","cle":"CO08","fam":"Equipements FTTH","cls":"B","lib":"Dis Cable 1 core in mix 450m","att":0.0,"a":[0.0,693.0,0.0,0.0,0.0,0.0,0.0]},{"i":272,"code":"110 238 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Boitier épiss BPEO T3 EDP 28P","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":273,"code":"110 241 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Drop Cable indr 1 connect 100m","att":0.0,"a":[0.0,273.0,0.0,1005.0,0.0,3079.0,0.0]},{"i":274,"code":"110 242 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Drop Cable 1 connect 500m","att":0.0,"a":[0.0,157.0,0.0,0.0,0.0,0.0,0.0]},{"i":275,"code":"110 243 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Drop Cable 1 connect 600m","att":0.0,"a":[0.0,138.0,0.0,0.0,0.0,105.0,0.0]},{"i":276,"code":"110 245 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"PTO1:5 Un. dist.SC/APC ATB2121","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,83.0,0.0]},{"i":277,"code":"110 246 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"PTO ATB 2120 T1 SC/APC","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,310.0,0.0]},{"i":278,"code":"110 247 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Cab. Op. Tprt,2xSC/APC,50m ODN","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,49.0,0.0]},{"i":279,"code":"110 248 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Cab. Op. Tprt,2xSC/APC,40m ODN","att":0.0,"a":[0.0,140.0,0.0,0.0,0.0,0.0,0.0]},{"i":280,"code":"110 249 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Cab. Op. Tprt,2xSC/APC,30m ODN","att":0.0,"a":[0.0,40.0,0.0,0.0,0.0,70.0,0.0]},{"i":281,"code":"110 250 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Connec. Opt. montable sur site","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,785.0,0.0]},{"i":282,"code":"101 152 4","cle":"CO06","fam":"Cables fibre Optique","cls":"A","lib":"CABLE AER 2xGAIN G657A2 1FO","att":0.0,"a":[0.0,0.0,0.0,60841.0,0.0,4742534.0,0.0]},{"i":283,"code":"101 640 6","cle":"CO05","fam":"Pièces de rechanges","cls":"C","lib":"Piton accroch inox béton 8mm","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,30000.0,0.0]},{"i":284,"code":"107 621 9","cle":"CO06","fam":"Cables fibre Optique","cls":"A","lib":"CABLE BRANCH 2XGAIN 1FO G657A2","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":285,"code":"105 031 8","cle":"CO06","fam":"Cables fibre Optique","cls":"C","lib":"CABLE AER 2xGAIN G657A2 2FO m1","att":0.0,"a":[0.0,0.0,25850.0,0.0,0.0,0.0,0.0]},{"i":286,"code":"102 105 9","cle":"CO06","fam":"Cables fibre Optique","cls":"A","lib":"CABLE INT 4,2 G657A2 1FO iv","att":0.0,"a":[0.0,0.0,100447.0,0.0,0.0,2063553.0,0.0]},{"i":287,"code":"108 963 9","cle":"CO06","fam":"Cables fibre Optique","cls":"C","lib":"CABLE INT 4,2 G657A2 2FO m1 iv","att":0.0,"a":[0.0,0.0,47000.0,0.0,0.0,0.0,0.0]},{"i":288,"code":"100 096 2","cle":"CO06","fam":"Cables fibre Optique","cls":"A","lib":"CABLE MM SOUT G657A2 48FO m6","att":0.0,"a":[0.0,0.0,0.0,5509.0,5342.0,0.0,15151.0]},{"i":289,"code":"100 149 5","cle":"CO06","fam":"Cables fibre Optique","cls":"B","lib":"CABLE MM SOUT G657A2 6FO m6","att":0.0,"a":[0.0,95109.0,0.0,1612.0,19897.0,0.0,0.0]},{"i":290,"code":"100 704 6","cle":"CO06","fam":"Cables fibre Optique","cls":"B","lib":"CABLE LT AER G652D 24FO m12","att":0.0,"a":[0.0,0.0,0.0,0.0,51338.0,0.0,0.0]},{"i":291,"code":"102 925 3","cle":"CO06","fam":"Cables fibre Optique","cls":"B","lib":"Câble LT St  L1041 G652 D 36FO","att":0.0,"a":[0.0,0.0,12130.0,0.0,0.0,0.0,0.0]},{"i":292,"code":"101 171 5","cle":"CO06","fam":"Cables fibre Optique","cls":"B","lib":"CABLE MM SOUT G657A2 12FO m6","att":0.0,"a":[0.0,7692.0,18073.0,19246.0,0.0,0.0,12762.0]},{"i":293,"code":"106 587 9","cle":"CO06","fam":"Cables fibre Optique","cls":"B","lib":"Câble LT St  L1041 G652 D 60FO","att":0.0,"a":[0.0,1268.0,11044.0,0.0,0.0,0.0,17333.0]},{"i":294,"code":"100 270 6","cle":"CO06","fam":"Cables fibre Optique","cls":"B","lib":"Câble LT St L1042 G652 D 72FO","att":0.0,"a":[4300.0,0.0,0.0,187.0,0.0,0.0,9513.0]},{"i":295,"code":"101 812 7","cle":"CO06","fam":"Cables fibre Optique","cls":"A","lib":"CABLE MM AER G657A2 6FO m6","att":0.0,"a":[0.0,58522.0,308440.0,56135.0,0.0,0.0,7982.0]},{"i":296,"code":"107 875 6","cle":"CO06","fam":"Cables fibre Optique","cls":"A","lib":"Câble LT St L1042 G652 D 144FO","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":297,"code":"101 907 0","cle":"CO06","fam":"Cables fibre Optique","cls":"B","lib":"CABLE LT SOUT G652D 6FO m6","att":0.0,"a":[0.0,0.0,2754.0,15118.0,36443.0,0.0,0.0]},{"i":298,"code":"102 636 8","cle":"CO06","fam":"Cables fibre Optique","cls":"A","lib":"CABLE LT SOUT G652D 24FO m12","att":0.0,"a":[0.0,65447.0,0.0,449.0,8044.0,0.0,6609.0]},{"i":299,"code":"100 295 9","cle":"CO06","fam":"Cables fibre Optique","cls":"A","lib":"CABLE MM SOUT G657A2 24FO m6","att":0.0,"a":[0.0,88194.0,0.0,22942.0,71757.0,0.0,10767.0]},{"i":300,"code":"102 700 6","cle":"CO06","fam":"Cables fibre Optique","cls":"B","lib":"CABLE LT AER G652D 36FO m12","att":0.0,"a":[1005.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":301,"code":"102 993 2","cle":"CO06","fam":"Cables fibre Optique","cls":"C","lib":"Câble LT Aér L1092 G652D 48FO","att":0.0,"a":[414.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":302,"code":"103 006 8","cle":"CO06","fam":"Cables fibre Optique","cls":"A","lib":"CABLE MM AER G657A2 12FO m6","att":0.0,"a":[0.0,311440.0,1409.0,0.0,18981.0,0.0,0.0]},{"i":303,"code":"105 937 3","cle":"CO06","fam":"Cables fibre Optique","cls":"B","lib":"Câble MM St L1042 G652 D 96FO","att":0.0,"a":[6575.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":304,"code":"107 195 5","cle":"CO06","fam":"Cables fibre Optique","cls":"C","lib":"CABLE MM SOUT 144FO M6","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":305,"code":"107 851 0","cle":"CO06","fam":"Cables fibre Optique","cls":"C","lib":"Câble MM SOUT 288FO M12","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":306,"code":"103 472 1","cle":"CO06","fam":"Cables fibre Optique","cls":"C","lib":"CABLE LT AER G652D 12FO m12","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":307,"code":"104 832 2","cle":"CO06","fam":"Cables fibre Optique","cls":"A","lib":"CABLE LT SOUT G652D 12FO m12","att":0.0,"a":[0.0,15390.0,0.0,0.0,0.0,0.0,0.0]},{"i":308,"code":"107 162 5","cle":"CO06","fam":"Cables fibre Optique","cls":"B","lib":"CABLE MM SOUT G657A2 36FO m6","att":0.0,"a":[0.0,0.0,1742.0,0.0,0.0,0.0,0.0]},{"i":309,"code":"107 409 3","cle":"CO06","fam":"Cables fibre Optique","cls":"A","lib":"CABLE LT SOUT G652D 48FO m12","att":0.0,"a":[875.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":310,"code":"108 335 4","cle":"CO06","fam":"Cables fibre Optique","cls":"C","lib":"CABLE LT AER G652D 6FO m6","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":311,"code":"109 294 3","cle":"CO06","fam":"Cables fibre Optique","cls":"C","lib":"Câble LT St  L1042 G652 D 96FO","att":0.0,"a":[1540.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":312,"code":"109 546 3","cle":"CO06","fam":"Cables fibre Optique","cls":"A","lib":"CABLE MM SOUT G657A2 72FO m6","att":0.0,"a":[0.0,0.0,273960.0,0.0,0.0,0.0,0.0]},{"i":313,"code":"105 028 8","cle":"CO06","fam":"Cables fibre Optique","cls":"A","lib":"Câble MM Aér L1092 G657A2 24FO","att":0.0,"a":[0.0,126197.0,0.0,0.0,0.0,0.0,0.0]},{"i":314,"code":"108 931 8","cle":"CO06","fam":"Cables fibre Optique","cls":"B","lib":"CABLE MM AER G657A2 36FO m6","att":0.0,"a":[0.0,0.0,0.0,0.0,2668.0,0.0,0.0]},{"i":315,"code":"102 054 0","cle":"CO06","fam":"Cables fibre Optique","cls":"A","lib":"CABLE MM AER G657A2 48FO m6","att":0.0,"a":[3112.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":316,"code":"110 137 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Cable L1082 G657 A2 1FO Blanc","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":317,"code":"110 138 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Cable L1082 G657 A2 2FO Blanc","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":318,"code":"110 139 1","cle":"CO06","fam":"Cables fibre Optique","cls":"C","lib":"Cable L1082 G657 A2 4FO Blanc","att":0.0,"a":[0.0,0.0,52000.0,0.0,0.0,0.0,0.0]},{"i":319,"code":"110 140 1","cle":"CO06","fam":"Cables fibre Optique","cls":"C","lib":"Cable L1082 G657 A2 4FO Noir","att":0.0,"a":[0.0,0.0,200000.0,0.0,0.0,0.0,0.0]},{"i":320,"code":"110 149 1","cle":"CO06","fam":"Cables fibre Optique","cls":"A","lib":"CABLE MM SOUT G657A2 144FO m12","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":321,"code":"110 048 1","cle":"CO06","fam":"Cables fibre Optique","cls":"C","lib":"Cable Vertical G657 6FO ivoir","att":0.0,"a":[0.0,13000.0,6000.0,0.0,0.0,0.0,0.0]},{"i":322,"code":"110 049 1","cle":"CO06","fam":"Cables fibre Optique","cls":"C","lib":"Cable Vertical G657 12FO ivoir","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":323,"code":"110 050 1","cle":"CO06","fam":"Cables fibre Optique","cls":"A","lib":"Cable Vertical G657 24FO ivoir","att":0.0,"a":[245.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":324,"code":"110 051 1","cle":"CO06","fam":"Cables fibre Optique","cls":"C","lib":"Cable Vertical G657 36FO ivoir","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":325,"code":"110 052 1","cle":"CO06","fam":"Cables fibre Optique","cls":"B","lib":"Cable Vertical G657 48FO ivoir","att":0.0,"a":[16590.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":326,"code":"110 053 1","cle":"CO06","fam":"Cables fibre Optique","cls":"C","lib":"Cable Vertical G657 60FO ivoir","att":0.0,"a":[0.0,0.0,4600.0,13900.0,0.0,0.0,0.0]},{"i":327,"code":"110 054 1","cle":"CO06","fam":"Cables fibre Optique","cls":"C","lib":"Cable Vertical G657 72FO ivoir","att":0.0,"a":[6142.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":328,"code":"100 267 6","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"CISCO CP7942G","att":0.0,"a":[0.0,0.0,6.0,0.0,0.0,0.0,0.0]},{"i":329,"code":"100 331 4","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Module SFP-6","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":330,"code":"100 692 6","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"CISCO ISR 4331","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":331,"code":"100 853 1","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Modem RAISECOM RAX701-L","att":0.0,"a":[0.0,0.0,80.0,0.0,0.0,0.0,0.0]},{"i":332,"code":"100 870 8","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Module SFP 1000BASE BX10","att":0.0,"a":[0.0,0.0,233.0,0.0,0.0,0.0,0.0]},{"i":333,"code":"101 040 4","cle":"CO04","fam":"Equipement B2B","cls":"A","lib":"Livebox business 150 (LBB 150)","att":0.0,"a":[0.0,0.0,349.0,0.0,0.0,0.0,0.0]},{"i":334,"code":"101 067 1","cle":"CO04","fam":"Equipement B2B","cls":"B","lib":"PBX Plug 101","att":0.0,"a":[0.0,0.0,1111.0,0.0,0.0,0.0,0.0]},{"i":335,"code":"101 294 1","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"One Cell 35","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":336,"code":"101 678 9","cle":"CO04","fam":"Equipement B2B","cls":"B","lib":"RAD ETX-2I-B (L2/L3)","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":337,"code":"102 773 0","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Livebox business 500 (LBB 500)","att":0.0,"a":[0.0,0.0,3.0,0.0,0.0,0.0,0.0]},{"i":338,"code":"102 964 2","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"ASA 5505 -BUN -K09","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":339,"code":"103 040 2","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Routeur HUAWEI AR6140E","att":0.0,"a":[0.0,0.0,33.0,0.0,0.0,0.0,0.0]},{"i":340,"code":"103 401 1","cle":"CO04","fam":"Equipement B2B","cls":"B","lib":"Livebox business 350 (LBB 350)","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":341,"code":"103 437 0","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"CATALYST C9300L-24T-4G-E","att":0.0,"a":[0.0,0.0,2.0,0.0,0.0,0.0,0.0]},{"i":342,"code":"103 584 1","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"RAD ETX-1P ROA ( L2/L3)","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":343,"code":"103 724 1","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Carte Cisco NIM-ES-4","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":344,"code":"103 821 7","cle":"CO04","fam":"Equipement B2B","cls":"A","lib":"Modem RAISECOM RAX711-L-4GE-AC","att":0.0,"a":[0.0,0.0,40.0,0.0,0.0,0.0,0.0]},{"i":345,"code":"104 052 4","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"RICi-8 E1/ETH","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":346,"code":"104 053 1","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"IPBX IX 100 Global CS","att":0.0,"a":[0.0,0.0,6.0,0.0,0.0,0.0,0.0]},{"i":347,"code":"104 564 2","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Routeur HUAWEI AR6121E","att":0.0,"a":[0.0,0.0,11.0,0.0,0.0,0.0,0.0]},{"i":348,"code":"105 129 2","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Module Cisco GLC - LH - SM","att":0.0,"a":[0.0,0.0,50.0,0.0,0.0,0.0,0.0]},{"i":349,"code":"105 376 0","cle":"CO04","fam":"Equipement B2B","cls":"B","lib":"CISCO Catalyst 8200L","att":0.0,"a":[0.0,0.0,10.0,0.0,0.0,0.0,0.0]},{"i":350,"code":"105 414 9","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Alimentation Maxwell 3 § Basic","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":351,"code":"105 492 7","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"PBX Plug 102","att":0.0,"a":[0.0,0.0,269.0,0.0,0.0,0.0,0.0]},{"i":352,"code":"105 693 8","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Livebox business 360 (LBB 360)","att":0.0,"a":[0.0,0.0,232.0,0.0,0.0,0.0,0.0]},{"i":353,"code":"105 808 6","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"PBX Plug 401","att":0.0,"a":[0.0,0.0,10.0,0.0,0.0,0.0,0.0]},{"i":354,"code":"105 865 9","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Livebox business 240 (LBB 240)","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":355,"code":"105 947 2","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"IPBX IX 50 Global CS","att":0.0,"a":[0.0,0.0,7.0,0.0,0.0,0.0,0.0]},{"i":356,"code":"106 125 3","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Module USFP -Gb/S1-D-R","att":0.0,"a":[0.0,0.0,202.0,0.0,0.0,0.0,0.0]},{"i":357,"code":"106 263 2","cle":"CO04","fam":"Equipement B2B","cls":"B","lib":"PBX Plug 103","att":0.0,"a":[0.0,0.0,244.0,0.0,0.0,0.0,0.0]},{"i":358,"code":"106 528 2","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Module SFP-1000 Base-LX10","att":0.0,"a":[0.0,0.0,287.0,0.0,0.0,0.0,0.0]},{"i":359,"code":"107 070 5","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"OP-108L/B/ETH/SC/13L","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":360,"code":"107 610 3","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Postes Num Aastra 5380","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":361,"code":"109 076 5","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Baie FT RTNM PAM 42U PORTE OCU","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":362,"code":"109 146 5","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"IPBX IX 30 Global CS","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":363,"code":"102 812 6","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Routeur Cisco C1121X-8P","att":0.0,"a":[0.0,0.0,58.0,0.0,0.0,0.0,0.0]},{"i":364,"code":"104 945 9","cle":"CO04","fam":"Equipement B2B","cls":"B","lib":"Catalyst C9200L-24P-4G-E","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":365,"code":"101 970 4","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Catalyst C1000-24FP-4G-L","att":0.0,"a":[0.0,0.0,13.0,0.0,0.0,0.0,0.0]},{"i":366,"code":"100 278 2","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr monomode duplex FC-LC 10m","att":0.0,"a":[0.0,0.0,150.0,0.0,0.0,0.0,0.0]},{"i":367,"code":"100 706 0","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr monomode duplex LC-LC 10m","att":0.0,"a":[0.0,0.0,100.0,0.0,0.0,0.0,0.0]},{"i":368,"code":"100 966 8","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr monomode simplex FC-LC 10m","att":0.0,"a":[0.0,0.0,0.0,745.0,0.0,0.0,0.0]},{"i":369,"code":"101 456 3","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Jarr Simplex SC/APC - SC/APC 2M","att":0.0,"a":[0.0,0.0,1100.0,0.0,0.0,0.0,0.0]},{"i":370,"code":"101 619 2","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Jar mde Sp SC/APC-SC/PC 3,5m Jaune","att":0.0,"a":[0.0,3960.0,0.0,0.0,0.0,0.0,0.0]},{"i":371,"code":"101 653 6","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr monomode duplex FC-SC APC 5m","att":0.0,"a":[0.0,0.0,522.0,0.0,0.0,0.0,694.0]},{"i":372,"code":"102 069 4","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr monomode duplex FC-SC 3m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":373,"code":"102 409 8","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr monomode duplex FC-FC 25m","att":0.0,"a":[0.0,0.0,718.0,0.0,0.0,0.0,0.0]},{"i":374,"code":"103 033 4","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr monomode duplex FC-FC 10m","att":0.0,"a":[0.0,0.0,341.0,0.0,0.0,0.0,0.0]},{"i":375,"code":"103 034 1","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr sp md 2x SC/APC bl 1,5m D2","att":0.0,"a":[0.0,0.0,0.0,500.0,0.0,0.0,6783.0]},{"i":376,"code":"103 984 9","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr monomode duplex LC-LC 25m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,370.0]},{"i":377,"code":"104 429 4","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Jar mnde simp SC/APC-SC/APC 3m blc","att":0.0,"a":[0.0,0.0,4156.0,0.0,0.0,0.0,0.0]},{"i":378,"code":"104 696 0","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Jar mnde simp SC/APC-SC/APC 1m jn","att":0.0,"a":[0.0,0.0,5385.0,0.0,0.0,0.0,0.0]},{"i":379,"code":"104 787 5","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr monomode duplex FC-SC 15m","att":0.0,"a":[0.0,0.0,788.0,0.0,0.0,0.0,0.0]},{"i":380,"code":"104 854 4","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr monomode duplex LC-LC 10m","att":0.0,"a":[0.0,0.0,172.0,0.0,0.0,0.0,20.0]},{"i":381,"code":"104 985 5","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr monomode duplex LC-SC APC 10m","att":0.0,"a":[0.0,0.0,12.0,0.0,0.0,0.0,0.0]},{"i":382,"code":"102 898 0","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr monomode duplex FC-LC 25m","att":0.0,"a":[0.0,0.0,25.0,0.0,0.0,0.0,0.0]},{"i":383,"code":"103 712 8","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Livebox business 154 (LBB 154)","att":0.0,"a":[0.0,0.0,55.0,0.0,0.0,0.0,0.0]},{"i":384,"code":"105 987 8","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr monomode duplex FC-FC 25m","att":0.0,"a":[0.0,0.0,100.0,0.0,0.0,0.0,0.0]},{"i":385,"code":"106 394 3","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarretière mnde Simplex LC/APC long 3m d 2,5mm jaune","att":0.0,"a":[0.0,0.0,10.0,0.0,0.0,0.0,0.0]},{"i":386,"code":"108 226 5","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr monomode duplex FC-LC 3m","att":0.0,"a":[0.0,0.0,200.0,0.0,0.0,0.0,0.0]},{"i":387,"code":"106 597 8","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Jar mnde simp 2x SC/APC 2m bl","att":0.0,"a":[0.0,0.0,5809.0,0.0,0.0,0.0,0.0]},{"i":388,"code":"106 880 1","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr monomode duplex FC-LC 20m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":389,"code":"106 915 0","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr monomode duplex SC-LC 10m","att":0.0,"a":[0.0,0.0,100.0,0.0,0.0,0.0,0.0]},{"i":390,"code":"107 483 3","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr simpl SC/APC-SC/APC 25m","att":0.0,"a":[0.0,0.0,306.0,0.0,0.0,0.0,100.0]},{"i":391,"code":"107 882 4","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr monomode duplex FC-LC 15m","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,429.0]},{"i":392,"code":"108 509 9","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr mde dup FC/UPC-SC/APC 25m","att":0.0,"a":[0.0,0.0,771.0,0.0,0.0,0.0,263.0]},{"i":393,"code":"108 843 4","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr monomode duplex FC-LC 25m","att":0.0,"a":[0.0,0.0,340.0,0.0,0.0,0.0,0.0]},{"i":394,"code":"108 872 4","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr monomode duplex FC-LC 3m","att":0.0,"a":[0.0,0.0,350.0,0.0,0.0,0.0,44.0]},{"i":395,"code":"109 430 5","cle":"CO04","fam":"Equipement B2B","cls":"C","lib":"Jarr simpl SC/APC-SC/APC 15m","att":0.0,"a":[0.0,8.0,280.0,0.0,0.0,0.0,0.0]},{"i":396,"code":"102 711 2","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Breakout 72FO Mod12 LC/UPC 25m","att":0.0,"a":[0.0,26.0,0.0,0.0,0.0,0.0,0.0]},{"i":397,"code":"103 056 3","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Breakout 72FO Mod12 SC/UPC 25m","att":0.0,"a":[0.0,148.0,0.0,0.0,0.0,0.0,0.0]},{"i":398,"code":"107 530 4","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Coupleur PLC 1*4","att":0.0,"a":[0.0,2500.0,0.0,0.0,0.0,0.0,0.0]},{"i":399,"code":"110 058 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"Jrt SC/APC Splx mde L1,5 D2 Jn","att":0.0,"a":[0.0,0.0,0.0,0.0,0.0,0.0,0.0]},{"i":400,"code":"110 084 1","cle":"CO08","fam":"Equipements FTTH","cls":"C","lib":"BAEP Universel 1/12 Tubes 5mm","att":0.0,"a":[0.0,190.0,0.0,0.0,0.0,0.0,0.0]}]</script>
 <script>
@@ -613,7 +803,8 @@ async function hashPwd(s){
 // Firebase interdit . # $ / [ ] dans une clé : « roxane.hunt » devient « roxane_hunt ».
 // Vues attribuables. L'onglet Utilisateurs reste réservé aux administrateurs.
 const VUES = [
-  { k:'accords',      ui:'Accords' },
+  { k:'eb',           ui:'Expressions de besoin' },
+  { k:'suivi',        ui:'Suivi EB' },
   { k:'reception',    ui:'Réceptions' },
   { k:'retour',       ui:'Retours' },
   { k:'transmission', ui:'Transmission' },
@@ -622,9 +813,9 @@ const VUES = [
   { k:'histo',        ui:'Historique' }
 ];
 const PROFILS = {
-  consultation: ['etat','histo'],
+  consultation: ['etat','histo','suivi'],
   dispatch:     ['etat','dispatch','histo'],
-  magasin:      ['accords','reception','retour','etat','histo'],
+  magasin:      ['eb','suivi','reception','retour','etat','histo'],
   complet:      VUES.map(v=>v.k)
 };
 // Un compte sans liste de vues (créé avant cette version) garde l'accès complet.
@@ -649,9 +840,8 @@ const ACTS = [
 const WH = ['KM4','AGL'];
 
 const S = {
-  arts:{}, order:[], mv:[], meta:{lastTx:null},
-  sel:null, selWh:null, selAct:null,
-  form:{qty:'',ref:'',res:'',wh:null}, editVues:null, users:{}, user:null,
+  arts:{}, order:[], mv:[], bons:{}, meta:{lastTx:null},
+  editVues:null, users:{}, user:null,
   tx:{ KM4:null, AGL:null, diff:null, date:null }
 };
 
@@ -762,7 +952,11 @@ const store = {
       this.mode='firebase';
       if(!(await delai(FB.get('articles'), 15000, 'lecture de la base'))) await seedRemote();
       S.users = (await delai(FB.get('utilisateurs'), 15000, 'lecture des comptes')) || {};
+      try{ const mt=await FB.get('meta'); if(mt && mt.projetsEb) E.projets=mt.projetsEb; }catch(e){}
       FB.on('articles', v=>{ v=v||{}; S.arts=v; S.order=Object.keys(v).sort((a,b)=>(v[a].i||0)-(v[b].i||0)); renderAll(); });
+      FB.on('bons', v=>{ S.bons=v||{};
+        if($('#p-suivi').classList.contains('on')) renderSuivi();
+        renderBadgeEb(); });
       FB.on('mouvements', v=>{ v=v||{}; S.mv=Object.entries(v).map(([id,m])=>({id,...m})).sort((a,b)=>(b.ts||'').localeCompare(a.ts||'')); renderHisto(); });
       FB.on('utilisateurs', v=>{ S.users=v||{};
         if(S.user && S.user.cuid!=='local'){
@@ -807,6 +1001,18 @@ const store = {
     m.parNom = S.user ? S.user.nom : '';
     if(this.mode==='firebase'){ try{ await FB.push('mouvements', m); }catch(e){ toast('Journal non écrit','err'); } }
     else { S.mv.unshift({id:'L'+Date.now()+Math.random().toString(36).slice(2,6), ...m}); renderHisto(); }
+  },
+  async savePiece(ref, piece){
+    if(S.bons[ref]) S.bons[ref].piece=piece;
+    if(this.mode==='firebase'){ try{ await FB.update('bons/'+ref+'/piece', piece); }catch(e){} }
+  },
+  async saveBon(ref, bon){
+    S.bons[ref]=bon;
+    if(this.mode==='firebase'){
+      try{ await FB.set('bons/'+ref, bon); }
+      catch(e){ toast('Bon non enregistré : '+e.message,'err'); }
+    } else { renderSuivi(); renderBadgeEb(); }
+    renderBadgeEb();
   },
   async saveUser(cuid, u){
     if(this.mode==='firebase'){
@@ -973,14 +1179,13 @@ function ouvrirSession(u){
   $('#navUsers').hidden = u.role!=='admin';
   appliquerVues();
   renderAll(); renderHisto();
-  $('#q').focus();
 }
 
 function logout(msg){
-  S.user=null; S.sel=null; S.selAct=null;
+  S.user=null;
   $('#me').hidden=true; $('#navUsers').hidden=true;
   $$('.navbtn').forEach(b=>{ if(b.dataset.tab!=='users') b.hidden=false; });
-  $$('.navbtn').find(b=>b.dataset.tab==='accords').click();
+  const prem=$$('.navbtn').find(b=>b.dataset.tab==='eb'); if(prem) prem.click();
   renderGate(); if(msg) gateErr(msg);
 }
 $('#meOut').onclick=()=>logout();
@@ -1100,7 +1305,8 @@ $('#uAdd').onclick=async()=>{
 
 /* ─────────────────────────── navigation ─────────────────────────── */
 const TITLES = {
-  accords:['Accords sur bons','Rechercher un article, vérifier la disponibilité, servir une activité'],
+  eb:['Expressions de besoin','Charger un EB, contrôler la disponibilité, accorder le bon'],
+  suivi:['Suivi des EB','Étapes horodatées, délais par phase, reliquats'],
   reception:['Réceptions','Entrer les quantités reçues et les affecter aux activités'],
   retour:['Retours de stock','Matériel qui revient du terrain et repart en dispatching'],
   transmission:['Transmission hebdomadaire','Charger les extractions KM4 et AGL, traiter les écarts'],
@@ -1115,6 +1321,8 @@ $$('.navbtn').forEach(b=>b.onclick=()=>{
   $$('.panel').forEach(p=>p.classList.toggle('on', p.id==='p-'+t));
   $('#pgTitle').textContent=TITLES[t][0]; $('#pgSub').textContent=TITLES[t][1];
   if(t==='users'){ initFormulaireVues(); renderUsers(); }
+  if(t==='eb') renderEb();
+  if(t==='suivi') renderSuivi();
   if(t==='dispatch') renderDispatch();
   if(t==='etat'){ renderMajBanner(); renderEtat(); }
   window.scrollTo(0,0);
@@ -1157,179 +1365,19 @@ function attachSearch(inputSel, boxSel, onPick){
   document.addEventListener('click',e=>{ if(!box.contains(e.target)&&e.target!==inp) close(); });
 }
 
-/* ─────────────────────────── fiche article ─────────────────────────── */
-function selectArt(a){ S.sel=a.key; S.selAct=null; S.form={qty:'',ref:'',res:'',wh:null}; $('#q').value=a.code; renderFiche(); }
-
-function grabForm(){
-  const q=$('#acQty'), r=$('#acRef'), s=$('#acWh'), n=$('#acRes');
-  if(q) S.form.qty=q.value; if(r) S.form.ref=r.value; if(s) S.form.wh=s.value;
-  if(n) S.form.res=n.value;
-}
+/* ─────────────────────────── ressources ─────────────────────────── */
 // Ressources déjà saisies, proposées en autocomplétion pour éviter les variantes d'orthographe.
 const ressourcesConnues = () =>
   [...new Set(S.mv.map(m=>m.res).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'fr'));
-// Ce que la quantité demandée consommerait, et où ça coince. Informatif : rien n'est verrouillé.
-function capText(a,qty){
-  if(S.selAct===null) return 'Choisis le service demandeur pour voir la disponibilité';
-  const al=+a.a[S.selAct]||0, w=S.form.wh, st=w?(+a[w.toLowerCase()]||0):null;
-  let s=`${esc(ACTS[S.selAct].ui)} <b>${fmt(al)}</b> · KM4 <b>${fmt(a.km4)}</b> · AGL <b>${fmt(a.agl)}</b>`;
-  if(qty>0){
-    const alertes=[];
-    if(qty>al) alertes.push(`${esc(ACTS[S.selAct].ui)} passerait à ${fmt(al-qty)}`);
-    if(st!==null&&qty>st) alertes.push(`${w} passerait à ${fmt(st-qty)}`);
-    if(alertes.length) s+=`<br><span style="color:var(--warn)">${alertes.join(' · ')}</span>`;
-  }
-  return s;
-}
-function whHintText(a,ready,qty){
-  if(!ready) return "Charge les extractions KM4 et AGL pour que l'emplacement soit proposé.";
-  const s=proposeWh(a,qty);
-  if(!s) return '<span style="color:var(--warn)">Aucun stock physique sur KM4 ni AGL.</span>';
-  if(qty>0 && (+a[s.toLowerCase()]||0)<qty)
-    return `<span style="color:var(--warn)">Ni KM4 ni AGL ne couvre les ${fmt(qty)} demandés.</span>`;
-  return `Proposé d'après l'extraction : <b>${s}</b>.`;
-}
-function renderFiche(){
-  const host=$('#fiche');
-  if(!S.sel||!S.arts[S.sel]){
-    host.innerHTML=`<div class="card"><div class="empty"><strong>Aucun article sélectionné</strong>Tape un code article ou un libellé pour ouvrir sa fiche.</div></div>`;
-    return;
-  }
-  const a=S.arts[S.sel], ready=splitReady(), alloc=sumA(a), tot=globalOf(a);
-  const maxA=Math.max(1,...a.a.map(x=>+x||0));
-
-  // Les entrepôts sont une information : ils disent OÙ est la marchandise, ils ne conditionnent rien.
-  const wh = WH.map(w=>{
-    const q=+a[w.toLowerCase()]||0;
-    return `<div class="wh info ${q>0?'has':''} ${q<0?'neg':''}" data-w="${w}">
-      <div class="lab">${w}</div><div class="val">${fmt(q)}</div>
-      <div class="muted" style="font-size:11px;margin-top:2px">${q>0?'unités en magasin':q<0?'sur-servi, à régulariser':'aucun stock'}</div></div>`;
-  }).join('');
-
-  const acts = ACTS.map((act,i)=>{
-    const q=+a.a[i]||0;
-    return `<button class="act ${S.selAct===i?'sel':''}" data-i="${i}">
-      <span class="nm">${esc(act.ui)}</span>
-      <span class="bar"><i style="width:${q>0?Math.max(6,Math.round(q/maxA*100)):0}%"></i></span>
-      <span class="qt">${fmt(q)}</span></button>`;
-  }).join('');
-
-  // Le plafond, c'est ce que le service demandeur possède. Rien d'autre.
-  const cap = S.selAct===null ? 0 : (+a.a[S.selAct]||0);
-
-  // Demandeur = l'activité qui consomme. Même liste que l'état des stocks.
-  const demOpts = ACTS.map((act,i)=>{
-    const q=+a.a[i]||0;
-    return `<option value="${i}" ${S.selAct===i?'selected':''}>${esc(act.ui)} · ${fmt(q)}</option>`;
-  }).join('');
-  // Emplacement : proposé d'après les extractions, modifiable.
-  const qtyNow = Math.floor(toNum(S.form.qty));
-  const sugg = ready ? proposeWh(a, qtyNow) : '';
-  if(S.form.wh===null) S.form.wh = sugg;
-  const whOpts = WH.map(w=>{
-    const q=+a[w.toLowerCase()]||0;
-    return `<option value="${w}" ${S.form.wh===w?'selected':''}>${w} · ${fmt(q)}${q>0?' dispo':''}</option>`;
-  }).join('');
-  const whHint = `<div class="note" id="acWhHint" style="margin:6px 0 0">${whHintText(a,ready,qtyNow)}</div>`;
-
-  host.innerHTML=`
-  <div class="fiche">
-    <div class="fiche-top">
-      <div class="t">
-        <h3>${esc(a.lib||'—')}</h3>
-        <div class="meta">
-          <span class="code" style="font-size:13px;color:var(--ink)">${esc(a.code)}</span>
-          ${a.fam?`<span class="pill">${esc(a.fam)}</span>`:''}
-          ${a.cls?`<span class="pill">Classe ${esc(a.cls)}</span>`:''}
-        </div>
-      </div>
-      <div style="text-align:right">
-        <div class="eyebrow">Stock global</div>
-        <div class="mono" style="font-size:24px;font-weight:700;letter-spacing:-.03em">${fmt(tot)}</div>
-        ${a.att?`<span class="pill warn">${fmt(a.att)} à dispatcher</span>`:''}
-      </div>
-    </div>
-    <div class="side"><h4>Où se trouve le stock</h4><div class="whrow">${wh}</div>
-      ${!ready
-        ? `<div class="note">Ventilation KM4/AGL pas encore établie — elle se remplira à la première transmission.</div>`
-        : (Math.abs(phys(a)-alloc-(+a.att||0))>0.5
-            ? `<div class="note" style="color:var(--warn)">Écart de ${fmt(phys(a)-alloc-(+a.att||0))} entre le physique et la répartition. À traiter à la prochaine transmission.</div>`
-            : '')}
-    </div>
-    <div class="side"><h4>Quelles activités en ont</h4><div class="acts">${acts}</div>
-      ${alloc===0?'<div class="note">Aucune allocation. Passe par À dispatcher.</div>':''}
-    </div>
-    <div class="accordbox">
-      <div class="f"><label><span>Quantité accordée</span>
-        <input class="inp num" id="acQty" type="number" min="1" step="1" placeholder="0" value="${esc(S.form.qty)}"></label>
-        ${cap>0?`<button class="btn ghost sm" id="acMax" style="margin-top:4px;padding:2px 6px">tout : ${fmt(cap)}</button>`:''}</div>
-      <div class="f grow"><label><span>Demandeur / service</span>
-        <select class="inp" id="acWho">
-          <option value="">— Choisir le service —</option>${demOpts}
-        </select></label></div>
-      <div class="f grow"><label><span>Ressource</span>
-        <input class="inp" id="acRes" list="acResList" placeholder="Qui récupère le matériel"
-               autocomplete="off" value="${esc(S.form.res)}"></label>
-        <datalist id="acResList">${ressourcesConnues().map(r=>`<option value="${esc(r)}"></option>`).join('')}</datalist></div>
-      <div class="f grow"><label><span>Référence du bon</span>
-        <input class="inp" id="acRef" placeholder="N° de bon" value="${esc(S.form.ref)}"></label></div>
-      <div class="f"><label><span>Emplacement de sortie</span>
-        <select class="inp" id="acWh"><option value="">Non précisé</option>${whOpts}</select></label>${whHint}</div>
-      <div class="cap" id="acCap">${capText(a,qtyNow)}</div>
-      <button class="btn primary" id="acGo">Valider l'accord</button>
-    </div>
-  </div>`;
-
-  host.querySelectorAll('.act').forEach(b=>b.onclick=()=>{ grabForm(); const i=+b.dataset.i; S.selAct = S.selAct===i?null:i; renderFiche(); });
-
-  const who=$('#acWho');
-  who.onchange=()=>{ grabForm(); S.selAct = who.value===''?null:+who.value; renderFiche(); };
-  const go=$('#acGo'); if(go) go.onclick=()=>doAccord(cap);
-  const qi=$('#acQty');
-  if(qi){
-    qi.addEventListener('input',()=>{
-      const auto = ready && S.form.wh===proposeWh(a,Math.floor(toNum(S.form.qty)));
-      S.form.qty=qi.value;
-      const n=Math.floor(toNum(qi.value));
-      if(auto && ready){ const next=proposeWh(a,n); S.form.wh=next; const sel=$('#acWh'); if(sel) sel.value=next; }
-      const h=$('#acWhHint'); if(h) h.innerHTML=whHintText(a,ready,n);
-      const c=$('#acCap'); if(c) c.innerHTML=capText(a,n);
-    });
-    qi.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); doAccord(cap); } });
-    if(cap>0 && !S.form.qty) qi.focus();
-  }
-  const ri=$('#acRef'); if(ri) ri.addEventListener('input',()=>{ S.form.ref=ri.value; });
-  const si=$('#acRes'); if(si) si.addEventListener('input',()=>{ S.form.res=si.value; });
-  const wi=$('#acWh'); if(wi) wi.addEventListener('change',()=>{ S.form.wh=wi.value;
-    const c=$('#acCap'); if(c) c.innerHTML=capText(a,Math.floor(toNum(S.form.qty))); });
-  const mx=$('#acMax'); if(mx) mx.onclick=()=>{ const i=$('#acQty'); i.value=String(cap); i.dispatchEvent(new Event('input')); i.focus(); };
-}
-
-async function doAccord(cap){
-  if(S.selAct===null) return toast('Choisis le service demandeur','err');
-  const a=S.arts[S.sel], q=Math.floor(toNum($('#acQty').value));
-  if(!(q>0)) return toast('Saisis une quantité','err');
-  grabForm();
-  const w0=S.form.wh, st0=w0?(+a[w0.toLowerCase()]||0):null, alertes=[];
-  if(q>cap) alertes.push(`${ACTS[S.selAct].ui} n'a que ${fmt(cap)} unités — l'activité passera à ${fmt(cap-q)}.`);
-  if(st0!==null && q>st0) alertes.push(`${w0} n'affiche que ${fmt(st0)} unités — le magasin passera à ${fmt(st0-q)}.`);
-  if(alertes.length && !confirm(`Sortie de ${fmt(q)} × ${a.code}\n\n${alertes.join('\n')}\n\nValider quand même ?`)) return;
-  const acts=a.a.slice(); acts[S.selAct]=(+acts[S.selAct]||0)-q;
-  const patch={a:acts};
-  const w=S.form.wh;
-  if(w){ const wf=w.toLowerCase(); patch[wf]=(+a[wf]||0)-q; }
-  await store.saveArt(a.key, patch);
-  await store.logMv({ type:'accord', code:a.code, key:a.key, lib:a.lib, wh:w,
-    act:ACTS[S.selAct].k, actUi:ACTS[S.selAct].ui, qte:q,
-    ref:S.form.ref, res:(S.form.res||'').trim(), who:ACTS[S.selAct].ui, date:today() });
-  toast(`Sortie de ${fmt(q)} × ${a.code} sur ${ACTS[S.selAct].ui}`,'ok');
-  S.selAct=null;
-  S.form={qty:'',ref:'',res:'',wh:null};
-  renderFiche();
-}
 
 /* ─────────────────────────── réceptions ─────────────────────────── */
 let rcSel=null;
+/* Évite les variantes d'orthographe d'un fournisseur d'une réception à l'autre. */
+function renderRcFours(){
+  const dl=$('#rcFours'); if(!dl) return;
+  dl.innerHTML=[...new Set(S.mv.map(m=>m.four).filter(Boolean))]
+    .sort((a,b)=>a.localeCompare(b,'fr')).map(f=>`<option value="${esc(f)}">`).join('');
+}
 function renderRcPick(){
   const el=$('#rcPick');
   if(!rcSel){ el.className='note'; el.textContent='Aucun article sélectionné.'; $('#rcGo').disabled=true; return; }
@@ -1344,10 +1392,16 @@ $('#rcGo').onclick=async()=>{
   const a=S.arts[rcSel], q=Math.floor(toNum($('#rcQty').value)), w=$('#rcWh').value, wf=w.toLowerCase();
   if(!(q>0)) return toast('Saisis une quantité reçue','err');
   await store.saveArt(a.key, { [wf]:(+a[wf]||0)+q, att:(+a.att||0)+q });
+  const bc=$('#rcBc').value.trim(), ship=$('#rcShip').value.trim(), four=$('#rcFour').value.trim();
+  /* Le bon de commande alimente aussi « ref » : c'est la colonne que
+     l'Historique affiche déjà, et l'ancien champ libre reste en secours. */
   await store.logMv({ type:'reception', code:a.code, key:a.key, lib:a.lib, wh:w, qte:q,
-    ref:$('#rcRef').value.trim(), date:$('#rcDate').value||today() });
+    ref: bc || $('#rcRef').value.trim(), bc, ship, four,
+    date:$('#rcDate').value||today(),
+    detail:[ship&&('Shipment '+ship), four&&('Fournisseur '+four), $('#rcRef').value.trim()].filter(Boolean).join(' · ') });
   toast(`Réception de ${fmt(q)} × ${a.code} sur ${w} — à dispatcher`,'ok');
-  $('#rcQty').value=''; $('#rcRef').value=''; renderRcPick(); renderBadge();
+  $('#rcQty').value=''; $('#rcRef').value=''; $('#rcShip').value='';
+  renderRcFours(); renderRcPick(); renderBadge();
 };
 
 /* ─────────────────────────── retours de stock ─────────────────────────── */
@@ -1981,35 +2035,52 @@ function histoFiltre(){
     return true;
   });
 }
+/* Le tableau rend une ligne par mouvement. Le plafond existait déjà ; ce qui
+   manquait, c'est de le dire — sinon on croit voir tout l'historique. */
+const HISTO_MAX = 400;
 function renderHisto(){
   const gens=[...new Set(S.mv.map(m=>m.par).filter(Boolean))].sort();
   const sel=$('#hsWho'), cur=sel.value;
   sel.innerHTML='<option value="">Tout le monde</option>'
     + gens.map(g=>`<option value="${esc(g)}" ${cur===g?'selected':''}>${esc((S.mv.find(m=>m.par===g)||{}).parNom||g)}</option>`).join('');
 
-  const tous=histoFiltre(), list=tous.slice(0,400);
+  const tous=histoFiltre(), list=tous.slice(0,HISTO_MAX);
   const filtre = $('#hsType').value || $('#hsWho').value || $('#hsArt').value || $('#hsDu').value || $('#hsAu').value;
-  $('#hsCount').innerHTML = filtre
-    ? `<span class="pill warn">${fmt(tous.length)} mouvement(s) sur ${fmt(S.mv.length)}</span>`
-    : `<span class="pill">${fmt(S.mv.length)} mouvement(s)</span>`;
+  $('#hsCount').innerHTML = (filtre
+      ? `<span class="pill warn">${fmt(tous.length)} mouvement(s) sur ${fmt(S.mv.length)}</span>`
+      : `<span class="pill">${fmt(S.mv.length)} mouvement(s)</span>`)
+    + (tous.length>list.length
+      ? ` <span class="pill warn" title="Affine les filtres ou exporte pour tout obtenir">${fmt(HISTO_MAX)} plus récents affichés</span>`
+      : '');
 
   $('#hsTab').innerHTML=`
-    <thead><tr><th>Date</th><th>Par</th><th>Type</th><th>Code</th><th>Article</th><th>Ressource</th><th>Détail</th><th class="num">Qté</th><th></th></tr></thead>
+    <thead><tr><th>Date</th><th>Par</th><th>Type</th><th>Bon / BC</th><th>Code</th><th>Article</th><th>Ressource</th><th>Détail</th><th class="num">Qté</th><th></th></tr></thead>
     <tbody>${list.map(m=>`<tr>
       <td class="mono muted" style="white-space:nowrap">${esc((m.ts||'').slice(0,16).replace('T',' '))}</td>
       <td style="white-space:nowrap">${m.par?`<span class="pill" title="${esc(m.par)}">${esc(m.parNom||m.par)}</span>`:'<span class="muted">—</span>'}</td>
       <td><span class="pill ${m.type==='accord'?'ok':m.type==='reception'?'km4':m.type==='retour'?'agl':m.type==='annulation'?'warn':''}">${MVLBL[m.type]||m.type}</span></td>
+      <td style="white-space:nowrap">${m.ref
+          ? (S.bons && S.bons[m.ref]
+              ? `<a href="#" class="lien code" data-bon="${esc(m.ref)}" title="Ouvrir le bon dans le Suivi EB">${esc(m.ref)}</a>`
+              : `<span class="code muted">${esc(m.ref)}</span>`)
+          : '<span class="muted">—</span>'}</td>
       <td class="code">${esc(m.code||'')}</td><td>${esc(m.lib||'')}</td>
       <td style="white-space:nowrap">${m.res?esc(m.res):'<span class="muted">—</span>'}</td>
-      <td class="muted" style="font-size:12px">${esc([m.actUi,m.wh,m.ref,m.detail].filter(Boolean).join(' · '))}</td>
+      <td class="muted" style="font-size:12px">${esc([m.actUi,m.wh,m.detail].filter(Boolean).join(' · '))}</td>
       <td class="num mono" style="font-weight:600">${m.qte!=null?fmt(m.qte):''}</td>
       <td>${(m.type==='accord'&&!m.annule&&(S.user?.role==='admin'||m.par===S.user?.cuid))
               ?`<button class="btn ghost sm" data-undo="${m.id}">Annuler</button>`
               :m.annule?'<span class="muted" style="font-size:11px">annulé</span>':''}</td>
-    </tr>`).join('') || '<tr><td colspan="9" class="empty">Aucun mouvement ne correspond à ces filtres.</td></tr>'}</tbody>`;
+    </tr>`).join('') || '<tr><td colspan="10" class="empty">Aucun mouvement ne correspond à ces filtres.</td></tr>'}</tbody>`;
   if(tous.length>400) $('#hsTab').insertAdjacentHTML('beforeend',
     `<tfoot><tr><td colspan="9" class="muted" style="padding:10px">${fmt(tous.length-400)} mouvement(s) supplémentaires — affine les filtres ou exporte.</td></tr></tfoot>`);
   $('#hsTab').querySelectorAll('[data-undo]').forEach(b=>b.onclick=()=>undoAccord(b.dataset.undo));
+  $('#hsTab').querySelectorAll('[data-bon]').forEach(a=>a.onclick=e=>{
+    e.preventDefault();
+    const ref=a.dataset.bon, b=S.bons[ref]; if(!b) return;
+    E.mois=''; E.detail=ref; allerOnglet('suivi');
+    const c=$('#ebDetail'); if(c && c.scrollIntoView) c.scrollIntoView({block:'center'});
+  });
 }
 ['#hsArt','#hsDu','#hsAu'].forEach(s=>$(s).addEventListener('input',renderHisto));
 $('#hsRaz').onclick=()=>{
@@ -2030,20 +2101,28 @@ async function undoAccord(id){
   m.annule=true;
   if(store.mode==='firebase'){ try{ await FB.update('mouvements/'+id,{annule:true}); }catch(e){} }
   await store.logMv({ type:'annulation', code:m.code, key:m.key, lib:m.lib, qte:m.qte, wh:m.wh, actUi:m.actUi, date:today(), detail:'annule l\'accord du '+(m.ts||'').slice(0,10) });
-  toast('Accord annulé, stock rétabli','ok'); renderHisto(); if(S.sel===m.key) renderFiche();
+  toast('Accord annulé, stock rétabli','ok'); renderHisto();
 }
 $('#hsExp').onclick=()=>{
-  const head=['Horodatage','Type','Code','Article','Entrepôt','Activité','Quantité','Ressource','Référence','Détail','Saisi par','Annulé'];
-  const rows=histoFiltre().map(m=>[m.ts||'',MVLBL[m.type]||m.type,m.code||'',m.lib||'',m.wh||'',m.actUi||'',m.qte??'',m.res||'',m.ref||'',m.detail||'',m.parNom||m.par||'',m.annule?'oui':'']);
-  const ws=XLSX.utils.aoa_to_sheet([head,...rows]); ws['!cols']=[{wch:18},{wch:14},{wch:12},{wch:34},{wch:9},{wch:26},{wch:10},{wch:22},{wch:14},{wch:34},{wch:18},{wch:8}];
+  const head=['Horodatage','Type','Bon / BC','Code','Article','Entrepôt','Activité','Quantité','Ressource',
+              'Bon de commande','Shipment','Fournisseur','Détail','Saisi par','Annulé'];
+  const rows=histoFiltre().map(m=>[m.ts||'',MVLBL[m.type]||m.type,m.ref||'',m.code||'',m.lib||'',m.wh||'',m.actUi||'',m.qte??'',m.res||'',
+    m.bc||'',m.ship||'',m.four||'',m.detail||'',m.parNom||m.par||'',m.annule?'oui':'']);
+  const ws=XLSX.utils.aoa_to_sheet([head,...rows]);
+  ws['!cols']=[{wch:18},{wch:14},{wch:12},{wch:34},{wch:9},{wch:26},{wch:10},{wch:22},{wch:14},{wch:16},{wch:16},{wch:22},{wch:34},{wch:18},{wch:8}];
   const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Mouvements');
   XLSX.writeFile(wb,`Mouvements_${today()}.xlsx`);
 };
 
 /* ─────────────────────────── rendu global ─────────────────────────── */
+function renderBadgeEb(){
+  const b=$('#badgeEb'); if(!b) return;
+  b.textContent = Object.values(S.bons||{}).filter(x=>x && x.h && !x.h.cloture).length;
+}
 function renderAll(){
-  if(S.sel&&!S.arts[S.sel]) S.sel=null;
-  renderFiche(); renderBadge();
+  renderBadge(); renderBadgeEb();
+  if($('#p-eb').classList.contains('on')) renderEbLignes();
+  if($('#p-suivi').classList.contains('on')) renderSuivi();
   if($('#p-etat').classList.contains('on')) renderEtat();
   if($('#p-dispatch').classList.contains('on')) renderDispatch();
   if(rcSel) renderRcPick();
@@ -2054,11 +2133,860 @@ $('#etDate').addEventListener('change',()=>{
   const e=$('#etDate');
   if(e.value && e.value!==(frToISO(S.meta.lastTx)||today())) e.dataset.touched='1'; else delete e.dataset.touched;
 });
-attachSearch('#q','#res',selectArt);
 attachSearch('#rcQ','#rcRes',a=>{ rcSel=a.key; $('#rcQ').value=a.code; renderRcPick(); });
 attachSearch('#rtQ','#rtRes',a=>{ rtSel=a.key; $('#rtQ').value=a.code; renderRtPick(); });
-$('#rcDate').value=today();
+$('#rcDate').value=today(); renderRcFours();
 $('#rtDate').value=today(); syncDates();
+/* ══════════════════════════════════════════════════════════════════
+   EXPRESSIONS DE BESOIN
+   Parcours complet : chargement de l'EB → accord selon la dispo →
+   impression → mise en préparation → traitement terminé → enlèvement
+   → clôture. Chaque étape s'horodate au moment où elle est franchie,
+   et les lignes accordées passent par store.saveArt / store.logMv,
+   donc elles nourrissent l'Historique et restent annulables comme
+   n'importe quel accord.
+   ══════════════════════════════════════════════════════════════════ */
+
+const ETAPES = [
+  { k:'charge',      ui:'Chargement EB',      court:'Chargé',         verbe:null },
+  { k:'accord',      ui:'Accord selon dispo', court:'Accordé',        verbe:null },
+  { k:'impression',  ui:'Impression accord',  court:'Imprimé',        verbe:"Imprimer l'accord" },
+  { k:'preparation', ui:'Mise en préparation',court:'En préparation', verbe:'En préparation' },
+  { k:'traite',      ui:'Traitement terminé', court:'Traité',         verbe:'Traitement fini' },
+  { k:'enleve',      ui:'EB enlevé',          court:'Enlevé',         verbe:'Enlèvement' },
+  { k:'cloture',     ui:'Clôture EB',         court:'Clôturé',        verbe:'Clôturer' }
+];
+const PHASES = [
+  ['charge','accord','Chargement → accord'],
+  ['accord','impression','Accord → impression'],
+  ['impression','preparation','Impression → préparation'],
+  ['preparation','traite','Préparation → traitement'],
+  ['traite','enleve','Traitement → enlèvement'],
+  ['enleve','cloture','Enlèvement → clôture'],
+  ['charge','cloture','Bout en bout']
+];
+/* Préfixe de référence par activité, aligné sur la numérotation en vigueur. */
+const PREFIXE = { ftth:'DEPL', b2b:'B2BL', maint_client:'MINF', backhaul:'DERX', prod_b2c:'PROD', maint_fo:'MFOB' };
+const PIECE_MAX = 8 * 1024 * 1024;
+
+/* La navigation vit dans le onclick des .navbtn : on passe par le bouton. */
+const allerOnglet = t => { const b=$$('.navbtn').find(x=>x.dataset.tab===t); if(b) b.click(); };
+
+/* ─────────────────────────── état du module ─────────────────────────── */
+const E = {
+  form:{}, lignes:[], piece:null,   // brouillon en cours de saisie
+  ai:1,                              // index d'activité dans ACTS (0 = commun)
+  detail:null, subIdx:null, mois:'',
+  lecture:{ entete:{}, lignes:[] },
+  projets:{}                         // libellé de projet → clé d'activité, appris
+};
+
+/* ─────────────────────────── disponibilité ─────────────────────────── */
+/* Une activité peut puiser sur sa propre dotation et sur le pool commun.
+   Les autres activités ne sont proposées qu'en dernier recours. */
+function dispoEb(a, ai){
+  if(!a) return null;
+  const propre = +a.a[ai] || 0, commun = +a.a[0] || 0;
+  const ailleurs = ACTS.map((x,i)=>({ i, ui:x.ui, q:+a.a[i]||0 }))
+    .filter(x=>x.i!==ai && x.i!==0 && x.q>0).sort((x,y)=>y.q-x.q);
+  return { art:a, propre, commun, servable:propre+commun, ailleurs, glob:globalOf(a) };
+}
+
+/* ─────────────────────────── saisie des lignes ─────────────────────────── */
+function evalLigne(l){
+  const orig = S.arts[l.key];
+  l.lib = orig ? orig.lib : l.lib;
+  l.keyServi = l.sub || l.key;
+  const art = S.arts[l.keyServi];
+  const d = dispoEb(art, E.ai);
+  if(!d){ l.statut='inconnu'; l.accorde=0; return l; }
+  l.codeServi = art.code; l.libServi = art.lib;
+  l.dispo = l.src!=null ? (+art.a[l.src]||0) : d.servable;
+  l.accorde = Math.min(l.qte, Math.max(0, l.force!=null ? l.force : l.dispo));
+  l.statut = l.accorde>=l.qte ? 'ok' : (l.accorde>0 ? 'partiel' : 'rupture');
+  l.options = d.ailleurs;
+  if(!l.wh) l.wh = splitReady() ? proposeWh(art, l.accorde) : '';
+  return l;
+}
+
+function renderEbLignes(){
+  const t = $('#ebTab');
+  if(!E.lignes.length){
+    t.innerHTML = `<tbody><tr><td style="padding:26px;text-align:center;color:var(--muted);font-size:13px">Aucune ligne. Chercher un article ci-dessus, ou charger l'EB pour le lire automatiquement.</td></tr></tbody>`;
+    $('#ebResume').innerHTML=''; return;
+  }
+  E.lignes.forEach(evalLigne);
+  /* KM4 et AGL localisent le physique ; l'activité, elle, plafonne le droit de
+     tirage. Les deux axes sont donc affichés séparément, sinon on choisit un
+     entrepôt à l'aveugle. */
+  const whOpts = (l,art) => ['',...WH].map(w=>{
+    if(!w) return `<option value=""${l.wh?'':' selected'}>—</option>`;
+    const q=+art[w.toLowerCase()]||0;
+    const court=q>=l.accorde?'':' ⚠';
+    return `<option value="${w}"${l.wh===w?' selected':''}>${w} · ${fmt(q)}${court}</option>`;
+  }).join('');
+  t.innerHTML = `<thead><tr>
+      <th>Code</th><th>Article</th><th class="r">Demandé</th><th class="r">Dispo</th>
+      <th class="r">Accordé</th><th>Statut</th><th>Puiser sur</th><th>Entrepôt</th><th></th></tr></thead><tbody>`
+    + E.lignes.map((l,i)=>{
+      const pill = l.statut==='ok' ? '<span class="pill ok">servi</span>'
+                 : l.statut==='partiel' ? '<span class="pill warn">partiel</span>'
+                 : '<span class="pill" style="border-color:#F0B6C2;background:#FCEBEF;color:#B8203C">rupture</span>';
+      const src = [`<option value="">activité + commun (${fmt(l.dispo)})</option>`]
+        .concat((l.options||[]).map(o=>`<option value="${o.i}"${l.src===o.i?' selected':''}>${esc(o.ui)} (${fmt(o.q)})</option>`)).join('');
+      return `<tr class="eb-${l.statut}">
+        <td><span class="code">${esc(l.codeServi||'')}</span>${l.sub?`<span class="eb-sub">remplace <s>${esc(l.code)}</s></span>`:''}</td>
+        <td>${esc(l.libServi||l.lib||'')}${l.sub?`<span class="eb-sub">demandé : ${esc(l.lib)}</span>`:''}</td>
+        <td class="r">${fmt(l.qte)}</td>
+        <td class="r">${fmt(l.dispo)}</td>
+        <td class="r"><input class="inp" type="number" min="0" max="${l.qte}" value="${l.accorde}" data-acc="${i}" style="width:84px;text-align:right;padding:5px 7px"></td>
+        <td>${pill}</td>
+        <td><select class="inp" data-src="${i}" style="min-width:180px;padding:5px 7px">${src}</select></td>
+        <td>${(()=>{ const art=S.arts[l.keyServi]||{}; const q=l.wh?(+art[l.wh.toLowerCase()]||0):null;
+            return `<select class="inp" data-wh="${i}" style="min-width:118px;padding:5px 7px">${whOpts(l,art)}</select>`
+              + `<span class="eb-wh">KM4 ${fmt(art.km4)} · AGL ${fmt(art.agl)}</span>`
+              + (q!=null && q<l.accorde ? `<span class="eb-sub">manque ${fmt(l.accorde-q)} en physique</span>` : ''); })()}</td>
+        <td style="white-space:nowrap">${l.accorde<l.qte||l.sub?`<button class="btn sm" data-sub="${i}">${l.sub?'Changer':'Substituer'}</button> `:''}<button class="btn sm ghost" data-del="${i}">Retirer</button></td></tr>`;
+    }).join('') + '</tbody>';
+
+  const dde = E.lignes.reduce((s,l)=>s+l.qte,0), acc = E.lignes.reduce((s,l)=>s+l.accorde,0);
+  const rupt = E.lignes.filter(l=>l.statut==='rupture').length;
+  $('#ebResume').innerHTML = `<span class="pill">${E.lignes.length} ligne(s)</span>`
+    + `<span class="pill ${dde&&acc===dde?'ok':'warn'}">taux de service ${dde?Math.round(acc/dde*100):0} %</span>`
+    + (rupt?`<span class="pill" style="border-color:#F0B6C2;background:#FCEBEF;color:#B8203C">${rupt} en rupture</span>`:'');
+}
+
+function ebAjoute(a, qte){
+  const ex = E.lignes.find(l=>l.key===a.key);
+  if(ex) ex.qte += qte;
+  else E.lignes.push({ key:a.key, code:a.code, lib:a.lib, qte, sub:null, src:null, wh:'', force:null });
+  renderEbLignes();
+}
+
+/* ─────────────────────────── substitution ─────────────────────────── */
+/* Les équivalents probables : articles disponibles sur l'activité dont la
+   désignation est proche. Même famille légèrement favorisée. Rien
+   d'automatique — c'est un arbitrage technique, il reste manuel. */
+function proximite(a,b){
+  a=norm(a).replace(/[^a-z0-9]/g,''); b=norm(b).replace(/[^a-z0-9]/g,'');
+  if(!a||!b) return 0;
+  const n=Math.max(a.length,b.length); const d=[...Array(b.length+1)].map((_,i)=>i);
+  for(let i=1;i<=a.length;i++){ let prev=d[0]; d[0]=i;
+    for(let j=1;j<=b.length;j++){ const tmp=d[j];
+      d[j]=Math.min(d[j]+1,d[j-1]+1,prev+(a[i-1]===b[j-1]?0:1)); prev=tmp; } }
+  return 1 - d[b.length]/n;
+}
+function equivalents(key){
+  const o=S.arts[key]; if(!o) return [];
+  return S.order.map(k=>S.arts[k]).filter(x=>x.key!==o.key)
+    .map(x=>{ const d=dispoEb(x,E.ai); return { a:x, dispo:d?d.servable:0, s:proximite(o.lib,x.lib)+(x.fam===o.fam?0.08:0) }; })
+    .filter(c=>c.dispo>0 && c.s>=0.5).sort((x,y)=>y.s-x.s).slice(0,6);
+}
+function ouvrirSub(i){
+  E.subIdx=i;
+  const l=E.lignes[i], o=S.arts[l.key];
+  $('#subOrig').innerHTML = `<b>${esc(l.code)} — ${esc(o?o.lib:l.lib)}</b>`
+    + `${fmt(l.qte)} demandé(s) · ${fmt(dispoEb(o,E.ai)?.servable||0)} disponible(s) sur ${esc(ACTS[E.ai].ui)}`;
+  const c=equivalents(l.key);
+  $('#subSugg').innerHTML = c.length
+    ? `<div class="sub-t">Équivalents probables, disponibles sur cette activité</div>`
+      + c.map(x=>`<button data-pick="${esc(x.a.key)}"><span class="code" style="min-width:80px">${esc(x.a.code)}</span><span style="flex:1">${esc(x.a.lib)}</span><span class="pill ok">${fmt(x.dispo)}</span></button>`).join('')
+    : `<div class="sub-t">Aucun équivalent évident — utiliser la recherche ci-dessous</div>`;
+  $('#subRetirer').hidden = !l.sub;
+  $('#subQ').value=''; $('#subRes').hidden=true;
+  $('#modalSub').hidden=false; $('#subQ').focus();
+}
+function appliquerSub(key){
+  const l=E.lignes[E.subIdx]; if(!l) return;
+  if(key===l.key) return toast("C'est l'article d'origine",'err');
+  l.sub = key||null; l.force=null; l.src=null; l.wh='';
+  $('#modalSub').hidden=true; renderEbLignes();
+  toast(key?`${l.code} remplacé par ${S.arts[key].code}`:'Substitution retirée','ok');
+}
+
+/* ─────────────────────────── accord ─────────────────────────── */
+function refSuivante(actK){
+  const p = PREFIXE[actK]||'BONS', an=new Date().getFullYear();
+  const n = Object.values(S.bons||{}).filter(b=>b && b.ref && b.ref.startsWith(p+an)).length + 1;
+  return `${p}${an}-${String(n).padStart(3,'0')}`;
+}
+
+async function ebAccorder(){
+  if(!E.lignes.length) return toast('Aucune ligne à accorder','err');
+  if(!$('#ebEdl').value.trim()) return toast("L'EDL est obligatoire",'err');
+  if(!$('#ebRecep').value) return toast('La date de réception est obligatoire','err');
+  E.lignes.forEach(evalLigne);
+  if(!E.lignes.some(l=>l.accorde>0)) return toast('Rien de disponible : tout partirait en reliquat','err');
+
+  /* Le prélèvement est plafonné par la dotation, donc une activité ne peut pas
+     passer sous zéro — le surplus part en reliquat. L'entrepôt, lui, peut
+     devenir négatif si le physique est en retard sur le dispatching : on le
+     signale une seule fois, comme le fait l'accord direct. */
+  const besoins = {};
+  for(const l of E.lignes){
+    if(!l.wh || l.accorde<=0) continue;
+    const a=S.arts[l.keyServi]; if(!a) continue;
+    const c=l.wh.toLowerCase(), id=a.key+'|'+l.wh;
+    besoins[id]=besoins[id]||{ code:a.code, wh:l.wh, stock:+a[c]||0, q:0 };
+    besoins[id].q+=l.accorde;
+  }
+  const alertes=Object.values(besoins).filter(x=>x.q>x.stock)
+    .map(x=>`${x.wh} n'affiche que ${fmt(x.stock)} unité(s) de ${x.code} — le magasin passera à ${fmt(x.stock-x.q)}.`);
+  if(alertes.length && !confirm(`Accord en cours\n\n${alertes.join('\n')}\n\nValider quand même ?`)) return;
+
+  const act = ACTS[E.ai], ref = refSuivante(act.k), now = new Date().toISOString();
+  const patchs = {}, mvs = [], lignes = [], reliquats = [];
+
+  for(const l of E.lignes){
+    const a = S.arts[l.keyServi]; if(!a) continue;
+    const acts = (patchs[a.key]?.a || a.a).slice();
+    const whs  = { km4:(patchs[a.key]?.km4 ?? (+a.km4||0)), agl:(patchs[a.key]?.agl ?? (+a.agl||0)) };
+    let reste = l.accorde; const prel = [];
+    for(const pool of (l.src!=null ? [l.src] : [E.ai, 0])){
+      if(reste<=0) break;
+      const pris = Math.min(reste, +acts[pool]||0);
+      if(pris<=0) continue;
+      acts[pool] = (+acts[pool]||0) - pris; reste -= pris;
+      prel.push({ pool, ui:ACTS[pool].ui, q:pris });
+      mvs.push({ type:'accord', code:a.code, key:a.key, lib:a.lib, wh:l.wh||'',
+                 act:ACTS[pool].k, actUi:ACTS[pool].ui, qte:pris,
+                 ref, res:$('#ebEdl').value.trim().toUpperCase(), who:act.ui, date:today(),
+                 detail: l.sub ? `substitution de ${l.code} — ${l.lib}` : '' });
+    }
+    const servi = l.accorde - reste;
+    if(servi>0){
+      if(l.wh){ const wf=l.wh.toLowerCase(); whs[wf] = whs[wf] - servi; }
+      patchs[a.key] = { a:acts, km4:whs.km4, agl:whs.agl };
+      lignes.push({ key:a.key, code:a.code, lib:a.lib, demande:l.qte, accorde:servi,
+                    prel, wh:l.wh||'', subDe: l.sub ? { code:l.code, lib:l.lib } : null });
+    }
+    if(l.qte-servi>0) reliquats.push({ key:l.key, code:l.code, lib:l.lib, manquant:l.qte-servi });
+  }
+
+  const bon = {
+    ref, ebOrigine:$('#ebNum').value.trim(), projet:$('#ebProjet').value.trim(),
+    act:act.k, actUi:act.ui, edl:$('#ebEdl').value.trim().toUpperCase(),
+    site:$('#ebSite').value.trim(), demandeur:$('#ebDem').value.trim(),
+    cout:$('#ebCout').value.trim(), codeProjet:$('#ebCodeP').value.trim(),
+    validation:$('#ebValid').value||'', lignes, reliquats,
+    piece: E.piece ? { nom:E.piece.nom, taille:E.piece.taille, type:E.piece.type, url:'', etat:'encours' } : null,
+    h:{ charge:$('#ebRecep').value, accord:now, impression:'', preparation:'', traite:'', enleve:'', cloture:'' },
+    par:S.user?S.user.cuid:'?', parNom:S.user?S.user.nom:''
+  };
+
+  await store.saveMany(patchs);
+  for(const m of mvs) await store.logMv(m);
+  await store.saveBon(ref, bon);
+
+  const p=$('#ebProjet').value.trim(); if(p){ E.projets[p]=act.k; store.setMeta({ projetsEb:E.projets }); }
+  if(E.piece) archiverPiece(ref, E.piece);      // volontairement sans await
+  ebVider();
+  toast(`${ref} accordé — ${lignes.length} ligne(s)`+(reliquats.length?`, ${reliquats.length} en reliquat`:''),'ok');
+  allerOnglet('suivi');
+}
+
+function ebVider(){
+  E.lignes=[]; E.piece=null;
+  ['ebProjet','ebEdl','ebNum','ebSite','ebDem','ebCout','ebCodeP','ebValid','ebQ','ebQte'].forEach(id=>{ const e=$('#'+id); if(e) e.value=''; });
+  $('#ebRecep').value=today();
+  $('#ebLecture').hidden=true;
+  renderDepot(); renderEbLignes();
+}
+
+/* ─────────────────────────── étapes ─────────────────────────── */
+const etapeIdx = k => ETAPES.findIndex(e=>e.k===k);
+const etapeCourante = b => { let i=0; ETAPES.forEach((e,k)=>{ if(b.h && b.h[e.k]) i=k; }); return i; };
+const prochaine = b => { const i=etapeCourante(b); return i<ETAPES.length-1 ? ETAPES[i+1] : null; };
+
+async function franchir(ref, k){
+  const b=S.bons[ref]; if(!b) return;
+  if(etapeIdx(k)!==etapeCourante(b)+1) return toast('Étape précédente non franchie','err');
+  b.h[k]=new Date().toISOString();
+  /* Le franchissement n'est pas journalisé dans « mouvements » : il ne touche
+     pas au stock, et quatre lignes par bon noieraient l'Historique. Les
+     horodatages vivent sur le bon lui-même, visibles dans le Suivi EB. */
+  await store.saveBon(ref,b);
+  toast(`${ref} — ${ETAPES[etapeIdx(k)].ui}`,'ok'); renderSuivi();
+}
+async function annulerEtape(ref){
+  const b=S.bons[ref]; if(!b) return;
+  const i=etapeCourante(b);
+  if(i<2) return toast("L'accord s'annule depuis l'Historique, ligne par ligne",'err');
+  b.h[ETAPES[i].k]='';
+  await store.saveBon(ref,b);
+  toast(`${ref} — retour à « ${ETAPES[i-1].court} »`,'ok'); renderSuivi();
+}
+
+const jours = (a,b) => (!a||!b) ? null : Math.round((new Date(b.slice(0,10))-new Date(a.slice(0,10)))/864e5);
+function delais(b){
+  const d={}; PHASES.forEach(([x,z])=>d[x+'>'+z]=jours(b.h[x],b.h[z]));
+  d.age = b.h.cloture ? null : jours(b.h.charge, today());
+  return d;
+}
+function tauxService(b){
+  const dde=(b.lignes||[]).reduce((s,l)=>s+l.demande,0)+(b.reliquats||[]).reduce((s,l)=>s+l.manquant,0);
+  const acc=(b.lignes||[]).reduce((s,l)=>s+l.accorde,0);
+  return dde?acc/dde:1;
+}
+const lignesDde = b => (b.lignes||[]).length + (b.reliquats||[]).length;
+const lignesSrv = b => (b.lignes||[]).length;
+const bonsTries = () => Object.values(S.bons||{}).filter(Boolean)
+  .sort((a,b)=>String(b.h?.accord||'').localeCompare(String(a.h?.accord||'')));
+/* Les indicateurs, les tableaux et les exports suivent tous le même filtre :
+   un chiffre affiché et un chiffre exporté doivent porter sur le même périmètre.
+   Le mois retenu est celui de la réception de l'EB, pas celui de la clôture. */
+const bonsFiltres = () => bonsTries().filter(b=>!E.mois || String(b.h?.charge||'').slice(0,7)===E.mois);
+const MOIS_FR = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const moisLib = m => { const [a,x]=m.split('-'); return MOIS_FR[+x-1]+' '+a; };
+function renderMois(){
+  const sel=$('#ebMois'); if(!sel) return;
+  const dispo=[...new Set(bonsTries().map(b=>String(b.h?.charge||'').slice(0,7)).filter(x=>x.length===7))].sort().reverse();
+  if(E.mois && !dispo.includes(E.mois)) E.mois='';
+  sel.innerHTML=`<option value="">Tous les mois</option>`
+    + dispo.map(m=>`<option value="${m}"${E.mois===m?' selected':''}>${moisLib(m)}</option>`).join('');
+  sel.value=E.mois;
+}
+
+/* ─────────────────────────── pièce jointe ─────────────────────────── */
+function lirePiece(file, apres){
+  if(file.size>PIECE_MAX) return toast('Fichier trop lourd (8 Mo maximum)','err');
+  const fr=new FileReader();
+  fr.onload=e=>apres({ nom:file.name, type:file.type||'application/pdf', taille:file.size, data:e.target.result });
+  fr.onerror=()=>toast('Lecture du fichier impossible','err');
+  fr.readAsDataURL(file);
+}
+const poids = p => !p?'':(p.taille>1048576?(p.taille/1048576).toFixed(1)+' Mo':Math.round(p.taille/1024)+' Ko');
+function renderDepot(){
+  const z=$('#ebDepot'), p=E.piece;
+  z.classList.toggle('plein',!!p);
+  $('#ebRmPiece').hidden=!p;
+  $('#ebDepotTxt').innerHTML = p
+    ? `<b>${esc(p.nom)}</b>${poids(p)} — archivé à l'accord`
+    : `<b>Déposer le PDF de l'EB</b>ou cliquer pour choisir — PDF, JPG ou PNG`;
+}
+/* Un PDF pèse ~500 Ko, soit ~670 Ko en base64. Écrit dans la Realtime
+   Database, il serait retéléchargé à chaque ouverture par FB.on('bons') :
+   à 47 EB par mois, des centaines de Go de trafic. Le binaire va donc dans
+   Firebase Storage et la base ne garde que l'URL. */
+let stoPret=false;
+async function chargerStorage(){
+  if(stoPret) return firebase.storage();
+  if(store.mode!=='firebase') throw new Error('mode local');
+  await delai(loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js'), 20000, 'SDK Storage');
+  stoPret=true;
+  return firebase.storage();
+}
+/* L'archivage tourne APRÈS l'enregistrement du bon, sans le bloquer : un
+   accord de stock ne doit pas dépendre d'un envoi de fichier. La pièce
+   passe de « en cours » à « archivé » ou « échec », et le bon est déjà
+   écrit dans tous les cas. */
+async function archiverPiece(ref, p){
+  if(!p || !p.data) return;
+  const etat = async e => { try{ await store.savePiece(ref, e); }catch(_){}
+                            if($('#p-suivi').classList.contains('on')) renderSuivi(); };
+  try{
+    const st=await chargerStorage();
+    const chemin=`eb/${ref}/${p.nom.replace(/[^\w.\-]/g,'_')}`;
+    const snap=await delai(st.ref(chemin).putString(p.data,'data_url'), 45000, "envoi du PDF vers Storage");
+    const url=await delai(snap.ref.getDownloadURL(), 15000, "lien du PDF");
+    await etat({ nom:p.nom, taille:p.taille, type:p.type, url, chemin, etat:'ok' });
+    toast(`${ref} — EB archivé`,'ok');
+  }catch(e){
+    const m=(e&&e.message)||String(e);
+    await etat({ nom:p.nom, taille:p.taille, type:p.type, url:'', etat:'echec', motif:m });
+    toast(`${ref} enregistré, mais l'EB n'a pas été archivé : ${m}`,'err');
+  }
+}
+function ouvrirPiece(p){
+  if(p && p.url) return void window.open(p.url,'_blank');
+  if(!p||!p.data) return toast("Le PDF n'a pas été archivé pour ce bon",'err');
+  const bin=atob(p.data.split(',')[1]); const u8=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) u8[i]=bin.charCodeAt(i);
+  const url=URL.createObjectURL(new Blob([u8],{type:p.type||'application/pdf'}));
+  if(!window.open(url,'_blank')){ const a=document.createElement('a'); a.href=url; a.download=p.nom; a.click(); }
+  setTimeout(()=>URL.revokeObjectURL(url),30000);
+}
+
+/* ─────────────────────────── lecture automatique ─────────────────────────── */
+/* Les fiches arrivent en scan, sans couche texte : il faut de l'OCR. Les
+   bibliothèques sont lourdes, on ne les charge qu'au premier usage. */
+let ocrPret=false;
+async function chargerOcr(){
+  if(ocrPret) return;
+  await delai(loadScript('https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.1/tesseract.min.js'), 30000, 'moteur de reconnaissance');
+  await delai(loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'), 30000, 'lecteur PDF');
+  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  ocrPret=true;
+}
+async function versCanvas(p){
+  if(p.type!=='application/pdf'){
+    const img=new Image();
+    await new Promise((ok,ko)=>{ img.onload=ok; img.onerror=ko; img.src=p.data; });
+    const c=document.createElement('canvas'), k=Math.min(2400/img.width,2400/img.height,3);
+    c.width=img.width*k; c.height=img.height*k;
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    return c;
+  }
+  const bin=atob(p.data.split(',')[1]); const u8=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) u8[i]=bin.charCodeAt(i);
+  const pdf=await pdfjsLib.getDocument({data:u8}).promise;
+  const page=await pdf.getPage(1), vp=page.getViewport({scale:3});
+  const c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height;
+  await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
+  return c;
+}
+const CHAMPS = [
+  ['projet',   /(?:libell[ée]|ibell[ée])\s*du\s*projet\s*:?\s*(.+)/i],
+  ['cout',     /centre\s*d[eu]\s*co[uû]t\s*:?\s*(.+)/i],
+  ['codeProjet',/code\s*du\s*projet\s*:?\s*(.+)/i],
+  ['site',     /situation\s*g[ée]ographiqu\w*\s*:?\s*(.+)/i],
+  ['demandeur',/service\s*du\s*demandeur\s*:?\s*(.+)/i],
+  ['edl',      /^\s*\|?\s*EDL\s*:?\s*(.+)/i],
+  ['ebNum',    /n[°'`´]?\s*bon\s*:?\s*(.+)/i],
+  ['validation',/^\s*date\s*:?\s*(\d{2}[\/.-]\d{2}[\/.-]\d{2,4})/i]
+];
+const RX_LIGNE = /^\s*(?:0?\d{1,3}\s+)?[^\d\n]{0,3}(\d{3}\s*\d{3}\s*\d)(?!\d)\s+(.+)$/;
+
+function lireEntete(txt){
+  const e={};
+  for(const L of txt.split('\n')) for(const [k,rx] of CHAMPS){
+    if(e[k]) continue;
+    const m=L.match(rx);
+    if(m){ const v=m[1].replace(/[|_]+$/,'').trim(); if(v && v!==':' && !/^contact/i.test(v)) e[k]=v; }
+  }
+  return e;
+}
+/* Le code lu est confronté au référentiel. S'il n'existe pas, la désignation
+   sert de recours. Si aucun des deux ne retombe sur un article connu, la
+   ligne est écartée : une référence inventée ne doit pas entrer dans un bon. */
+function lireLignes(txt){
+  const out=[], vus=new Set();
+  for(const brut of txt.split('\n')){
+    const m=brut.match(RX_LIGNE); if(!m) continue;
+    const ch=m[1].replace(/\D/g,''); if(ch.length!==7) continue;
+    const code=`${ch.slice(0,3)} ${ch.slice(3,6)} ${ch[6]}`, key=kOf(code);
+    const jetons=m[2].trim().split(/\s+/);
+    let qte=null;
+    if(jetons.length>1 && /^\d+$/.test(jetons[jetons.length-1])) qte=parseInt(jetons.pop(),10);
+    const libOcr=jetons.join(' ').replace(/[^\w)\]]+$/,'').trim();
+
+    let statut, keyRet=key;
+    if(S.arts[key]) statut='exact';
+    else{
+      let best=null, sc=0;
+      for(const k of S.order){ const s=proximite(libOcr, S.arts[k].lib||''); if(s>sc){ sc=s; best=S.arts[k]; } }
+      if(best && sc>=0.7){ statut='corrige'; keyRet=best.key; } else continue;
+    }
+    if(vus.has(keyRet)) continue;
+    vus.add(keyRet);
+    out.push({ key:keyRet, code:S.arts[keyRet].code, codeOcr:code, lib:S.arts[keyRet].lib, qte, statut });
+  }
+  return out;
+}
+
+async function lireDocument(p){
+  const z=$('#ebLecture'); z.hidden=false;
+  $('#ebRepr').hidden=true; $('#ebLTitre').textContent='Lecture du document';
+  $('#ebLEtat').textContent='préparation…'; $('#ebLBarre').style.width='3%';
+  $('#ebLCorps').innerHTML=`<div class="note">Premier passage : les données de reconnaissance se téléchargent, comptez une minute. Les suivants sont rapides.</div>`;
+  try{
+    await chargerOcr();
+    const canvas=await versCanvas(p);
+    $('#ebLEtat').textContent='reconnaissance…'; $('#ebLBarre').style.width='12%';
+    const res=await Tesseract.recognize(canvas,'fra',{ logger:m=>{
+      if(m.status==='recognizing text'){
+        $('#ebLBarre').style.width=(12+m.progress*86)+'%';
+        $('#ebLEtat').textContent=`reconnaissance ${Math.round(m.progress*100)} %`;
+      } } });
+    $('#ebLBarre').style.width='100%';
+    E.lecture={ entete:lireEntete(res.data.text), lignes:lireLignes(res.data.text) };
+    renderLecture();
+  }catch(err){
+    $('#ebLEtat').textContent='';
+    $('#ebLCorps').innerHTML=`<div class="banner warn" style="margin:0"><span>!</span><div>Lecture impossible : ${esc(err.message)}<br>Les champs restent saisissables à la main.</div></div>`;
+  }
+}
+
+function renderLecture(){
+  const e=E.lecture.entete, L=E.lecture.lignes;
+  const nO=L.filter(l=>l.statut==='exact').length, nC=L.filter(l=>l.statut==='corrige').length;
+  $('#ebLTitre').textContent='Proposition de lecture';
+  $('#ebLEtat').innerHTML = L.length
+    ? `${L.length} ligne(s) — ${nO} reconnue(s)`+(nC?`, ${nC} corrigée(s) par la désignation`:'')
+    : 'aucune ligne article détectée';
+  const LIB={ projet:'Libellé du projet', edl:'EDL', ebNum:"N° EB d'origine", site:'Situation géographique',
+              demandeur:'Service du demandeur', cout:'Centre de coût', codeProjet:'Code projet', validation:'Date de validation' };
+  const ent=Object.keys(LIB).map(k=>`<div class="prop"><span class="k">${LIB[k]}</span>
+      <span class="v${e[k]?'':' vide'}">${esc(e[k]||'non trouvé — à saisir')}</span></div>`).join('');
+  const lig = L.length ? `<div class="tscroll" style="max-height:230px;margin-top:11px"><table>
+      <thead><tr><th>Code</th><th>Article</th><th class="r">Qté</th><th>Lecture</th></tr></thead><tbody>`
+    + L.map((l,i)=>`<tr class="eb-${l.statut==='exact'?'ok':'partiel'}">
+        <td><span class="code">${esc(l.code)}</span></td><td>${esc(l.lib)}</td>
+        <td class="r"><input class="inp" type="number" min="1" value="${l.qte==null?'':l.qte}" data-lq="${i}" style="width:76px;text-align:right;padding:4px 6px"></td>
+        <td>${l.statut==='exact'?'<span class="pill ok">reconnu</span>':`<span class="pill warn" title="lu ${esc(l.codeOcr)}">corrigé</span>`}</td></tr>`).join('')
+    + '</tbody></table></div>' : '';
+  $('#ebLCorps').innerHTML = `<div class="props">${ent}</div>` + lig
+    + `<div class="note">Rien n'est repris tant que tu n'as pas cliqué. Les lignes hors référentiel sont écartées.</div>`;
+  $('#ebRepr').hidden=false;
+}
+
+function reprendreLecture(){
+  const e=E.lecture.entete;
+  const pose=(id,v)=>{ const el=$('#'+id); if(v && el && !el.value) el.value=v; };
+  pose('ebProjet',e.projet); pose('ebEdl',e.edl); pose('ebNum',e.ebNum); pose('ebSite',e.site);
+  pose('ebDem',e.demandeur); pose('ebCout',e.cout); pose('ebCodeP',e.codeProjet);
+  if(e.validation){
+    const m=e.validation.match(/(\d{2})[\/.-](\d{2})[\/.-](\d{2,4})/);
+    if(m) $('#ebValid').value=`${m[3].length===2?'20'+m[3]:m[3]}-${m[2]}-${m[1]}`;
+  }
+  const k=E.projets[(e.projet||'').trim()];
+  if(k){ const i=ACTS.findIndex(x=>x.k===k); if(i>0){ E.ai=i; $('#ebAct').value=String(i); } }
+  let n=0, sans=0;
+  for(const l of E.lecture.lignes){
+    if(!l.qte){ sans++; continue; }
+    ebAjoute(S.arts[l.key], l.qte); n++;
+  }
+  renderEbLignes();
+  toast(`${n} ligne(s) reprise(s)`+(sans?` — ${sans} sans quantité lisible`:''),'ok');
+  $('#ebLecture').hidden=true;
+}
+
+/* ─────────────────────────── accord PDF ─────────────────────────── */
+/* window.print() est muet dans un cadre sandboxé : on produit un vrai PDF.
+   toLocaleString insère une espace fine que jsPDF n'encode pas, d'où ce
+   formateur dédié (sinon « 1 000 » s'imprime « 1/00 »). */
+const nbPdf = n => (n==null||isNaN(n)?0:Math.round(+n)).toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+let pdfPret=false;
+async function chargerPdf(){
+  if(pdfPret) return;
+  await delai(loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'), 25000, 'générateur PDF');
+  await delai(loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js'), 25000, 'tableaux PDF');
+  pdfPret=true;
+}
+function construireAccord(b){
+  const { jsPDF }=window.jspdf, doc=new jsPDF({unit:'mm',format:'a4'});
+  const M=14, W=doc.internal.pageSize.getWidth();
+  doc.setFillColor(255,121,0); doc.rect(M,M,22,9,'F');
+  doc.setTextColor(255).setFont('helvetica','bold').setFontSize(12);
+  doc.text('orange',M+11,M+6.2,{align:'center'});
+  doc.setTextColor(60).setFont('helvetica','normal').setFontSize(8);
+  doc.text('Pôle Technique — Gestion des stocks techniques',M,M+14);
+  doc.setTextColor(30).setFontSize(9); doc.text('Accord de sortie',W-M,M+3.5,{align:'right'});
+  doc.setFont('courier','bold').setFontSize(15); doc.text(b.ref,W-M,M+10.5,{align:'right'});
+  doc.setDrawColor(20).setLineWidth(.5).line(M,M+17,W-M,M+17);
+
+  doc.autoTable({ startY:M+21, margin:{left:M,right:M}, theme:'grid',
+    styles:{font:'helvetica',fontSize:8,cellPadding:1.6,lineColor:[175,175,175],lineWidth:.1},
+    columnStyles:{0:{cellWidth:28,fontStyle:'bold',fillColor:[240,240,240]},1:{cellWidth:63},
+                  2:{cellWidth:30,fontStyle:'bold',fillColor:[240,240,240]},3:{cellWidth:'auto'}},
+    body:[['Projet',b.projet||'—',"EB d'origine",b.ebOrigine||'—'],
+          ['Activité',b.actUi,'Centre de coût',b.cout||'—'],
+          ['EDL',b.edl,'Code projet',b.codeProjet||'—'],
+          ['Site',b.site||'—','Service demandeur',b.demandeur||'—'],
+          ['Reçu le',isoToFR(b.h.charge),'Accordé le',isoToFR((b.h.accord||'').slice(0,10))]] });
+
+  const corps=(b.lignes||[]).map((l,i)=>[String(i+1).padStart(2,'0'), l.code,
+    l.subDe?`${l.lib}\n(en remplacement de ${l.subDe.code} — ${l.subDe.lib})`:l.lib,
+    nbPdf(l.demande), nbPdf(l.accorde), l.wh||'—']);
+  const dep=corps.length;
+  (b.reliquats||[]).forEach(r=>corps.push(['',r.code,r.lib+' — non servi, en reliquat',nbPdf(r.manquant),'0','—']));
+  const tot=(b.lignes||[]).reduce((s,l)=>s+l.accorde,0);
+
+  doc.autoTable({ startY:doc.lastAutoTable.finalY+6, margin:{left:M,right:M}, theme:'grid',
+    head:[['N°','Code article','Désignation','Demandé','Accordé','Entrepôt']], body:corps,
+    foot:[[{content:`Total accordé — taux de service ${Math.round(tauxService(b)*100)} %`,colSpan:4,styles:{halign:'left'}},
+           {content:nbPdf(tot),styles:{halign:'right'}},'']],
+    styles:{font:'helvetica',fontSize:8,cellPadding:1.6,lineColor:[175,175,175],lineWidth:.1},
+    headStyles:{fillColor:[235,235,235],textColor:20,fontStyle:'bold',lineColor:[130,130,130]},
+    footStyles:{fillColor:[235,235,235],textColor:20,fontStyle:'bold',lineColor:[130,130,130]},
+    columnStyles:{0:{cellWidth:8},1:{cellWidth:22,font:'courier'},2:{cellWidth:'auto'},
+                  3:{cellWidth:18,halign:'right'},4:{cellWidth:18,halign:'right',fontStyle:'bold'},5:{cellWidth:18}},
+    didParseCell:h=>{ if(h.section==='body'&&h.row.index>=dep) h.cell.styles.textColor=[170,0,30]; } });
+
+  let y=doc.lastAutoTable.finalY+18;
+  if(y>250){ doc.addPage(); y=40; }
+  const lg=(W-2*M-12)/3, sites=[...new Set((b.lignes||[]).map(l=>l.wh).filter(Boolean))].join(' / ');
+  ['Gestionnaire des stocks','Magasinier '+sites,'Enlèvement — nom, date et signature'].forEach((lib,i)=>{
+    const x=M+i*(lg+6);
+    doc.setDrawColor(20).setLineWidth(.3).line(x,y,x+lg,y);
+    doc.setFont('helvetica','normal').setFontSize(7).setTextColor(70).text(lib.trim(),x,y+4);
+  });
+  doc.setFontSize(6.5).setTextColor(140);
+  doc.text(`Édité le ${new Date().toLocaleString('fr-FR')} — ${(b.lignes||[]).length} ligne(s) accordée(s) — ${b.parNom||''}`,
+    M, doc.internal.pageSize.getHeight()-8);
+  return doc;
+}
+async function imprimerAccord(ref, horodate){
+  const b=S.bons[ref]; if(!b) return;
+  let doc;
+  try{ await chargerPdf(); doc=construireAccord(b); }
+  catch(err){ return toast('Accord PDF indisponible : '+err.message,'err'); }
+  if(horodate && !b.h.impression){ b.h.impression=new Date().toISOString(); await store.saveBon(ref,b); renderSuivi(); }
+  try{
+    const w=window.open(doc.output('bloburl'),'_blank');
+    if(w) return toast(`${ref} — accord ouvert, Ctrl+P pour imprimer`,'ok');
+  }catch(e){}
+  doc.save(`accord_${ref}.pdf`);
+  toast(`${ref} — accord téléchargé`,'ok');
+}
+
+/* ─────────────────────────── rendu : saisie ─────────────────────────── */
+function renderEb(){
+  if(!$('#ebAct').options.length){
+    $('#ebAct').innerHTML = ACTS.map((a,i)=>i===0?'':`<option value="${i}">${esc(a.ui)}</option>`).join('');
+    $('#ebAct').value=String(E.ai);
+  }
+  $('#ebProjets').innerHTML = Object.keys(E.projets).map(p=>`<option value="${esc(p)}">`).join('');
+  $('#ebEdls').innerHTML = [...new Set(bonsTries().map(b=>b.edl).filter(Boolean))].map(e=>`<option value="${esc(e)}">`).join('');
+  if(!$('#ebRecep').value) $('#ebRecep').value=today();
+  renderDepot(); renderEbLignes();
+}
+
+/* ─────────────────────────── rendu : suivi ─────────────────────────── */
+function jauge(b){
+  const i=etapeCourante(b);
+  return `<span class="jauge" title="${esc(ETAPES[i].ui)}">`+ETAPES.map((e,k)=>`<i class="${k<=i?'on':''}"></i>`).join('')+'</span>';
+}
+function renderSuivi(){
+  renderMois();
+  const L=bonsFiltres(), clos=L.filter(b=>b.h && b.h.cloture);
+  const tous=bonsTries().length;
+  $('#ebPortee').textContent = E.mois
+    ? `${L.length} bon(s) sur ${tous} — ${moisLib(E.mois)}`
+    : `${tous} bon(s), tous mois confondus`;
+  const moy=a=>{ const v=a.filter(x=>x!=null); return v.length?v.reduce((x,y)=>x+y,0)/v.length:null; };
+  const som=(l,f)=>l.reduce((s,b)=>s+f(b),0);
+  const cartes=[['Bons chargés',L.length,''],['Clôturés',clos.length,''],
+    ['Lignes demandées',som(L,lignesDde),''],['Lignes servies',som(L,lignesSrv),''],
+    ['Lignes en reliquat',som(L,b=>(b.reliquats||[]).length),''],
+    ['Taux de service',L.length?moy(L.map(tauxService))*100:null,'%']]
+    .concat(PHASES.map(([x,z,ui])=>[ui,moy(clos.map(b=>delais(b)[x+'>'+z])),'j']));
+  $('#ebKpis').innerHTML = cartes.map(([k,v,u])=>`<div class="kpi"><div class="k">${esc(k)}</div>
+      <div class="v">${v==null?'—':(u?(+v).toFixed(1):fmt(v))}${u?` <span style="font-size:12px;color:var(--muted)">${u}</span>`:''}</div></div>`).join('');
+
+  const tb=$('#ebBons');
+  if(!L.length){
+    tb.innerHTML=`<tbody><tr><td style="padding:26px;text-align:center;color:var(--muted);font-size:13px">${E.mois?'Aucun bon reçu en '+esc(moisLib(E.mois))+'.':'Aucun bon. Commencer par charger un EB.'}</td></tr></tbody>`;
+  } else {
+    tb.innerHTML=`<thead><tr><th>Référence</th><th>EB d'origine</th><th>Pièce</th><th>Projet</th><th>EDL</th>
+        <th class="r">Lignes</th><th class="r">Taux</th><th>Reçu</th><th>Étape</th><th>Avancement</th><th class="r">Délai</th><th></th></tr></thead><tbody>`
+      + L.map(b=>{
+        const d=delais(b), ts=Math.round(tauxService(b)*100), i=etapeCourante(b), su=prochaine(b);
+        const btns=(su ? (su.k==='impression'
+            ? `<button class="btn sm" data-print="${esc(b.ref)}">Imprimer l'accord</button>`
+            : `<button class="btn sm" data-next="${esc(b.ref)}" data-k="${su.k}">${esc(su.verbe)}</button>`) : '')
+          + (i>1?` <button class="btn sm ghost" data-undo="${esc(b.ref)}" title="Annuler la dernière étape">&#8629;</button>`:'')
+          + (i>=2?` <button class="btn sm ghost" data-re="${esc(b.ref)}" title="Réimprimer l'accord">&#9113;</button>`:'');
+        return `<tr data-open="${esc(b.ref)}" style="cursor:pointer">
+          <td><span class="code">${esc(b.ref)}</span></td>
+          <td><span class="code" style="color:var(--muted)">${esc(b.ebOrigine||'—')}</span></td>
+          <td>${!b.piece ? '—'
+            : (b.piece.url||b.piece.data) ? `<a href="#" data-voir="${esc(b.ref)}" class="lien" title="${esc(b.piece.nom)}">voir l'EB</a>`
+            : b.piece.etat==='encours' ? `<span class="pill warn" title="${esc(b.piece.nom)}">archivage…</span>`
+            : `<span class="pill" title="${esc(b.piece.motif||b.piece.nom)}">non archivé</span>`}</td>
+          <td>${esc(b.projet||'—')}</td><td>${esc(b.edl)}</td>
+          <td class="r">${lignesSrv(b)}${(b.reliquats||[]).length?` <span style="color:#B8203C">+${b.reliquats.length}</span>`:''}</td>
+          <td class="r"><span class="pill ${ts===100?'ok':'warn'}">${ts} %</span></td>
+          <td>${isoToFR(b.h.charge)}</td>
+          <td><span class="pill ${i===6?'ok':i<=1?'':'warn'}">${ETAPES[i].court}</span></td>
+          <td>${jauge(b)}</td>
+          <td class="r">${d['charge>cloture']!=null?d['charge>cloture']+' j':(d.age!=null?d.age+' j':'—')}</td>
+          <td style="white-space:nowrap">${btns}</td></tr>`;
+      }).join('')+'</tbody>';
+  }
+
+  const b=E.detail && S.bons[E.detail];
+  $('#ebDetail').hidden=!b;
+  if(b){
+    $('#ebDTitre').innerHTML=`Détail ${esc(b.ref)} <span style="font-weight:400;color:var(--muted)">· ${esc(b.edl)} · ${esc(b.projet||'sans projet')} · ${esc(b.actUi)}</span>`;
+    $('#ebChrono').innerHTML=ETAPES.map((e,k)=>{
+      const on=!!b.h[e.k], ph=k>0&&on?jours(b.h[ETAPES[k-1].k],b.h[e.k]):null;
+      return `<div class="pas${on?' on':''}"><div class="pas-l">${esc(e.ui)}</div>
+        <div class="pas-d">${on?isoToFR(b.h[e.k].slice(0,10)):'—'}</div>
+        <div class="pas-j">${ph!=null?'+'+ph+' j':''}</div></div>`;
+    }).join('');
+    $('#ebDTab').innerHTML=`<thead><tr><th>Code</th><th>Article</th><th class="r">Demandé</th><th class="r">Accordé</th><th>Puisé sur</th><th>Entrepôt</th></tr></thead><tbody>`
+      + (b.lignes||[]).map(l=>`<tr class="eb-${l.accorde>=l.demande?'ok':'partiel'}">
+          <td><span class="code">${esc(l.code)}</span>${l.subDe?`<span class="eb-sub">remplace <s>${esc(l.subDe.code)}</s></span>`:''}</td>
+          <td>${esc(l.lib)}${l.subDe?`<span class="eb-sub">demandé : ${esc(l.subDe.lib)}</span>`:''}</td>
+          <td class="r">${fmt(l.demande)}</td><td class="r">${fmt(l.accorde)}</td>
+          <td style="font-size:11.5px">${(l.prel||[]).map(p=>esc(p.ui)+' ('+fmt(p.q)+')').join('<br>')}</td>
+          <td>${l.wh?`<span class="pill ${l.wh.toLowerCase()}">${esc(l.wh)}</span>`:'—'}</td></tr>`).join('')
+      + (b.reliquats||[]).map(r=>`<tr class="eb-rupture"><td><span class="code">${esc(r.code)}</span></td><td>${esc(r.lib)}</td>
+          <td class="r">${fmt(r.manquant)}</td><td class="r">0</td>
+          <td colspan="2"><span class="pill" style="border-color:#F0B6C2;background:#FCEBEF;color:#B8203C">reliquat</span></td></tr>`).join('')
+      + '</tbody>';
+  }
+  renderReliquats();
+}
+
+function reliquatsPlats(){
+  const out=[];
+  bonsFiltres().forEach(b=>(b.reliquats||[]).forEach(r=>{
+    const d=dispoEb(S.arts[r.key], ACTS.findIndex(x=>x.k===b.act));
+    out.push({ b, r, srv:d?d.servable:0, glob:d?d.glob:0 });
+  }));
+  return out;
+}
+function renderReliquats(){
+  const L=reliquatsPlats(), t=$('#ebRel');
+  if(!L.length){
+    t.innerHTML=`<tbody><tr><td style="padding:26px;text-align:center;color:var(--muted);font-size:13px">Aucun reliquat. Tout ce qui a été demandé a été servi.</td></tr></tbody>`;
+    return;
+  }
+  t.innerHTML=`<thead><tr><th>Bon</th><th>EDL</th><th>Activité</th><th>Code</th><th>Article</th>
+      <th class="r">Manquant</th><th class="r">Dispo activité</th><th class="r">Dispo globale</th><th></th></tr></thead><tbody>`
+    + L.map(({b,r,srv,glob})=>`<tr class="eb-${srv>=r.manquant?'ok':srv>0?'partiel':'rupture'}">
+        <td><span class="code">${esc(b.ref)}</span></td><td>${esc(b.edl)}</td>
+        <td style="font-size:11.5px">${esc(b.actUi)}</td>
+        <td><span class="code">${esc(r.code)}</span></td><td>${esc(r.lib)}</td>
+        <td class="r">${fmt(r.manquant)}</td><td class="r">${fmt(srv)}</td><td class="r">${fmt(glob)}</td>
+        <td>${srv>=r.manquant?'<span class="pill ok">servable</span>':srv>0?'<span class="pill warn">partiel</span>':'<span class="pill">toujours à zéro</span>'}</td></tr>`).join('')
+    + '</tbody>';
+}
+
+/* ─────────────────────────── exports ─────────────────────────── */
+function exportSuivi(){
+  const L=bonsFiltres();
+  if(!L.length) return toast('Aucun bon à exporter','err');
+  const head=['Référence',"N° EB origine",'Projet','Activité','EDL','Site','Service demandeur','Centre de coût','Date validation']
+    .concat(ETAPES.map(e=>e.ui)).concat(PHASES.map(p=>p[2]))
+    .concat(['Lignes demandées','Lignes servies','Lignes en reliquat','Qté demandée','Qté accordée','Taux de service','Étape','Saisi par']);
+  const rows=L.map(b=>{ const d=delais(b);
+    return [b.ref,b.ebOrigine||'',b.projet||'',b.actUi,b.edl,b.site||'',b.demandeur||'',b.cout||'',b.validation||'']
+      .concat(ETAPES.map(e=>(b.h[e.k]||'').slice(0,10)))
+      .concat(PHASES.map(([x,z])=>d[x+'>'+z]??''))
+      .concat([lignesDde(b),lignesSrv(b),(b.reliquats||[]).length,
+        (b.lignes||[]).reduce((s,l)=>s+l.demande,0)+(b.reliquats||[]).reduce((s,l)=>s+l.manquant,0),
+        (b.lignes||[]).reduce((s,l)=>s+l.accorde,0),
+        Math.round(tauxService(b)*100)/100, ETAPES[etapeCourante(b)].court, b.parNom||b.par||'']);
+  });
+  const det=[['Référence','EDL','Code','Article','Demandé','Accordé','Entrepôt','Puisé sur','Substitution de']];
+  L.forEach(b=>{
+    (b.lignes||[]).forEach(l=>det.push([b.ref,b.edl,l.code,l.lib,l.demande,l.accorde,l.wh||'',(l.prel||[]).map(p=>p.ui).join(' + '),l.subDe?l.subDe.code+' — '+l.subDe.lib:'']));
+    (b.reliquats||[]).forEach(r=>det.push([b.ref,b.edl,r.code,r.lib,r.manquant,0,'','RELIQUAT','']));
+  });
+  const wb=XLSX.utils.book_new();
+  const ws1=XLSX.utils.aoa_to_sheet([head,...rows]); ws1['!cols']=head.map(h=>({wch:Math.min(Math.max(h.length+2,11),26)}));
+  XLSX.utils.book_append_sheet(wb,ws1,'Suivi EB');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(det),'Lignes');
+  XLSX.writeFile(wb,`Suivi_EB_${E.mois||today()}.xlsx`);
+}
+function exportReliquats(){
+  const L=reliquatsPlats();
+  if(!L.length) return toast('Aucun reliquat à exporter','err');
+  const head=['Bon',"N° EB origine",'Projet','Activité','EDL','Site','Reçu le','Code article','Article',
+              'Quantité manquante','Dispo activité + commun','Dispo globale','Servable aujourd\'hui','Étape du bon'];
+  const rows=L.map(({b,r,srv,glob})=>[b.ref,b.ebOrigine||'',b.projet||'',b.actUi,b.edl,b.site||'',b.h.charge,
+    r.code,r.lib,r.manquant,srv,glob, srv>=r.manquant?'oui':srv>0?'partiellement':'non', ETAPES[etapeCourante(b)].court]);
+  /* La seconde feuille est celle qui sert : consolidée par article, triée par
+     volume manquant, elle se transmet telle quelle aux achats. */
+  const par={};
+  L.forEach(({b,r,glob})=>{
+    par[r.code]=par[r.code]||{code:r.code,lib:r.lib,bons:0,total:0,glob,edls:new Set()};
+    par[r.code].bons++; par[r.code].total+=r.manquant; par[r.code].edls.add(b.edl);
+  });
+  const agg=[['Code article','Article','Bons concernés','Total manquant','Dispo globale','Prestataires concernés']]
+    .concat(Object.values(par).sort((a,b)=>b.total-a.total)
+      .map(x=>[x.code,x.lib,x.bons,x.total,x.glob,[...x.edls].join(', ')]));
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.aoa_to_sheet([head,...rows]); ws['!cols']=head.map(h=>({wch:Math.min(Math.max(h.length+2,11),30)}));
+  XLSX.utils.book_append_sheet(wb,ws,'Reliquats');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(agg),'Par article');
+  XLSX.writeFile(wb,`Reliquats_${E.mois||today()}.xlsx`);
+}
+
+/* ─────────────────────────── branchements ─────────────────────────── */
+function initEb(){
+  /* La recherche standard n'affiche que le global : ici on veut la dotation de
+     l'activité servie et la localisation physique, c'est ce qui décide. */
+  attachSearch('#ebQ','#ebRes', a=>{ E.pick=a; $('#ebQ').value=a.code+' — '+(a.lib||''); $('#ebQte').focus(); });
+  $('#ebQ').addEventListener('input',()=>setTimeout(()=>{
+    $('#ebRes').querySelectorAll('button .q').forEach((el,i)=>{
+      const code=$('#ebRes').querySelectorAll('button .c')[i]?.textContent.trim();
+      const a=S.arts[kOf(code||'')]; if(!a) return;
+      const d=dispoEb(a,E.ai);
+      el.innerHTML=`<span title="Dotation ${esc(ACTS[E.ai].ui)} + commun">${fmt(d.servable)}</span>`
+        + `<span class="eb-wh" style="text-align:right">KM4 ${fmt(a.km4)} · AGL ${fmt(a.agl)}</span>`;
+    });
+  },0));
+  $('#ebAct').addEventListener('change',()=>{ E.ai=+$('#ebAct').value||1; E.lignes.forEach(l=>{l.wh='';}); renderEbLignes(); });
+  $('#ebProjet').addEventListener('change',()=>{
+    const k=E.projets[$('#ebProjet').value.trim()];
+    if(k){ const i=ACTS.findIndex(x=>x.k===k); if(i>0){ E.ai=i; $('#ebAct').value=String(i); renderEbLignes(); } }
+  });
+  $('#ebAdd').onclick=()=>{
+    const q=Math.floor(toNum($('#ebQte').value));
+    if(!E.pick) return toast('Choisir un article dans la liste','err');
+    if(!(q>0)) return toast('Indiquer une quantité','err');
+    ebAjoute(E.pick,q); E.pick=null; $('#ebQ').value=''; $('#ebQte').value=''; $('#ebQ').focus();
+  };
+  $('#ebQte').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); $('#ebAdd').click(); } });
+  $('#ebTab').addEventListener('click',e=>{
+    const d=e.target.closest('[data-del]'); if(d){ E.lignes.splice(+d.dataset.del,1); return renderEbLignes(); }
+    const s=e.target.closest('[data-sub]'); if(s) return ouvrirSub(+s.dataset.sub);
+  });
+  $('#ebTab').addEventListener('change',e=>{
+    const t=e.target;
+    if(t.dataset.src!=null){ const l=E.lignes[+t.dataset.src]; l.src=t.value===''?null:+t.value; l.force=null; renderEbLignes(); }
+    if(t.dataset.wh!=null) E.lignes[+t.dataset.wh].wh=t.value;
+    if(t.dataset.acc!=null){ E.lignes[+t.dataset.acc].force=Math.max(0,Math.floor(toNum(t.value))); renderEbLignes(); }
+  });
+  /* garde() renvoie la fonction protégée et route ses erreurs vers l'écran de
+     connexion : ici on veut un toast, donc verrou local. */
+  $('#ebAccorder').onclick=async()=>{
+    const b=$('#ebAccorder'); if(b.disabled) return;
+    const txt=b.textContent; b.disabled=true; b.textContent='Un instant…';
+    try{ await delai(ebAccorder(), 40000, "enregistrement de l'accord"); }
+    catch(e){ console.error(e); toast('Accord non enregistré : '+((e&&e.message)||e),'err'); }
+    finally{ b.disabled=false; b.textContent=txt; }
+  };
+  $('#ebVider').onclick=ebVider;
+
+  /* dépôt du PDF */
+  const z=$('#ebDepot');
+  const prendre=p=>{ E.piece=p; renderDepot(); lireDocument(p); };
+  z.onclick=e=>{ if(!e.target.closest('#ebRmPiece')) $('#ebFile').click(); };
+  z.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); $('#ebFile').click(); } };
+  ['dragenter','dragover'].forEach(ev=>z.addEventListener(ev,e=>{ e.preventDefault(); z.classList.add('survol'); }));
+  ['dragleave','drop'].forEach(ev=>z.addEventListener(ev,e=>{ e.preventDefault(); z.classList.remove('survol'); }));
+  z.addEventListener('drop',e=>{ const f=e.dataTransfer.files[0]; if(f) lirePiece(f,prendre); });
+  $('#ebFile').addEventListener('change',e=>{ const f=e.target.files[0]; if(f) lirePiece(f,prendre); });
+  $('#ebRmPiece').onclick=e=>{ e.stopPropagation(); E.piece=null; $('#ebFile').value=''; $('#ebLecture').hidden=true; renderDepot(); };
+  $('#ebFermerL').onclick=()=>$('#ebLecture').hidden=true;
+  $('#ebRepr').onclick=reprendreLecture;
+  $('#ebLCorps').addEventListener('change',e=>{
+    if(e.target.dataset.lq!=null) E.lecture.lignes[+e.target.dataset.lq].qte=Math.floor(toNum(e.target.value))||null;
+  });
+
+  /* substitution */
+  attachSearch('#subQ','#subRes', a=>appliquerSub(a.key));
+  $('#subAnnuler').onclick=()=>$('#modalSub').hidden=true;
+  $('#subRetirer').onclick=()=>appliquerSub(null);
+  $('#modalSub').addEventListener('click',e=>{
+    if(e.target.id==='modalSub') $('#modalSub').hidden=true;
+    const p=e.target.closest('[data-pick]'); if(p) appliquerSub(p.dataset.pick);
+  });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('#modalSub').hidden) $('#modalSub').hidden=true; });
+
+  /* suivi */
+  $('#ebBons').addEventListener('click',e=>{
+    const n=e.target.closest('[data-next]'); if(n){ e.preventDefault(); return franchir(n.dataset.next,n.dataset.k); }
+    const p=e.target.closest('[data-print]'); if(p){ e.preventDefault(); return imprimerAccord(p.dataset.print,true); }
+    const r=e.target.closest('[data-re]');    if(r){ e.preventDefault(); return imprimerAccord(r.dataset.re,false); }
+    const u=e.target.closest('[data-undo]');  if(u){ e.preventDefault(); return annulerEtape(u.dataset.undo); }
+    const v=e.target.closest('[data-voir]');  if(v){ e.preventDefault(); return ouvrirPiece(S.bons[v.dataset.voir]?.piece); }
+    const o=e.target.closest('[data-open]');  if(o){ E.detail = E.detail===o.dataset.open?null:o.dataset.open; renderSuivi(); }
+  });
+  $('#ebMois').addEventListener('change',()=>{ E.mois=$('#ebMois').value; E.detail=null; renderSuivi(); });
+  $('#ebExpSuivi').onclick=exportSuivi;
+  $('#ebExpRel').onclick=exportReliquats;
+  $('#ebRecep').value=today();
+}
+
+initEb();
+renderEb();
+
 function panne(e){
   console.error(e);
   $('#gate').classList.remove('off');
