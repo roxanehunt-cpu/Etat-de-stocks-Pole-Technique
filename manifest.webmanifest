@@ -2,7 +2,6 @@
   "name": "ARCH — Stocks techniques",
   "short_name": "ARCH",
   "description": "Accords · Réceptions · Contrôles · Historique — Pôle Technique SGSD",
-  "start_url": "./etat-stocks-technique.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
