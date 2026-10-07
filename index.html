@@ -70,7 +70,10 @@ button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit
 .topbar .sub{font-size:12px;color:var(--muted)}
 .topbar .spacer{flex:1}
 .stamp{font-family:var(--mono);font-size:11px;color:var(--muted);background:var(--canvas);border:1px solid var(--line);padding:4px 9px;border-radius:5px}
-.wrap{padding:22px 24px 60px;max-width:1220px;width:100%;min-width:0}
+/* Le contenu occupe l'écran : à 1 220 px, un tiers de l'écran restait vide
+   pendant que les grands tableaux défilaient horizontalement. On plafonne
+   large pour garder des lignes lisibles sur un écran très large. */
+.wrap{padding:22px 24px 60px;max-width:1760px;width:100%;min-width:0}
 .panel{display:none;min-width:0}.panel.on{display:block}
 
 /* ---------- primitives ---------- */
@@ -420,6 +423,7 @@ th.r,td.r{text-align:right}
 #rcListe tr:hover td:last-child,#rtListe tr:hover td:last-child{background:#FBFCFD}
 #rcListe .pill,#rtListe .pill{white-space:nowrap}
 #rcListe td,#rcListe th,#rtListe td,#rtListe th{padding:8px 8px}
+.kpi .kpi-n{display:block;font-size:10px;font-weight:500;color:var(--faint);letter-spacing:.02em;margin-top:1px}
 .kpi.kpi-alerte{border-color:#F3C58E;background:#FFF8EF}
 /* taux en texte seul : vert = bon, ambre = partiel, rouge = faible */
 .taux{font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
@@ -430,6 +434,51 @@ th.r,td.r{text-align:right}
 .doc-ecart td{background:#FFFAF3}
 .ecart-neg{color:#B8203C}
 .ecart-pos{color:#0E7C7B}
+
+/* Tableaux de suivi : densité resserrée et textes longs tronqués, pour tenir
+   sans défilement horizontal sur un écran de bureau courant. */
+#ebBons td,#ebBons th,#inTab td,#inTab th{padding:7px 9px}
+#ebBons td,#inTab td{font-size:12.5px}
+#ebBons td:nth-child(5),#ebBons td:nth-child(6){max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#inTab td:nth-child(3),#inTab td:nth-child(4){max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:1500px){ #ebBons th:nth-child(11),#ebBons td:nth-child(11){display:none} }   /* l'avancement double l'étape */
+
+/* Chronologie du bon : les sept dates s'adaptent à la largeur au lieu d'être
+   compressées en sept colonnes fixes. */
+.chrono{grid-template-columns:repeat(auto-fit,minmax(168px,1fr))}
+.pas{padding:9px 11px}
+.pas-l{font-size:10.5px;min-height:0;margin-bottom:5px}
+.pas-date{padding:5px 7px!important}
+.pas-j{min-height:14px;font-size:10.5px}
+
+/* graphiques */
+.g-svg{display:block;width:100%;height:auto;overflow:visible}
+.g-leg{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-bottom:8px}
+.g-leg.vert{flex-direction:column;gap:7px;margin:0}
+.g-leg span{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.g-leg i{width:10px;height:10px;border-radius:3px;flex:none}
+.g-leg b{color:var(--ink);font-weight:600}
+.g-anneau{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.g-donut{width:140px;height:140px;flex:none}
+
+/* tableau de bord */
+.ds-hello{display:flex;align-items:center;gap:13px;margin-bottom:16px}
+.ds-hello .ds-av{width:42px;height:42px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;
+  justify-content:center;font-weight:700;font-size:15px;flex:none;letter-spacing:.02em}
+.ds-hello b{display:block;font-size:17px;color:var(--ink)}
+.ds-hello span{font-size:12.5px;color:var(--muted)}
+tr.ds-moi td{background:#FFF7EF}
+.ds-t{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px}
+.ds-t:first-of-type{margin-top:4px}
+.ds-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:16px;margin-top:22px}
+.barres{display:flex;flex-direction:column;gap:9px}
+.bar{display:grid;grid-template-columns:minmax(0,1fr) 120px 72px;align-items:center;gap:12px;font-size:12.5px}
+.bar-l{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-l span{display:block;font-size:11px;color:var(--faint)}
+.bar-t{height:8px;background:var(--line-s);border-radius:4px;overflow:hidden}
+.bar-t i{display:block;height:100%;background:var(--orange);border-radius:4px}
+.bar-v{text-align:right;font-family:var(--mono);font-size:12.5px;font-weight:600}
+@media(max-width:640px){ .ds-grid{grid-template-columns:1fr} .bar{grid-template-columns:minmax(0,1fr) 64px} .bar-t{display:none} }
 
 /* site ABOBO */
 .pill.abobo{border-color:#E8C99A;background:#FDF3E3;color:#8A5A12}
@@ -461,6 +510,8 @@ th.r,td.r{text-align:right}
 .pas.on{background:var(--surface);color:var(--ink)}
 .pas-l{font-size:11px;line-height:1.3;min-height:28px}
 .pas-d{font-size:13px;font-weight:600;margin-top:4px}
+.pas-date{padding:4px 6px!important;font-size:12.5px!important;width:100%;min-width:0}
+.pas:not(.on) .pas-date{color:var(--faint)}
 .pas-j{font-size:11px;color:var(--orange-d);font-weight:500;min-height:15px}
 @media (max-width:900px){.chrono{grid-template-columns:repeat(2,1fr)}}
 
@@ -513,10 +564,13 @@ th.r,td.r{text-align:right}
   .card .tscroll:has(>table.cartes){padding:0 10px 4px}
 
   /* indicateurs : une bande qui défile, plutôt que treize cartes empilées */
-  #ebKpis,#rpKpis,#rcKpis{display:flex!important;overflow-x:auto;gap:8px;padding-bottom:6px;margin:0 -10px 12px;padding-left:10px;padding-right:10px;
+  #ebKpis,#rpKpis,#rcKpis,#inKpis,#dsEb,#dsDelais,#dsRup,#dsRec,#dsFlux,#dsStock,#dsMoi{display:flex!important;overflow-x:auto;gap:8px;padding-bottom:6px;margin:0 -10px 12px;padding-left:10px;padding-right:10px;
     scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-  #ebKpis::-webkit-scrollbar,#rpKpis::-webkit-scrollbar,#rcKpis::-webkit-scrollbar{display:none}
-  #ebKpis .kpi,#rpKpis .kpi,#rcKpis .kpi{flex:0 0 128px;scroll-snap-align:start}
+  #ebKpis::-webkit-scrollbar,#rpKpis::-webkit-scrollbar,#rcKpis::-webkit-scrollbar,#inKpis::-webkit-scrollbar,
+  #dsEb::-webkit-scrollbar,#dsDelais::-webkit-scrollbar,#dsRup::-webkit-scrollbar,#dsRec::-webkit-scrollbar,
+  #dsFlux::-webkit-scrollbar,#dsStock::-webkit-scrollbar,#dsMoi::-webkit-scrollbar{display:none}
+  #ebKpis .kpi,#rpKpis .kpi,#rcKpis .kpi,#inKpis .kpi,#dsEb .kpi,#dsDelais .kpi,#dsRup .kpi,
+  #dsRec .kpi,#dsFlux .kpi,#dsStock .kpi,#dsMoi .kpi{flex:0 0 132px;scroll-snap-align:start}
 
   /* barres de saisie et de filtres : un champ par ligne, à pleine largeur */
   .filtre-mois .fld,.doc-add .fld{width:100%!important;max-width:none!important;flex:1 1 100%!important;min-width:0!important}
@@ -547,16 +601,19 @@ th.r,td.r{text-align:right}
       <p>STOCKS TECHNIQUES · SGSD</p>
     </div>
     <div class="navlist">
-      <button class="navbtn on" data-tab="eb"><span class="n">01</span> Expressions de besoin</button>
-      <button class="navbtn" data-tab="suivi"><span class="n">02</span> Suivi EB <span class="badge" id="badgeEb">0</span></button>
-      <button class="navbtn" data-tab="ruptures"><span class="n">03</span> Ruptures <span class="badge" id="badgeRup">0</span></button>
-      <button class="navbtn" data-tab="reception"><span class="n">04</span> Réceptions</button>
-      <button class="navbtn" data-tab="retour"><span class="n">05</span> Retours</button>
-      <button class="navbtn" data-tab="transmission"><span class="n">06</span> Inventaire physique</button>
-      <button class="navbtn" data-tab="dispatch"><span class="n">07</span> À dispatcher <span class="badge" id="badgeDis">0</span></button>
-      <button class="navbtn" data-tab="etat"><span class="n">08</span> État de stock</button>
-      <button class="navbtn" data-tab="histo"><span class="n">09</span> Historique</button>
-      <button class="navbtn" data-tab="users" id="navUsers" hidden><span class="n">10</span> Utilisateurs</button>
+      <button class="navbtn on" data-tab="dash"><span class="n">01</span> Tableau de bord</button>
+      <button class="navbtn" data-tab="eb"><span class="n">02</span> Expressions de besoin</button>
+      <button class="navbtn" data-tab="suivi"><span class="n">03</span> Suivi EB <span class="badge" id="badgeEb">0</span></button>
+      <button class="navbtn" data-tab="interieur"><span class="n">04</span> Suivi intérieur <span class="badge" id="badgeInt">0</span></button>
+      <button class="navbtn" data-tab="ruptures"><span class="n">05</span> Ruptures <span class="badge" id="badgeRup">0</span></button>
+      <button class="navbtn" data-tab="reception"><span class="n">06</span> Réceptions</button>
+      <button class="navbtn" data-tab="retour"><span class="n">07</span> Retours</button>
+      <button class="navbtn" data-tab="prets"><span class="n">08</span> Prêts &amp; transferts <span class="badge" id="badgePret">0</span></button>
+      <button class="navbtn" data-tab="transmission"><span class="n">09</span> Inventaire physique</button>
+      <button class="navbtn" data-tab="dispatch"><span class="n">10</span> À dispatcher <span class="badge" id="badgeDis">0</span></button>
+      <button class="navbtn" data-tab="etat"><span class="n">11</span> État de stock</button>
+      <button class="navbtn" data-tab="histo"><span class="n">12</span> Historique</button>
+      <button class="navbtn" data-tab="users" id="navUsers" hidden><span class="n">13</span> Utilisateurs</button>
     </div>
     <div class="railfoot">
       <div class="me" id="me" hidden>
@@ -570,8 +627,8 @@ th.r,td.r{text-align:right}
   <div class="main">
     <header class="topbar">
       <div>
-        <h2 id="pgTitle">Expressions de besoin</h2>
-        <div class="sub" id="pgSub">Saisir un EB, contrôler la disponibilité, accorder le bon</div>
+        <h2 id="pgTitle">Tableau de bord</h2>
+        <div class="sub" id="pgSub">Tous les indicateurs de l'outil, sur la période choisie</div>
       </div>
       <div class="spacer"></div>
       <div class="stamp">Dernier inventaire physique · <span id="lastTx">—</span></div>
@@ -580,7 +637,84 @@ th.r,td.r{text-align:right}
     <div class="wrap">
 
       <!-- ================= EXPRESSIONS DE BESOIN ================= -->
-      <section class="panel on" id="p-eb">
+      <section class="panel on" id="p-dash">
+        <div class="ds-hello" id="dsHello"></div>
+        <div class="filtre-mois">
+          <label class="fld" style="margin:0;max-width:240px"><span>Période</span><select class="inp" id="dsMois"></select></label>
+          <div style="flex:1"></div>
+          <button class="btn sm dark" id="dsExport">Exporter le tableau de bord</button>
+        </div>
+        <div class="note" id="dsPortee" style="margin:-6px 0 14px"></div>
+
+        <h3 class="ds-t">Expressions de besoin</h3>
+        <div class="kpis" id="dsEb"></div>
+        <h3 class="ds-t">Délais moyens par phase</h3>
+        <div class="kpis" id="dsDelais"></div>
+        <h3 class="ds-t">Ruptures</h3>
+        <div class="kpis" id="dsRup"></div>
+        <h3 class="ds-t">Réceptions et conformité</h3>
+        <div class="kpis" id="dsRec"></div>
+        <h3 class="ds-t">Retours, prêts et transferts</h3>
+        <div class="kpis" id="dsFlux"></div>
+        <h3 class="ds-t">Stock à l'instant présent</h3>
+        <div class="kpis" id="dsStock"></div>
+
+        <h3 class="ds-t">Évolution</h3>
+        <div class="ds-grid">
+          <div class="card" style="grid-column:1/-1">
+            <div class="card-h"><h3>Bons chargés et clôturés par mois</h3></div>
+            <div class="card-b" id="dsGBons"></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h3>Taux de service par mois</h3></div>
+            <div class="card-b" id="dsGTaux"></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h3>Délai bout en bout par mois</h3><span class="note" style="margin:0">jours ouvrés</span></div>
+            <div class="card-b" id="dsGDelai"></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h3>Où en sont les bons</h3></div>
+            <div class="card-b" id="dsGEtapes"></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h3>Lignes servies et ruptures</h3></div>
+            <div class="card-b" id="dsGLignes"></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h3>Conformité des livraisons</h3><span class="note" style="margin:0">lignes contrôlées</span></div>
+            <div class="card-b" id="dsGConf"></div>
+          </div>
+        </div>
+
+        <h3 class="ds-t">Mon activité sur la période</h3>
+        <div class="kpis" id="dsMoi"></div>
+
+        <div class="ds-grid">
+          <div class="card">
+            <div class="card-h"><h3>Qui a fait quoi</h3><span class="note" style="margin:0">sur la période</span></div>
+            <div class="tscroll" style="max-height:340px"><table id="dsQui"></table></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h3>Dotation par activité</h3></div>
+            <div class="card-b" id="dsParAct"></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h3>Mouvements de la période</h3></div>
+            <div class="card-b" id="dsMv"></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h3>Par prestataire</h3><span class="note" style="margin:0">les 8 plus actifs</span></div>
+            <div class="tscroll" style="max-height:340px"><table id="dsEdl"></table></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h3>Articles les plus manquants</h3><span class="note" style="margin:0">ruptures ouvertes</span></div>
+            <div class="tscroll" style="max-height:340px"><table id="dsManq"></table></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="p-eb">
         <div class="banner info"><span>↧</span><div>Saisis l'EB reçu par mail : l'outil contrôle la disponibilité activité par activité. L'accord décrémente le stock, alimente l'Historique et ouvre le suivi des délais.</div></div>
 
         <div class="card" style="margin-bottom:16px">
@@ -593,6 +727,8 @@ th.r,td.r{text-align:right}
               <label class="fld"><span>EDL (prestataire)</span><input class="inp" id="ebEdl" list="ebEdls" placeholder="GNANZOUKY"></label>
               <datalist id="ebEdls"></datalist>
               <label class="fld"><span>N° EB d'origine</span><input class="inp" id="ebNum" placeholder="DENS2026-075"></label>
+              <label class="fld"><span>Zone</span>
+                <select class="inp" id="ebZone"><option value="abidjan">Abidjan</option><option value="interieur">Intérieur</option></select></label>
               <label class="fld"><span>Situation géographique</span><input class="inp" id="ebSite" placeholder="ABIDJAN"></label>
               <label class="fld"><span>Service du demandeur</span><input class="inp" id="ebDem" placeholder="BroadBand Factory"></label>
               <label class="fld"><span>Code projet</span><input class="inp" id="ebCodeP" placeholder="FB240201"></label>
@@ -634,7 +770,9 @@ th.r,td.r{text-align:right}
           <label class="fld" style="margin:0;flex:1;min-width:240px"><span>Rechercher un bon</span>
             <input class="inp" id="ebCherche" spellcheck="false" autocomplete="off"
                    placeholder="AC-0012, EB d'origine, EDL, projet, n° OF / BLM…"></label>
-          <label class="fld" style="margin:0;width:210px"><span>Étape</span>
+          <label class="fld" style="margin:0;width:160px"><span>Zone</span>
+            <select class="inp" id="ebZoneF"><option value="">Toutes</option><option value="abidjan">Abidjan</option><option value="interieur">Intérieur</option></select></label>
+          <label class="fld" style="margin:0;width:200px"><span>Étape</span>
             <select class="inp" id="ebEtape"></select></label>
           <label class="fld" style="margin:0;width:190px"><span>Période</span>
             <select class="inp" id="ebMois"></select></label>
@@ -654,6 +792,8 @@ th.r,td.r{text-align:right}
             <label class="fld" style="margin:0;width:260px"><span>N° OF / BLM</span>
               <input class="inp mono" id="ebOf" spellcheck="false" autocomplete="off" placeholder="Saisir le numéro"></label>
             <button class="btn sm" id="ebOfSave">Enregistrer</button>
+            <label class="fld" style="margin:0;width:190px"><span>Zone</span>
+              <select class="inp" id="ebZoneBon"><option value="abidjan">Abidjan</option><option value="interieur">Intérieur</option></select></label>
             <div style="flex:1"></div>
             <button class="btn sm ghost danger" id="ebSuppr" hidden>Supprimer ce bon</button>
           </div>
@@ -664,6 +804,26 @@ th.r,td.r{text-align:right}
       </section>
 
       <!-- ================= RUPTURES ================= -->
+      <section class="panel" id="p-interieur">
+        <div class="banner info"><span>⛟</span><div>Les bons dont la zone est <b>Intérieur</b> passent par le service transport avant d'être préparés. Ils figurent aussi dans le Suivi EB : cet onglet n'en est qu'une lecture dédiée, avec les dates et les délais qui comptent pour l'expédition.</div></div>
+
+        <div class="filtre-mois">
+          <label class="fld" style="margin:0;flex:1;min-width:220px"><span>Rechercher un bon</span>
+            <input class="inp" id="inCherche" spellcheck="false" autocomplete="off" placeholder="AC-0012, EDL, projet, site…"></label>
+          <label class="fld" style="margin:0;width:200px"><span>Étape</span><select class="inp" id="inEtape"></select></label>
+          <label class="fld" style="margin:0;width:190px"><span>Période</span><select class="inp" id="inMois"></select></label>
+        </div>
+        <div id="inPortee" class="note" style="margin:-6px 0 14px"></div>
+
+        <div class="kpis" id="inKpis"></div>
+
+        <div class="card">
+          <div class="card-h"><h3>Bons de l'intérieur</h3><span class="note" style="margin:0">dates clés de l'expédition</span>
+            <div style="flex:1"></div><button class="btn sm dark" id="inExport">Exporter</button></div>
+          <div class="tscroll" style="max-height:none"><table id="inTab"></table></div>
+        </div>
+      </section>
+
       <section class="panel" id="p-ruptures">
         <div class="kpis" id="rpKpis"></div>
         <div class="card">
@@ -701,6 +861,7 @@ th.r,td.r{text-align:right}
               <label class="fld"><span>Shipment</span><input class="inp mono" id="rcShip" placeholder="N° d'expédition"></label>
               <label class="fld"><span>Fournisseur</span><input class="inp" id="rcFour" list="rcFours" placeholder="Nom du fournisseur"></label>
               <datalist id="rcFours"></datalist>
+              <label class="fld"><span>Alerte de livraison</span><input class="inp" id="rcAlerte" type="date"></label>
               <label class="fld"><span>Date de réception</span><input class="inp" id="rcDate" type="date"></label>
               <label class="fld"><span>Acheteur</span><input class="inp" id="rcAch" value="GUINDO AMINATA" list="rcAchs"></label>
               <datalist id="rcAchs"></datalist>
@@ -804,6 +965,51 @@ th.r,td.r{text-align:right}
       </section>
 
       <!-- ================= TRANSMISSION ================= -->
+      <section class="panel" id="p-prets">
+        <div class="banner info"><span>⇆</span><div>Un <b>transfert</b> déplace définitivement une dotation d'un service à un autre. Un <b>prêt</b> fait la même chose mais reste dû, jusqu'à sa restitution. Dans les deux cas le stock global et le physique KM4 / AGL ne bougent pas : la marchandise reste au magasin, c'est le droit de tirage qui change de main.</div></div>
+
+        <div class="kpis" id="prKpis"></div>
+
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-h"><h3>Nouveau mouvement entre services</h3></div>
+          <div class="card-b">
+            <div class="eb-grid">
+              <label class="fld"><span>Type</span>
+                <select class="inp" id="prType"><option value="pret">Prêt — à rendre</option><option value="transfert">Transfert — définitif</option></select></label>
+              <label class="fld"><span>Service prêteur</span><select class="inp" id="prDe"></select></label>
+              <label class="fld"><span>Service bénéficiaire</span><select class="inp" id="prVers"></select></label>
+              <label class="fld"><span>Date</span><input class="inp" id="prDate" type="date"></label>
+            </div>
+            <div class="doc-add">
+              <label class="fld" style="flex:1;min-width:240px;position:relative"><span>Article</span>
+                <input class="inp mono" id="prQ" placeholder="Code ou libellé…" autocomplete="off" spellcheck="false">
+                <div class="results" id="prRes" hidden></div></label>
+              <label class="fld" style="width:140px"><span>Quantité</span><input class="inp num" id="prQte" type="number" min="1" step="1" placeholder="0"></label>
+              <label class="fld" style="width:190px"><span>Motif / référence</span><input class="inp" id="prRef" placeholder="Chantier, accord verbal…"></label>
+              <label class="fld" style="width:180px"><span>Demandé par</span><input class="inp" id="prQui" placeholder="Nom (facultatif)"></label>
+            </div>
+            <div id="prDispo" style="display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 12px"></div>
+            <div class="doc-actions">
+              <button class="btn primary" id="prGo">Enregistrer le prêt</button>
+              <span class="note" id="prNote" style="margin:0"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-h"><h3>Prêts en cours</h3><span class="note" style="margin:0">ce qu'un service doit encore à un autre</span>
+            <div style="flex:1"></div>
+            <input class="inp" id="prCherche" style="max-width:280px" placeholder="Code, article, service, motif…" spellcheck="false">
+            <button class="btn sm dark" id="prExport">Exporter</button></div>
+          <div class="tscroll" style="max-height:none"><table id="prEnCours"></table></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><h3>Transferts et prêts soldés</h3><span class="note" style="margin:0">les 60 derniers</span></div>
+          <div class="tscroll" style="max-height:520px"><table id="prHisto"></table></div>
+        </div>
+      </section>
+
       <section class="panel" id="p-transmission">
         <div class="banner info"><span>⇄</span><div>Le chargement des extractions ne modifie rien. Il produit un <b>comparatif</b> entre ce que détient l'outil et ce que disent les inventaires. Tu l'exportes, tu corriges si besoin, puis tu appliques depuis l'onglet <b>État de stock</b>.</div></div>
         <div class="steps" style="margin-bottom:16px">
@@ -860,7 +1066,8 @@ th.r,td.r{text-align:right}
               <option value="">Tous les types</option><option value="accord">Accords</option>
               <option value="reception">Réceptions</option><option value="dispatch">Dispatchings</option>
               <option value="retour">Retours</option>
-              <option value="transmission">Inventaires physiques</option><option value="actualisation">Actualisations</option>
+              <option value="transmission">Inventaires physiques</option><option value="pret">Prêts</option>
+              <option value="transfert">Transferts</option><option value="retour_pret">Retours de prêt</option><option value="actualisation">Actualisations</option>
               <option value="base">Chargements de base</option><option value="annulation">Annulations</option>
             </select>
             <select class="inp" id="hsWho" style="max-width:170px;padding:6px 10px"><option value="">Tout le monde</option></select>
@@ -972,20 +1179,23 @@ async function hashPwd(s){
 // Firebase interdit . # $ / [ ] dans une clé : « roxane.hunt » devient « roxane_hunt ».
 // Vues attribuables. L'onglet Utilisateurs reste réservé aux administrateurs.
 const VUES = [
+  { k:'dash',         ui:'Tableau de bord' },
   { k:'eb',           ui:'Expressions de besoin' },
   { k:'suivi',        ui:'Suivi EB' },
+  { k:'interieur',    ui:'Suivi intérieur' },
   { k:'ruptures',     ui:'Ruptures' },
   { k:'reception',    ui:'Réceptions' },
   { k:'retour',       ui:'Retours' },
+  { k:'prets',        ui:'Prêts & transferts' },
   { k:'transmission', ui:'Inventaire physique' },   // clé conservée : droits déjà attribués
   { k:'dispatch',     ui:'À dispatcher' },
   { k:'etat',         ui:'État de stock' },
   { k:'histo',        ui:'Historique' }
 ];
 const PROFILS = {
-  consultation: ['etat','histo','suivi','ruptures'],
+  consultation: ['dash','etat','histo','suivi','interieur','ruptures'],
   dispatch:     ['etat','dispatch','histo'],
-  magasin:      ['eb','suivi','ruptures','reception','retour','etat','histo'],
+  magasin:      ['dash','eb','suivi','interieur','ruptures','reception','retour','prets','etat','histo'],
   complet:      VUES.map(v=>v.k)
 };
 // Un compte sans liste de vues (créé avant cette version) garde l'accès complet.
@@ -1129,12 +1339,17 @@ const store = {
       try{ const mt=await FB.get('meta'); if(mt && mt.projetsEb) E.projets=mt.projetsEb; }catch(e){}
       FB.on('articles', v=>{ v=v||{}; S.arts=v; S.order=Object.keys(v).sort((a,b)=>(v[a].i||0)-(v[b].i||0)); renderAll(); });
       FB.on('bons', v=>{ S.bons=v||{};
+        if($('#p-dash').classList.contains('on')) renderDash();
         if($('#p-suivi').classList.contains('on')) renderSuivi();
+        if($('#p-interieur').classList.contains('on')) renderInterieur();
         if($('#p-ruptures').classList.contains('on')) renderRuptures();
         renderBadgeEb(); });
       FB.on('mouvements', v=>{ v=v||{}; S.mv=Object.entries(v).map(([id,m])=>({id,...m})).sort((a,b)=>(b.ts||'').localeCompare(a.ts||'')); renderHisto();
         if($('#p-reception').classList.contains('on')) renderListe('reception');
-        if($('#p-retour').classList.contains('on')) renderListe('retour'); });
+        if($('#p-retour').classList.contains('on')) renderListe('retour');
+        if($('#p-prets').classList.contains('on')) renderPrets();
+        if($('#p-dash').classList.contains('on')) renderDash();
+        renderBadgePrets(); });
       FB.on('utilisateurs', v=>{ S.users=v||{};
         if(S.user && S.user.cuid!=='local'){
           const moi = trouveUser(S.user.cuid);
@@ -1519,9 +1734,12 @@ $('#uAdd').onclick=async()=>{
 
 /* ─────────────────────────── navigation ─────────────────────────── */
 const TITLES = {
+  dash:['Tableau de bord','Tous les indicateurs de l\'outil, sur la période choisie'],
   eb:['Expressions de besoin','Saisir un EB, contrôler la disponibilité, accorder le bon'],
   suivi:['Suivi des EB','Rechercher un bon, faire avancer son étape, suivre les délais'],
+  interieur:['Suivi des bons de l\'intérieur','Remise au transport, traitement, enlèvement, clôture'],
   ruptures:['Ruptures','Quantités demandées et non servies, et ce qui redevient servable'],
+  prets:['Prêts & transferts','Déplacer une dotation d\'un service à un autre, et suivre ce qui est dû'],
   reception:['Réceptions','Entrer les quantités reçues et les affecter aux activités'],
   retour:['Retours de stock','Matériel qui revient du terrain et repart en dispatching'],
   transmission:['Inventaire physique','Charger les extractions KM4 et AGL, traiter les écarts'],
@@ -1539,6 +1757,9 @@ $$('.navbtn').forEach(b=>b.onclick=()=>{
   if(t==='eb') renderEb();
   if(t==='suivi') renderSuivi();
   if(t==='ruptures') renderRuptures();
+  if(t==='interieur') renderInterieur();
+  if(t==='prets') renderPrets();
+  if(t==='dash') renderDash();
   if(t==='reception'){ renderListe('reception'); renderRcFours(); }
   if(t==='retour'){ renderListe('retour'); $('#rtWhoList').innerHTML=ressourcesConnues().map(r=>`<option value="${esc(r)}"></option>`).join(''); }
   if(t==='dispatch') renderDispatch();
@@ -1659,7 +1880,7 @@ const peutCorriger = doc => S.user && (S.user.role==='admin' || doc.lignes.every
 function lireEnteteDoc(kind){
   const v=id=>($('#'+id)?.value||'').trim();
   if(kind==='reception') return { bc:v('rcBc'), ship:v('rcShip'), four:v('rcFour'), date:v('rcDate')||today(), ref:v('rcRef'),
-    ofRc:v('rcOf'), typeCde:v('rcType'), dtq:v('rcDtq'), drtq:v('rcDrtq'), ach:v('rcAch'), depot:v('rcDepot') };
+    ofRc:v('rcOf'), typeCde:v('rcType'), dtq:v('rcDtq'), drtq:v('rcDrtq'), ach:v('rcAch'), depot:v('rcDepot'), alerte:v('rcAlerte') };
   const ai=v('rtAct');
   return { res:v('rtWho'), ref:v('rtRef'), date:v('rtDate')||today(),
            act: ai===''?'':ACTS[+ai].k, actUi: ai===''?'':ACTS[+ai].ui };
@@ -1667,12 +1888,12 @@ function lireEnteteDoc(kind){
 function poserEnteteDoc(kind, m){
   const p=(id,x)=>{ const e=$('#'+id); if(e) e.value=x||''; };
   if(kind==='reception'){ p('rcBc',m.bc); p('rcShip',m.ship); p('rcFour',m.four); p('rcDate',m.date); p('rcRef',m.bc?'':m.ref);
-    p('rcOf',m.ofRc); p('rcType',m.typeCde); p('rcDtq',m.dtq); p('rcDrtq',m.drtq); p('rcAch',m.ach); p('rcDepot',m.depot); }
+    p('rcOf',m.ofRc); p('rcType',m.typeCde); p('rcDtq',m.dtq); p('rcDrtq',m.drtq); p('rcAch',m.ach); p('rcDepot',m.depot); p('rcAlerte',m.alerte); }
   else{ p('rtWho',m.res); p('rtRef',m.ref); p('rtDate',m.date);
         const ai=ACTS.findIndex(x=>x.k===m.act); p('rtAct', ai>=0?String(ai):''); }
 }
 function viderEnteteDoc(kind){
-  const ids = kind==='reception' ? ['rcBc','rcShip','rcFour','rcRef','rcOf','rcType','rcDtq','rcDrtq','rcDepot'] : ['rtWho','rtRef','rtAct'];   // l'acheteur reste
+  const ids = kind==='reception' ? ['rcBc','rcShip','rcFour','rcRef','rcOf','rcType','rcDtq','rcDrtq','rcDepot','rcAlerte'] : ['rtWho','rtRef','rtAct'];   // l'acheteur reste
   ids.forEach(id=>{ const e=$('#'+id); if(e) e.value=''; });
   $('#'+DOCK[kind].p+'Date').value=today();
 }
@@ -1683,7 +1904,7 @@ function mvDeLigne(kind, docId, h, l){
   const base={ type:DOCK[kind].type, docId, code:a.code, key:a.key, lib:a.lib, wh:l.wh||'', qte:l.qte, date:h.date,
                 qteAnn:(l.qteAnn==null?l.qte:l.qteAnn), obs:l.obs||'', ...(l.ln?{ln:l.ln}:{}) };
   if(kind==='reception') return { ...base, ref:h.bc||h.ref, bc:h.bc, ship:h.ship, four:h.four,
-      ofRc:h.ofRc, typeCde:h.typeCde, dtq:h.dtq, drtq:h.drtq, ach:h.ach, depot:h.depot,
+      ofRc:h.ofRc, typeCde:h.typeCde, dtq:h.dtq, drtq:h.drtq, ach:h.ach, depot:h.depot, alerte:h.alerte,
       detail:[h.ship&&('Shipment '+h.ship), h.four&&('Fournisseur '+h.four), h.typeCde, h.ofRc&&('OF '+h.ofRc), h.bc?h.ref:''].filter(Boolean).join(' · ') };
   return { ...base, act:h.act, actUi:h.actUi, res:h.res, ref:h.ref, etat:l.etat||'Neuf', detail:'État : '+(l.etat||'Neuf') };
 }
@@ -1693,7 +1914,7 @@ const memeLigne = (kind,m,l,h) => m.key===l.key && +m.qte===+l.qte && (m.wh||'')
 const memeEntete = (kind,m,h) => kind==='reception'
   ? (m.bc||'')===h.bc && (m.ship||'')===h.ship && (m.four||'')===h.four && (m.date||'')===h.date
     && (m.ofRc||'')===h.ofRc && (m.typeCde||'')===h.typeCde && (m.dtq||'')===h.dtq && (m.drtq||'')===h.drtq
-    && (m.ach||'')===h.ach && (m.depot||'')===h.depot
+    && (m.ach||'')===h.ach && (m.depot||'')===h.depot && (m.alerte||'')===h.alerte
     && (h.bc ? true : (m.ref||'')===h.ref)
   : (m.res||'')===h.res && (m.ref||'')===h.ref && (m.date||'')===h.date && (m.act||'')===h.act;
 
@@ -1756,7 +1977,7 @@ function renderDoc(kind){
 function docsFiltres(kind){
   const q=norm($('#'+DOCK[kind].p+'Cherche')?.value||'').trim();
   const L=docsDe(kind);
-  return !q ? L : L.filter(d=>{ const t=norm([d.id, ...d.lignes.flatMap(m=>[m.code,m.lib,m.bc,m.ship,m.four,m.ref,m.res,m.actUi,m.ofRc,m.typeCde])].filter(Boolean).join(' '));
+  return !q ? L : L.filter(d=>{ const t=norm([d.id, ...d.lignes.flatMap(m=>[m.code,m.lib,m.bc,m.ship,m.four,m.ref,m.res,m.actUi,m.ofRc,m.typeCde,m.alerte])].filter(Boolean).join(' '));
                                return q.split(/\s+/).every(x=>t.includes(x)); });
 }
 
@@ -1805,13 +2026,14 @@ function renderListe(kind){
   const t=$('#'+P+'Liste');
   if(!L.length){ t.innerHTML=`<tbody><tr><td style="padding:22px;text-align:center;color:var(--muted);font-size:13px">${q?'Aucun document ne correspond.':'Rien d\'enregistré pour l\'instant.'}</td></tr></tbody>`; return; }
   const cols = kind==='reception'
-    ? '<th>N°</th><th>Reçu le</th><th>Bon de commande</th><th>Shipment</th><th>Fournisseur</th><th>Type</th><th>N° OF</th><th>Tests qualité</th><th>Conformité</th>'
+    ? '<th>N°</th><th>Alerte</th><th>Reçu le</th><th>Bon de commande</th><th>Shipment</th><th>Fournisseur</th><th>Type</th><th>N° OF</th><th>Tests qualité</th><th>Conformité</th>'
     : '<th>N°</th><th>Date</th><th>Ressource</th><th>Activité d\'origine</th><th>Motif</th>';
   t.innerHTML=`<thead><tr>${cols}<th class="r">Lignes</th><th class="r">Quantité</th><th>Saisi par</th><th></th></tr></thead><tbody>`
     + L.map(d=>{ const m=d.m0, tot=d.lignes.reduce((s,x)=>s+(+x.qte||0),0);
       const num = d.id.startsWith('~') ? '<span class="muted">—</span>' : `<span class="code">${esc(d.id)}</span>`;
       const tete = kind==='reception'
-        ? `<td>${isoToFR(m.date)}</td><td>${m.bc?`<span class="code">${esc(m.bc)}</span>`:'—'}</td><td>${m.ship?`<span class="code">${esc(m.ship)}</span>`:'—'}</td><td>${esc(m.four||'—')}</td>`
+        ? `<td>${m.alerte?`${isoToFR(m.alerte)}<span class="eb-wh">${joursOuvres(m.alerte,m.date)} j avant réception</span>`:'<span class="muted">—</span>'}</td>`
+          + `<td>${isoToFR(m.date)}</td><td>${m.bc?`<span class="code">${esc(m.bc)}</span>`:'—'}</td><td>${m.ship?`<span class="code">${esc(m.ship)}</span>`:'—'}</td><td>${esc(m.four||'—')}</td>`
           + `<td>${m.typeCde?`<span class="pill${m.typeCde==='Import'?' warn':''}">${esc(m.typeCde)}</span>`:'—'}</td>`
           + `<td>${m.ofRc?`<span class="code">${esc(m.ofRc)}</span>`:'—'}</td><td>${qualite(m)}</td>`
           + `<td>${(()=>{ const c=conformite(d.lignes); if(!c.mes) return '<span class="muted">—</span>';
@@ -1826,14 +2048,14 @@ function renderListe(kind){
           <button class="btn sm" data-fiche="${esc(d.id)}" title="Une fiche par article">Conformité${d.lignes.length>1?' ('+d.lignes.length+')':''}</button>
           ${peutCorriger(d)?`<button class="btn sm ghost" data-corr="${esc(d.id)}">Corriger</button>`:''}</td></tr>`; }).join('')
     + '</tbody>'
-    + (total>L.length?`<tfoot><tr><td colspan="13" class="note" style="padding:10px">${fmt(total)} documents — les 80 plus récents sont affichés, affine la recherche.</td></tr></tfoot>`:'');
+    + (total>L.length?`<tfoot><tr><td colspan="14" class="note" style="padding:10px">${fmt(total)} documents — les 80 plus récents sont affichés, affine la recherche.</td></tr></tfoot>`:'');
 }
 
 /* État des tests qualité d'une réception. */
 function qualite(m){
   if(!m.dtq) return '<span class="muted">—</span>';
-  if(!m.drtq) return `<span class="pill warn" title="tests le ${isoToFR(m.dtq)}">en test · ${jours(m.dtq,today())} j</span>`;
-  return `<span class="pill ok" title="tests le ${isoToFR(m.dtq)}, retour le ${isoToFR(m.drtq)}">retour ${isoToFR(m.drtq)} · ${jours(m.dtq,m.drtq)} j</span>`;
+  if(!m.drtq) return `<span class="pill warn" title="tests le ${isoToFR(m.dtq)}">en test · ${joursOuvres(m.dtq,today())} j</span>`;
+  return `<span class="pill ok" title="tests le ${isoToFR(m.dtq)}, retour le ${isoToFR(m.drtq)}">retour ${isoToFR(m.drtq)} · ${joursOuvres(m.dtq,m.drtq)} j</span>`;
 }
 
 /* ─────────── export : une ligne Excel par ligne de document ─────────── */
@@ -1843,12 +2065,12 @@ function exporterDocs(kind){
   const num=d=>d.id.startsWith('~')?'':d.id;
   let head, rows=[];
   if(kind==='reception'){
-    head=['N° réception','Date de réception','Bon de commande','Shipment','Fournisseur','Acheteur','Date de dépotage','Type de commande','N° réception OF',
+    head=['N° réception','Alerte de livraison','Délai alerte → réception (j ouvrés)','Date de réception','Bon de commande','Shipment','Fournisseur','Acheteur','Date de dépotage','Type de commande','N° réception OF',
           'Date tests qualité','Date retour tests','Délai tests (j)','Réf. complémentaire','Code article','Article',
           'Qté annoncée','Qté livrée','Écart','Observation','Entrepôt','Saisi par','Saisi le'];
     L.forEach(d=>d.lignes.forEach(m=>{ const ann=m.qteAnn==null?+m.qte:+m.qteAnn;
-      rows.push([num(d),m.date||'',m.bc||'',m.ship||'',m.four||'',m.ach||'',m.depot||'',m.typeCde||'',m.ofRc||'',
-      m.dtq||'',m.drtq||'',(m.dtq&&m.drtq)?jours(m.dtq,m.drtq):'', m.bc?'':(m.ref||''), m.code,m.lib,
+      rows.push([num(d),m.alerte||'',(m.alerte&&m.date)?joursOuvres(m.alerte,m.date):'',m.date||'',m.bc||'',m.ship||'',m.four||'',m.ach||'',m.depot||'',m.typeCde||'',m.ofRc||'',
+      m.dtq||'',m.drtq||'',(m.dtq&&m.drtq)?joursOuvres(m.dtq,m.drtq):'', m.bc?'':(m.ref||''), m.code,m.lib,
       ann,+m.qte,(+m.qte)-ann,m.obs||'',m.wh||'',m.parNom||m.par||'',(m.ts||'').slice(0,10)]); }));
   } else {
     head=['N° retour','Date','Ressource',"Activité d'origine",'Motif / référence','Code article','Article',
@@ -2451,9 +2673,9 @@ $('#etNz').addEventListener('change',renderEtat);
    volet figé, formules de contrôle). Aucune librairie externe.
    ══════════════════════════════════════════════════════════════════ */
 const XLF = {
-  hdrFill: ['000000','000000','000000','000000','000000','000000','0D0D0D','0D0D0D','808080',
+  hdrFill: ['000000','000000','000000','000000','000000','000000','1F4E79','5B2B8A','0D0D0D','0D0D0D','808080',
             'D60093','F79646','FF66FF','00B0F0','A885D8','00B050','602827','602827'],
-  width:   [7.25,13,18,7.25,10.75,47.25,17.5,13,20.25,14.5,14,18.125,18.5,21,20,13.75,9.75],
+  width:   [7.25,13,18,7.25,10.75,47.25,13,13,17.5,13,20.25,14.5,14,18.125,18.5,21,20,13.75,9.75],
   bg:'F2F2F2', bgCtrl:'F2DCDB', inkAct:'10253F', face:'Aptos Display',
   numFmt:'_-* #,##0\\ _€_-;\\-* #,##0\\ _€_-;_-* "-"\\ _€_-;_-@_-'
 };
@@ -2529,21 +2751,24 @@ function stylesXml(){
 
 function colLetter(n){ let s=''; while(n>0){ const m=(n-1)%26; s=String.fromCharCode(65+m)+s; n=(n-m-1)/26; } return s; }
 
+/* Les deux colonnes physiques figurent dans le fichier : elles rendent l'état
+   complet et permettent de recharger une correction de KM4 / AGL depuis ce
+   même fichier, sans passer par l'inventaire physique. */
 const ENTETE_ETAT = d => ['#','Clé GL','Famille','Class','Code Article','Equipements',
-  'Stock global au '+d,'En attente de dispatching', ...ACTS.map(a=>a.xl), 'Vérification','Gaps'];
+  'Stock KM4','Stock AGL','Stock global au '+d,'En attente de dispatching', ...ACTS.map(a=>a.xl), 'Vérification','Gaps'];
 
 function etatRows(){
   const d = isoToFR($('#etDate').value) || S.meta.lastTx || new Date().toLocaleDateString('fr-FR');
   const rows = S.order.map(k=>S.arts[k]).sort((a,b)=>(a.i||0)-(b.i||0))
     .map((a,n)=>[n+1, a.cle||'', a.fam||'', a.cls||'', a.code, a.lib||'',
-                 globalOf(a), +a.att||0, ...a.a.map(q=>+q||0)]);
+                 +a.km4||0, +a.agl||0, globalOf(a), +a.att||0, ...a.a.map(q=>+q||0)]);
   return {d, head: ENTETE_ETAT(d), rows};
 }
 
 function buildXlsx(){
   const {d, head, rows} = etatRows();
   const {xml:styles, S:st} = stylesXml();
-  const last = rows.length+1, ref = `A1:Q${last}`;
+  const last = rows.length+1, ref = `A1:S${last}`;
 
   const cols = XLF.width.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join('');
   const inline=(r,s,v)=>`<c r="${r}" s="${s}" t="inlineStr"><is><t xml:space="preserve">${xe(v)}</t></is></c>`;
@@ -2557,10 +2782,10 @@ function buildXlsx(){
     cells.push(num('A'+y, st.numCenter, r[0]));                                      // #
     for(let k=1;k<5;k++) cells.push(inline(colLetter(k+1)+y, st.txtCenter, r[k]));    // Clé GL → Code
     cells.push(inline('F'+y, st.txtLeft, r[5]));                                     // Equipements
-    for(let k=6;k<15;k++) cells.push(num(colLetter(k+1)+y, k>=8?st.qtyAct:st.qty, r[k]));
-    const verif = r.slice(7,15).reduce((x,q)=>x+(+q||0),0);                          // attente + activités
-    cells.push(form('P'+y, st.ctrl, `SUM(H${y}:O${y})`, verif));
-    cells.push(form('Q'+y, st.ctrl, `P${y}-G${y}`, Math.round((verif-r[6])*1000)/1000));
+    for(let k=6;k<17;k++) cells.push(num(colLetter(k+1)+y, k>=10?st.qtyAct:st.qty, r[k]));
+    const verif = r.slice(9,17).reduce((x,q)=>x+(+q||0),0);                          // attente + activités
+    cells.push(form('R'+y, st.ctrl, `SUM(J${y}:Q${y})`, verif));
+    cells.push(form('S'+y, st.ctrl, `R${y}-I${y}`, Math.round((verif-r[8])*1000)/1000));
     sd += `<row r="${y}">${cells.join('')}</row>`;
   });
 
@@ -2618,11 +2843,11 @@ $('#etModele').onclick=()=>{
   const head = ENTETE_ETAT(d);
   const exemple = S.order.slice(0,3).map((k,n)=>{
     const a=S.arts[k];
-    return [n+1, a.cle||'', a.fam||'', a.cls||'', a.code, a.lib||'', globalOf(a), +a.att||0, ...a.a.map(q=>+q||0)];
+    return [n+1, a.cle||'', a.fam||'', a.cls||'', a.code, a.lib||'', +a.km4||0, +a.agl||0, globalOf(a), +a.att||0, ...a.a.map(q=>+q||0)];
   });
   const rows = exemple.map(r=>{
-    const v=r.slice(7,15).reduce((x,q)=>x+(+q||0),0);
-    return [...r, v, Math.round((v-r[6])*1000)/1000];
+    const v=r.slice(9,17).reduce((x,q)=>x+(+q||0),0);
+    return [...r, v, Math.round((v-r[8])*1000)/1000];
   });
   const ws=XLSX.utils.aoa_to_sheet([head,...rows]);
   ws['!cols']=XLF.width.map(w=>({wch:w}));
@@ -2638,7 +2863,8 @@ $('#etImport').onclick=()=>{
   z.innerHTML=`<div style="padding:16px;border-bottom:1px solid var(--line-s);background:#FBFCFD">
     <div class="banner warn" style="margin-bottom:14px"><span>!</span><div>
       Le chargement <b>remplace</b> la répartition par activité et la file d'attente de tous les articles reconnus.
-      Les mouvements déjà enregistrés restent dans l'historique. La ventilation KM4/AGL n'est pas touchée.
+      Si le fichier contient les colonnes <b>Stock KM4</b> et <b>Stock AGL</b>, les quantités physiques sont corrigées elles aussi ;
+      sinon elles restent inchangées. Les mouvements déjà enregistrés restent dans l'historique.
     </div></div>
     <div class="drop" id="dropBase"><div class="big">Déposer un fichier d'état de stock</div>
       <div class="muted" style="font-size:12px">Format du bouton « Modèle » · .xlsx · .xlsm · .csv</div></div>
@@ -2672,10 +2898,15 @@ function setupDropBase(){
       code: guess(cols,['code article','codearticle','code']),
       lib:  guess(cols,['equipement','designation','libelle','article']),
       att:  guess(cols,['attente']),
+      km4:  guess(cols,['stock km4','km4']),
+      agl:  guess(cols,['stock agl','agl']),
       acts: ACTS.map(a=>guess(cols,[norm(a.xl).slice(0,18), norm(a.ui).slice(0,18)]))
     };
     if(idx.code<0) idx.code = 4;
-    idx.acts = idx.acts.map((v,k)=> v>=0 ? v : (8+k < cols.length ? 8+k : -1));
+    /* Repli sur les positions du modèle : décalées de deux colonnes depuis que
+       KM4 et AGL y figurent. */
+    const base0 = (idx.km4>=0 || idx.agl>=0) ? 10 : 8;
+    idx.acts = idx.acts.map((v,k)=> v>=0 ? v : (base0+k < cols.length ? base0+k : -1));
 
     const manquantes = ACTS.filter((a,k)=>idx.acts[k]<0).map(a=>a.ui);
     const lignes=[], inconnus=[];
@@ -2692,6 +2923,8 @@ function setupDropBase(){
         cls:  idx.cls>=0 ? String(aoa[r][idx.cls]??'').trim() : null,
         lib:  idx.lib>=0 ? String(aoa[r][idx.lib]??'').trim() : null,
         att:  idx.att>=0 ? toNum(aoa[r][idx.att]) : 0,
+        km4:  idx.km4>=0 ? toNum(aoa[r][idx.km4]) : null,
+        agl:  idx.agl>=0 ? toNum(aoa[r][idx.agl]) : null,
         a:    idx.acts.map(c=> c>=0 ? toNum(aoa[r][c]) : 0)
       });
     }
@@ -2699,13 +2932,16 @@ function setupDropBase(){
     const changes = lignes.filter(l=>{
       const a=S.arts[l.key];
       return JSON.stringify(l.a.map(x=>+x||0))!==JSON.stringify(a.a.map(x=>+x||0))
-          || Math.abs((+l.att||0)-(+a.att||0))>0.001;
+          || Math.abs((+l.att||0)-(+a.att||0))>0.001
+          || (l.km4!=null && Math.abs(l.km4-(+a.km4||0))>0.001)
+          || (l.agl!=null && Math.abs(l.agl-(+a.agl||0))>0.001);
     });
     const absents = S.order.filter(k=>!lignes.some(l=>l.key===k));
 
     mapEl.innerHTML=`
       <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
         <span class="pill ok">${fmt(lignes.length)} articles reconnus</span>
+        ${(idx.km4>=0||idx.agl>=0)?'<span class="pill km4">KM4 / AGL repris du fichier</span>':''}
         <span class="pill warn">${fmt(changes.length)} avec un changement</span>
         ${inconnus.length?`<span class="pill" style="border-color:#E8B5AF;background:#FDF2F1;color:var(--danger)">${fmt(inconnus.length)}+ hors référentiel</span>`:''}
         ${absents.length?`<span class="pill">${fmt(absents.length)} absents du fichier, inchangés</span>`:''}
@@ -2730,6 +2966,8 @@ function setupDropBase(){
       const patch={};
       for(const l of lignes){
         const p={ a:l.a, att:+l.att||0 };
+        if(l.km4!=null) p.km4=l.km4;
+        if(l.agl!=null) p.agl=l.agl;
         if(l.cle) p.cle=l.cle;
         if(l.fam) p.fam=l.fam;
         if(l.cls) p.cls=l.cls;
@@ -2738,7 +2976,8 @@ function setupDropBase(){
       }
       await store.saveMany(patch);
       await store.logMv({ type:'base', date:today(), qte:changes.length,
-        detail:`Fichier « ${f.name} » · ${lignes.length} articles rechargés, ${changes.length} modifiés` });
+        detail:`Fichier « ${f.name} » · ${lignes.length} articles rechargés, ${changes.length} modifiés`
+               + ((idx.km4>=0||idx.agl>=0) ? ' · KM4/AGL corrigés' : '') });
       $('#etImportZone').innerHTML='';
       toast(`Base chargée · ${fmt(lignes.length)} articles`,'ok');
       renderBadge(); renderEtat();
@@ -2750,7 +2989,8 @@ function setupDropBase(){
 
 const MVLBL={accord:'Accord',reception:'Réception',retour:'Retour',dispatch:'Dispatching',
              transmission:'Inventaire physique',actualisation:'Actualisation',base:'Chargement de base',annulation:'Annulation',
-             suppression:'Suppression bon',compte:'Suppression compte',correction:'Correction'};
+             suppression:'Suppression bon',compte:'Suppression compte',correction:'Correction',
+             pret:'Prêt',transfert:'Transfert',retour_pret:'Retour de prêt'};
 function histoFiltre(){
   const t=$('#hsType').value, who=$('#hsWho').value;
   const art=norm($('#hsArt').value).replace(/\s/g,'');
@@ -2791,7 +3031,7 @@ function renderHisto(){
     <tbody>${list.map(m=>`<tr>
       <td class="mono muted" style="white-space:nowrap">${esc((m.ts||'').slice(0,16).replace('T',' '))}</td>
       <td style="white-space:nowrap">${m.par?`<span class="pill" title="${esc(m.par)}">${esc(m.parNom||m.par)}</span>`:'<span class="muted">—</span>'}</td>
-      <td><span class="pill ${m.type==='accord'?'ok':m.type==='reception'?'km4':m.type==='retour'?'agl':(m.type==='annulation'||m.type==='suppression'||m.type==='compte'||m.type==='correction')?'warn':''}">${MVLBL[m.type]||m.type}</span></td>
+      <td><span class="pill ${m.type==='accord'?'ok':m.type==='reception'?'km4':(m.type==='retour'||m.type==='retour_pret')?'agl':m.type==='pret'?'warn':m.type==='transfert'?'km4':(m.type==='annulation'||m.type==='suppression'||m.type==='compte'||m.type==='correction')?'warn':''}">${MVLBL[m.type]||m.type}</span></td>
       <td style="white-space:nowrap">${m.ref
           ? (S.bons && S.bons[m.ref]
               ? `<a href="#" class="lien code" data-bon="${esc(m.ref)}" title="Ouvrir le bon dans le Suivi EB">${esc(m.ref)}</a>`
@@ -2850,6 +3090,8 @@ $('#hsExp').onclick=()=>{
 /* ─────────────────────────── rendu global ─────────────────────────── */
 function renderBadgeEb(){
   const b=$('#badgeEb'); if(b) b.textContent = Object.values(S.bons||{}).filter(x=>x && x.h && !x.h.cloture).length;
+  const bi=$('#badgeInt'); if(bi) bi.textContent = Object.values(S.bons||{}).filter(x=>x && estInterieur(x) && x.h && !x.h.cloture).length;
+  renderBadgePrets();
   const r=$('#badgeRup'); if(r) r.textContent = Object.values(S.bons||{}).reduce((n,x)=>n+((x&&x.reliquats)||[]).filter(y=>!y.etat).length,0);
 }
 function renderAll(){
@@ -2857,6 +3099,9 @@ function renderAll(){
   if($('#p-eb').classList.contains('on')) renderEbLignes();
   if($('#p-suivi').classList.contains('on')) renderSuivi();
   if($('#p-ruptures').classList.contains('on')) renderRuptures();
+  if($('#p-interieur').classList.contains('on')) renderInterieur();
+  if($('#p-prets').classList.contains('on')) renderPrets();
+  if($('#p-dash').classList.contains('on')) renderDash();
   if($('#p-etat').classList.contains('on')) renderEtat();
   if($('#p-dispatch').classList.contains('on')) renderDispatch();
   if($('#p-reception').classList.contains('on')) renderListe('reception');
@@ -2884,10 +3129,23 @@ const ETAPES = [
   { k:'charge',      ui:'Chargement EB',      court:'Chargé',         verbe:null },
   { k:'accord',      ui:'Accord selon dispo', court:'Accordé',        verbe:null },
   { k:'impression',  ui:'Impression accord',  court:'Imprimé',        verbe:"Imprimer l'accord" },
+  /* Étape réservée aux bons de l'intérieur : le matériel passe par le service
+     transport avant d'être préparé pour l'expédition. */
+  { k:'transport',   ui:'Remise au service transport', court:'Au transport', verbe:'Remise au transport', zone:'interieur' },
   { k:'preparation', ui:'Mise en préparation',court:'En préparation', verbe:'En préparation' },
   { k:'traite',      ui:'Traitement terminé', court:'Traité',         verbe:'Traitement fini' },
   { k:'enleve',      ui:'EB enlevé',          court:'Enlevé',         verbe:'Enlèvement' },
   { k:'cloture',     ui:'Clôture EB',         court:'Clôturé',        verbe:'Clôturer' }
+];
+/* Les étapes de l'intérieur ont leurs propres intervalles : c'est le suivi que
+   demande le service transport. */
+const PHASES_INT = [
+  ['accord','transport','Accord → remise au transport'],
+  ['transport','preparation','Remise au transport → traitement'],
+  ['preparation','traite','Traitement → fin de traitement'],
+  ['traite','enleve','Fin de traitement → enlèvement'],
+  ['enleve','cloture','Enlèvement → clôture'],
+  ['charge','cloture','Bout en bout']
 ];
 const PHASES = [
   ['charge','accord','Chargement → accord'],
@@ -2912,7 +3170,7 @@ document.addEventListener('click', e=>{
 const E = {
   form:{}, lignes:[],               // brouillon en cours de saisie
   ai:1,                              // index d'activité dans ACTS (0 = commun)
-  detail:null, subIdx:null, mois:'', cherche:'', etape:'',
+  detail:null, subIdx:null, mois:'', cherche:'', etape:'', zone:'',
   complement:null,                   // { parent:'AC-0007', idx:[…] } quand on sert une rupture
   projets:{}                         // libellé de projet → clé d'activité, appris
 };
@@ -3104,7 +3362,7 @@ async function ebAccorder(){
   const bon = {
     ref, ebOrigine:$('#ebNum').value.trim(), projet:$('#ebProjet').value.trim(),
     act:act.k, actUi:act.ui, edl:$('#ebEdl').value.trim().toUpperCase(),
-    site:$('#ebSite').value.trim(), demandeur:$('#ebDem').value.trim(),
+    zone:$('#ebZone').value||'abidjan', site:$('#ebSite').value.trim(), demandeur:$('#ebDem').value.trim(),
     codeProjet:$('#ebCodeP').value.trim(),
     validation:$('#ebValid').value||'', lignes, reliquats,
     parent: E.complement ? E.complement.parent : '',
@@ -3138,25 +3396,62 @@ async function ebAccorder(){
 function ebVider(){
   E.lignes=[]; E.complement=null; renderComplement();
   ['ebProjet','ebEdl','ebNum','ebSite','ebDem','ebCodeP','ebValid','ebQ','ebQte'].forEach(id=>{ const e=$('#'+id); if(e) e.value=''; });
+  $('#ebZone').value='abidjan';
   $('#ebRecep').value=today();
   renderEbLignes();
 }
 
 /* ─────────────────────────── étapes ─────────────────────────── */
-const etapeIdx = k => ETAPES.findIndex(e=>e.k===k);
-const etapeCourante = b => { let i=0; ETAPES.forEach((e,k)=>{ if(b.h && b.h[e.k]) i=k; }); return i; };
-const prochaine = b => { const i=etapeCourante(b); return i<ETAPES.length-1 ? ETAPES[i+1] : null; };
+/* Le parcours dépend de la zone : un bon de l'intérieur passe par le service
+   transport, un bon d'Abidjan non. Toutes les fonctions de progression
+   travaillent donc sur les étapes du bon, pas sur la liste générale. */
+const estInterieur = b => (b && b.zone) === 'interieur';
+const etapesDe = b => ETAPES.filter(e => !e.zone || e.zone === (b && b.zone));
+const etapeIdx = (k, b) => etapesDe(b).findIndex(e => e.k === k);
+const etapeCourante = b => { const L=etapesDe(b); let i=0; L.forEach((e,k)=>{ if(b.h && b.h[e.k]) i=k; }); return i; };
+const etapeDe = b => etapesDe(b)[etapeCourante(b)];
+const prochaine = b => { const L=etapesDe(b), i=etapeCourante(b); return i<L.length-1 ? L[i+1] : null; };
 
 async function franchir(ref, k){
   const b=S.bons[ref]; if(!b) return;
-  if(etapeIdx(k)!==etapeCourante(b)+1) return toast('Étape précédente non franchie','err');
+  if(etapeIdx(k,b)!==etapeCourante(b)+1) return toast('Étape précédente non franchie','err');
   b.h[k]=new Date().toISOString();
   /* Le franchissement n'est pas journalisé dans « mouvements » : il ne touche
      pas au stock, et quatre lignes par bon noieraient l'Historique. Les
      horodatages vivent sur le bon lui-même, visibles dans le Suivi EB. */
   await store.saveBon(ref,b);
-  toast(`${ref} — ${ETAPES[etapeIdx(k)].ui}`,'ok'); renderSuivi();
+  toast(`${ref} — ${etapesDe(b)[etapeIdx(k,b)].ui}`,'ok'); renderSuivi(); renderInterieur();
 }
+/* Corriger la date d'une étape. Une étape ne peut pas être datée avant celle
+   qui la précède ni après celle qui la suit : sinon un délai deviendrait
+   négatif, et les moyennes seraient faussées sans qu'on le voie. */
+async function corrigerDate(ref, k, val){
+  const b=S.bons[ref]; if(!b) return;
+  const L=etapesDe(b), i=etapeIdx(k,b), e=L[i];
+  const avant=b.h[k] ? String(b.h[k]).slice(0,10) : '';
+  if(val===avant) return;
+  if(!(S.user && (S.user.role==='admin' || b.par===S.user.cuid))){ renderSuivi(); return toast("Seul l'auteur du bon ou un administrateur peut corriger ses dates",'err'); }
+
+  if(!val){
+    if(L.slice(i+1).some(x=>b.h[x.k])) { renderSuivi(); return toast('Efface d\'abord les étapes suivantes','err'); }
+    if(i===0) { renderSuivi(); return toast('La date de chargement est obligatoire','err'); }
+  } else {
+    if(i>0 && !b.h[L[i-1].k]) { renderSuivi(); return toast(`« ${L[i-1].ui} » n'est pas encore franchie`,'err'); }
+    const prec=i>0 ? String(b.h[L[i-1].k]).slice(0,10) : null;
+    const suiv=L.slice(i+1).map(x=>b.h[x.k]).filter(Boolean).map(d=>String(d).slice(0,10))[0] || null;
+    if(prec && val<prec) { renderSuivi(); return toast(`Date antérieure à « ${L[i-1].ui} » (${isoToFR(prec)})`,'err'); }
+    if(suiv && val>suiv) { renderSuivi(); return toast(`Date postérieure à l'étape suivante (${isoToFR(suiv)})`,'err'); }
+    if(val>today()) { renderSuivi(); return toast('Date dans le futur','err'); }
+  }
+
+  b.h[k] = !val ? '' : (k==='charge' ? val : val+'T12:00:00.000Z');
+  await store.saveBon(ref, b);
+  await store.logMv({ type:'correction', code:'', key:'', lib:`Bon ${ref}`, qte:null, ref, date:today(),
+    detail:`${e.ui} : ${avant?isoToFR(avant):'(vide)'} → ${val?isoToFR(val):'(vide)'}` });
+  toast(`${ref} — ${e.ui} ${val?'au '+isoToFR(val):'effacée'}`,'ok');
+  renderSuivi(); renderInterieur();
+}
+
 async function annulerEtape(ref){
   const b=S.bons[ref]; if(!b) return;
   const i=etapeCourante(b);
@@ -3167,9 +3462,25 @@ async function annulerEtape(ref){
 }
 
 const jours = (a,b) => (!a||!b) ? null : Math.round((new Date(b.slice(0,10))-new Date(a.slice(0,10)))/864e5);
+/* Les délais se comptent en jours ouvrés : le magasin ne travaille pas le
+   week-end, et un bon préparé le vendredi puis enlevé le lundi ne doit pas
+   coûter trois jours à l'indicateur. On compte les jours du lendemain de la
+   première date jusqu'à la seconde incluse, samedi et dimanche exclus. */
+function joursOuvres(a,b){
+  if(!a||!b) return null;
+  let d1=new Date(String(a).slice(0,10)), d2=new Date(String(b).slice(0,10));
+  if(isNaN(d1)||isNaN(d2)) return null;
+  let n=Math.round((d2-d1)/864e5), signe=1;
+  if(n===0) return 0;
+  if(n<0){ const t=d1; d1=d2; d2=t; n=-n; signe=-1; }
+  const premier=new Date(d1.getTime()+864e5).getUTCDay();   // premier jour compté
+  let c=Math.floor(n/7)*5;
+  for(let i=0;i<n%7;i++){ const j=(premier+i)%7; if(j!==0 && j!==6) c++; }
+  return signe*c;
+}
 function delais(b){
-  const d={}; PHASES.forEach(([x,z])=>d[x+'>'+z]=jours(b.h[x],b.h[z]));
-  d.age = b.h.cloture ? null : jours(b.h.charge, today());
+  const d={}; [...PHASES,...PHASES_INT].forEach(([x,z])=>d[x+'>'+z]=joursOuvres(b.h[x],b.h[z]));
+  d.age = b.h.cloture ? null : joursOuvres(b.h.charge, today());
   return d;
 }
 function tauxService(b){
@@ -3186,20 +3497,21 @@ const bonsTries = () => Object.values(S.bons||{}).filter(Boolean)
    Le mois retenu est celui de la réception de l'EB, pas celui de la clôture. */
 /* Recherche plein texte sur tout ce qui identifie un bon, y compris le n° OF /
    BLM saisi après coup : c'est souvent le seul numéro que le magasin cite. */
-const texteBon = b => norm([b.ref,b.ebOrigine,b.projet,b.edl,b.site,b.actUi,b.of,b.demandeur].filter(Boolean).join(' '));
+const texteBon = b => norm([b.ref,b.ebOrigine,b.projet,b.edl,b.site,b.actUi,b.of,b.demandeur,estInterieur(b)?'interieur':'abidjan'].filter(Boolean).join(' '));
 function bonsFiltres(){
   const q=norm(E.cherche||'').trim();
   return bonsTries().filter(b=>{
     if(E.mois && String(b.h?.charge||'').slice(0,7)!==E.mois) return false;
+    if(E.zone && (estInterieur(b)?'interieur':'abidjan')!==E.zone) return false;
     if(E.etape==='ouverts' && b.h?.cloture) return false;
-    if(E.etape && E.etape!=='ouverts' && ETAPES[etapeCourante(b)].k!==E.etape) return false;
+    if(E.etape && E.etape!=='ouverts' && etapeDe(b).k!==E.etape) return false;
     if(q && !q.split(/\s+/).every(m=>texteBon(b).includes(m))) return false;
     return true;
   });
 }
 function renderEtapes(){
   const sel=$('#ebEtape'); if(!sel) return;
-  const n=k=>bonsTries().filter(b=>ETAPES[etapeCourante(b)].k===k).length;
+  const n=k=>bonsTries().filter(b=>etapeDe(b).k===k).length;
   sel.innerHTML=`<option value="">Toutes les étapes</option>`
     + `<option value="ouverts">Non clôturés (${bonsTries().filter(b=>!b.h?.cloture).length})</option>`
     + ETAPES.slice(1).map(e=>`<option value="${e.k}">${esc(e.court)} (${n(e.k)})</option>`).join('');
@@ -3257,7 +3569,7 @@ function construireAccord(b){
     body:[['Projet',b.projet||'—',"EB d'origine",b.ebOrigine||'—'],
           ['Activité',b.actUi,'Code projet',b.codeProjet||'—'],
           ['EDL',b.edl,'Service demandeur',b.demandeur||'—'],
-          ['Site',b.site||'—','Reçu le',isoToFR(b.h.charge)],
+          ['Site',(b.site||'—')+(estInterieur(b)?' · INTÉRIEUR':''),'Reçu le',isoToFR(b.h.charge)],
           ['Accordé le',isoToFR((b.h.accord||'').slice(0,10)),'Accordé par',b.parNom||'—']] });
 
   const corps=(b.lignes||[]).map((l,i)=>[String(i+1).padStart(2,'0'), l.code,
@@ -3331,30 +3643,38 @@ function renderEb(){
 /* ─────────────────────────── rendu : suivi ─────────────────────────── */
 function jauge(b){
   const i=etapeCourante(b);
-  return `<span class="jauge" title="${esc(ETAPES[i].ui)}">`+ETAPES.map((e,k)=>`<i class="${k<=i?'on':''}"></i>`).join('')+'</span>';
+  const L=etapesDe(b);
+  return `<span class="jauge" title="${esc(L[i].ui)}">`+L.map((e,k)=>`<i class="${k<=i?'on':''}"></i>`).join('')+'</span>';
 }
 function renderSuivi(){
   renderMois(); renderEtapes();
   const L=bonsFiltres(), clos=L.filter(b=>b.h && b.h.cloture);
-  const tous=bonsTries().length, filtre=E.mois||E.etape||E.cherche;
-  $('#ebPortee').textContent = filtre
+  const tous=bonsTries().length, filtre=E.mois||E.etape||E.cherche||E.zone;
+  $('#ebPortee').innerHTML = '<b>Délais en jours ouvrés</b> (samedi et dimanche exclus) · ' + (filtre
     ? `${L.length} bon(s) sur ${tous}`+(E.mois?` — ${moisLib(E.mois)}`:'')+' · les indicateurs et l\'export suivent ce filtre'
-    : `${tous} bon(s), tous mois confondus`;
+    : `${tous} bon(s), tous mois confondus`);
   const moy=a=>{ const v=a.filter(x=>x!=null); return v.length?v.reduce((x,y)=>x+y,0)/v.length:null; };
   const som=(l,f)=>l.reduce((s,b)=>s+f(b),0);
   const cartes=[['Bons chargés',L.length,''],['Clôturés',clos.length,''],
     ['Lignes demandées',som(L,lignesDde),''],['Lignes servies',som(L,lignesSrv),''],
     ['Lignes en reliquat',som(L,b=>(b.reliquats||[]).length),''],
     ['Taux de service',L.length?moy(L.map(tauxService))*100:null,'%']]
-    .concat(PHASES.map(([x,z,ui])=>[ui,moy(clos.map(b=>delais(b)[x+'>'+z])),'j']));
-  $('#ebKpis').innerHTML = cartes.map(([k,v,u])=>`<div class="kpi"><div class="k">${esc(k)}</div>
-      <div class="v">${v==null?'—':(u?(+v).toFixed(1):fmt(v))}${u?` <span style="font-size:12px;color:var(--muted)">${u}</span>`:''}</div></div>`).join('');
+    /* Une phase se mesure dès que ses deux dates existent : attendre la clôture
+       laissait toutes les cartes vides tant qu'aucun bon n'était soldé. Seul le
+       bout en bout exige la clôture, puisqu'il s'y arrête. */
+    .concat(PHASES.map(([x,z,ui])=>{
+      const v=L.map(b=>delais(b)[x+'>'+z]).filter(d=>d!=null);
+      return [ui, v.length?v.reduce((a,c)=>a+c,0)/v.length:null, 'j', v.length];
+    }));
+  $('#ebKpis').innerHTML = cartes.map(([k,v,u,n])=>`<div class="kpi"${n!=null?` title="Calculé sur ${n} bon(s)"`:''}><div class="k">${esc(k)}</div>
+      <div class="v">${v==null?'—':(u?(+v).toFixed(1):fmt(v))}${u?` <span style="font-size:12px;color:var(--muted)">${u}</span>`:''}`
+      + (n!=null&&n>0?`<span class="kpi-n">sur ${n}</span>`:'')+`</div></div>`).join('');
 
   const tb=$('#ebBons');
   if(!L.length){
     tb.innerHTML=`<tbody><tr><td style="padding:26px;text-align:center;color:var(--muted);font-size:13px">${tous?'Aucun bon ne correspond à ces critères.':'Aucun bon. Commencer par charger un EB.'}</td></tr></tbody>`;
   } else {
-    tb.innerHTML=`<thead><tr><th>Référence</th><th>OF / BLM</th><th>EB d'origine</th><th>Projet</th><th>EDL</th>
+    tb.innerHTML=`<thead><tr><th>Référence</th><th>Zone</th><th>OF / BLM</th><th>EB d'origine</th><th>Projet</th><th>EDL</th>
         <th class="r">Lignes</th><th class="r">Taux</th><th>Reçu</th><th>Étape</th><th>Avancement</th><th class="r">Délai</th><th></th></tr></thead><tbody>`
       + L.map(b=>{
         const d=delais(b), ts=Math.round(tauxService(b)*100), i=etapeCourante(b), su=prochaine(b);
@@ -3365,6 +3685,7 @@ function renderSuivi(){
           + (i>=2?` <button class="btn sm ghost" data-re="${esc(b.ref)}" title="Réimprimer l'accord">&#9113;</button>`:'');
         return `<tr data-open="${esc(b.ref)}" style="cursor:pointer">
           <td><span class="code">${esc(b.ref)}</span></td>
+          <td>${estInterieur(b)?'<span class="pill agl">Intérieur</span>':'<span class="pill">Abidjan</span>'}</td>
           <td>${b.of?`<span class="code">${esc(b.of)}</span>`:'<span class="muted">—</span>'}</td>
           <td><span class="code" style="color:var(--muted)">${esc(b.ebOrigine||'—')}</span></td>
           <td>${esc(b.projet||'—')}</td><td>${esc(b.edl)}</td>
@@ -3381,15 +3702,23 @@ function renderSuivi(){
   const b=E.detail && S.bons[E.detail];
   $('#ebDetail').hidden=!b;
   if(b){
-    $('#ebDTitre').innerHTML=`Détail ${esc(b.ref)} <span style="font-weight:400;color:var(--muted)">· ${esc(b.edl)} · ${esc(b.projet||'sans projet')} · ${esc(b.actUi)}${b.parent?` · complément de ${esc(b.parent)}`:''}</span>`;
+    $('#ebDTitre').innerHTML=`Détail ${esc(b.ref)} <span style="font-weight:400;color:var(--muted)">· ${esc(b.edl)} · ${esc(b.projet||'sans projet')} · ${esc(b.actUi)} · zone ${estInterieur(b)?'intérieur':'Abidjan'}${b.parent?` · complément de ${esc(b.parent)}`:''}</span>`;
     $('#ebOf').value=b.of||'';
     $('#ebOfSave').dataset.ref=b.ref;
+    $('#ebZoneBon').value = b.zone==='interieur' ? 'interieur' : 'abidjan';
+    $('#ebZoneBon').dataset.ref=b.ref;
     const admin=S.user && S.user.role==='admin';
     $('#ebSuppr').hidden=!admin; $('#ebSuppr').dataset.ref=b.ref;
-    $('#ebChrono').innerHTML=ETAPES.map((e,k)=>{
-      const on=!!b.h[e.k], ph=k>0&&on?jours(b.h[ETAPES[k-1].k],b.h[e.k]):null;
+    /* Les dates se corrigent : une clôture oubliée est souvent saisie le
+       lendemain, et une date fausse fausse tous les délais. */
+    const modif = S.user && (S.user.role==='admin' || b.par===S.user.cuid);
+    $('#ebChrono').innerHTML=etapesDe(b).map((e,k,L)=>{
+      const on=!!b.h[e.k], ph=k>0&&on?joursOuvres(b.h[L[k-1].k],b.h[e.k]):null;
+      const val=on?String(b.h[e.k]).slice(0,10):'';
       return `<div class="pas${on?' on':''}"><div class="pas-l">${esc(e.ui)}</div>
-        <div class="pas-d">${on?isoToFR(b.h[e.k].slice(0,10)):'—'}</div>
+        <div class="pas-d">${modif
+          ? `<input class="inp pas-date" type="date" value="${val}" data-etape="${e.k}" data-ref="${esc(b.ref)}"${k===0?'':''}>`
+          : (on?isoToFR(val):'—')}</div>
         <div class="pas-j">${ph!=null?'+'+ph+' j':''}</div></div>`;
     }).join('');
     $('#ebDTab').innerHTML=`<thead><tr><th>Code</th><th>Article</th><th class="r">Demandé</th><th class="r">Accordé</th><th>Puisé sur</th><th>Entrepôt</th></tr></thead><tbody>`
@@ -3501,6 +3830,7 @@ function servirRupture(ref, i){
     const pose=(id,v)=>{ const el=$('#'+id); if(el) el.value=v||''; };
     pose('ebProjet',b.projet); pose('ebEdl',b.edl); pose('ebNum',b.ebOrigine); pose('ebSite',b.site);
     pose('ebDem',b.demandeur); pose('ebCodeP',b.codeProjet); pose('ebValid',b.validation);
+    $('#ebZone').value=b.zone||'abidjan';
     $('#ebRecep').value=today();
     const ai=ACTS.findIndex(x=>x.k===b.act); if(ai>0){ E.ai=ai; $('#ebAct').value=String(ai); }
   }
@@ -3535,6 +3865,27 @@ async function rouvrirRupture(ref, i){
 }
 
 /* ─────────────────────────── OF / BLM et suppression ─────────────────────────── */
+/* La zone se corrige après coup : les bons saisis avant son arrivée sont tous
+   marqués Abidjan, et certains partent en réalité à l'intérieur. Changer la
+   zone ajoute ou retire l'étape « Remise au service transport » — on refuse
+   donc de repasser un bon en Abidjan si cette étape est déjà datée. */
+async function changerZone(ref, zone){
+  const b=S.bons[ref]; if(!b) return;
+  const avant = b.zone==='interieur' ? 'interieur' : 'abidjan';
+  if(zone===avant) return;
+  if(zone==='abidjan' && b.h && b.h.transport){
+    $('#ebZoneBon').value='interieur';
+    return toast("Ce bon est déjà passé par le service transport : efface d'abord cette date",'err');
+  }
+  b.zone = zone;
+  await store.saveBon(ref, b);
+  await store.logMv({ type:'correction', code:'', key:'', lib:`Bon ${ref}`, qte:null, ref, date:today(),
+    detail:`Zone : ${avant==='interieur'?'Intérieur':'Abidjan'} → ${zone==='interieur'?'Intérieur':'Abidjan'}` });
+  toast(`${ref} — zone ${zone==='interieur'?'Intérieur':'Abidjan'}`,'ok');
+  renderSuivi(); renderInterieur(); renderBadgeEb();
+}
+
+
 async function enregistrerOf(ref){
   const b=S.bons[ref]; if(!b) return;
   const v=$('#ebOf').value.trim();
@@ -3568,17 +3919,17 @@ async function supprimerBon(ref){
 function exportSuivi(){
   const L=bonsFiltres();
   if(!L.length) return toast('Aucun bon à exporter','err');
-  const head=['Référence','N° OF / BLM',"N° EB origine",'Projet','Activité','EDL','Site','Service demandeur','Date validation']
+  const head=['Référence','Zone','N° OF / BLM',"N° EB origine",'Projet','Activité','EDL','Site','Service demandeur','Date validation']
     .concat(ETAPES.map(e=>e.ui)).concat(PHASES.map(p=>p[2]))
     .concat(['Lignes demandées','Lignes servies','Lignes en reliquat','Qté demandée','Qté accordée','Taux de service','Étape','Saisi par']);
   const rows=L.map(b=>{ const d=delais(b);
-    return [b.ref,b.of||'',b.ebOrigine||'',b.projet||'',b.actUi,b.edl,b.site||'',b.demandeur||'',b.validation||'']
+    return [b.ref,estInterieur(b)?'Intérieur':'Abidjan',b.of||'',b.ebOrigine||'',b.projet||'',b.actUi,b.edl,b.site||'',b.demandeur||'',b.validation||'']
       .concat(ETAPES.map(e=>(b.h[e.k]||'').slice(0,10)))
       .concat(PHASES.map(([x,z])=>d[x+'>'+z]??''))
       .concat([lignesDde(b),lignesSrv(b),(b.reliquats||[]).length,
         (b.lignes||[]).reduce((s,l)=>s+l.demande,0)+(b.reliquats||[]).reduce((s,l)=>s+l.manquant,0),
         (b.lignes||[]).reduce((s,l)=>s+l.accorde,0),
-        Math.round(tauxService(b)*100)/100, ETAPES[etapeCourante(b)].court, b.parNom||b.par||'']);
+        Math.round(tauxService(b)*100)/100, etapeDe(b).court, b.parNom||b.par||'']);
   });
   const det=[['Référence','EDL','Code','Article','Demandé','Accordé','Entrepôt','Puisé sur','Substitution de']];
   L.forEach(b=>{
@@ -3599,7 +3950,7 @@ function exportReliquats(){
   const libEtat=({r,srv,glob})=> r.etat==='transfere'?'reportée':r.etat==='abandonne'?'abandonnée'
     : srv>=r.manquant?'servable':srv>0?'partiel':glob>0?'sur une autre activité':'à zéro';
   const rows=L.map(x=>{ const {b,r,srv,glob}=x; return [b.ref,b.ebOrigine||'',b.projet||'',b.actUi,b.edl,b.site||'',b.h.charge,
-    r.code,r.lib,r.manquant,srv,glob, libEtat(x), r.vers||'', r.le||'', r.motif||'', ETAPES[etapeCourante(b)].court]; });
+    r.code,r.lib,r.manquant,srv,glob, libEtat(x), r.vers||'', r.le||'', r.motif||'', etapeDe(b).court]; });
   /* La seconde feuille est celle qui sert : consolidée par article, triée par
      volume manquant, elle se transmet telle quelle aux achats. */
   const par={};
@@ -3620,7 +3971,7 @@ function exportReliquats(){
 /* ─────────────────────────── branchements ─────────────────────────── */
 /* Tableaux qui deviennent des fiches sur téléphone : on recopie le titre de
    chaque colonne dans ses cellules, à chaque nouveau rendu du tableau. */
-const TABLES_FICHES = ['ebTab','ebBons','ebDTab','ebRel','rcTab','rtTab','rcListe','rtListe','hsTab'];
+const TABLES_FICHES = ['ebTab','ebBons','ebDTab','ebRel','rcTab','rtTab','rcListe','rtListe','hsTab','prEnCours','prHisto','dsEdl','dsManq','inTab','dsQui'];
 function etiqueter(t){
   const th=[...t.querySelectorAll('thead th')]; if(!th.length) return;
   const noms=[]; th.forEach(h=>{ for(let i=0;i<(+h.colSpan||1);i++) noms.push(h.textContent.trim()); });
@@ -3633,6 +3984,649 @@ function initFiches(){
     t.classList.add('cartes'); etiqueter(t);
     new MutationObserver(()=>etiqueter(t)).observe(t,{childList:true});
   }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   PRÊTS ET TRANSFERTS ENTRE SERVICES
+   Un transfert déplace définitivement une dotation d'une activité vers
+   une autre. Un prêt fait la même chose, mais reste dû : il se solde
+   par une ou plusieurs restitutions.
+
+   Dans les deux cas le stock global ne bouge pas, et le physique KM4 /
+   AGL non plus : la marchandise ne quitte pas le magasin, c'est le
+   droit de tirage qui change de main. Tout vit dans le journal des
+   mouvements — un prêt est un mouvement, ses restitutions aussi, qui
+   le désignent par sa référence. Aucune table séparée à réconcilier.
+   ══════════════════════════════════════════════════════════════════ */
+
+const pretsTous = () => S.mv.filter(m => m.type === 'pret' && !m.annule);
+const renduDe = id => S.mv.filter(m => m.type === 'retour_pret' && m.ref === id && !m.annule)
+                          .reduce((s, m) => s + (+m.qte || 0), 0);
+const resteDe = p => Math.max(0, (+p.qte || 0) - renduDe(p.id));
+const iAct = k => Math.max(0, ACTS.findIndex(a => a.k === k));
+
+function renderPretsOptions() {
+  const opt = sel => ACTS.map((a, i) => `<option value="${i}"${sel === i ? ' selected' : ''}>${esc(a.ui)}</option>`).join('');
+  const de = $('#prDe'), vers = $('#prVers');
+  if (!de.options.length) { de.innerHTML = opt(1); vers.innerHTML = opt(0); }
+}
+
+/* Dotation du service prêteur pour l'article choisi : c'est le plafond. */
+function renderPrDispo() {
+  const z = $('#prDispo'); if (!z) return;
+  const a = P.pick, i = +$('#prDe').value || 0;
+  if (!a) { z.innerHTML = '<span class="muted">Choisis un article pour voir la dotation du service prêteur.</span>'; return; }
+  const q = +a.a[i] || 0;
+  z.innerHTML = `<span class="pill ${q > 0 ? 'ok' : ''}">${esc(ACTS[i].ui)} · ${fmt(q)}</span>`
+    + `<span class="pill">global ${fmt(globalOf(a))}</span>`
+    + ACTS.map((x, k) => k !== i && (+a.a[k] || 0) > 0 ? `<span class="pill" style="opacity:.75">${esc(x.ui)} ${fmt(a.a[k])}</span>` : '').join('');
+}
+
+const P = { pick: null };
+
+async function enregistrerPret() {
+  const a = P.pick;
+  const de = +$('#prDe').value, vers = +$('#prVers').value;
+  const q = Math.floor(toNum($('#prQte').value));
+  const type = $('#prType').value;            // 'pret' ou 'transfert'
+  if (!a) return toast('Choisis un article', 'err');
+  if (de === vers) return toast('Le service prêteur et le bénéficiaire sont identiques', 'err');
+  if (!(q > 0)) return toast('Indique une quantité', 'err');
+  const dispo = +a.a[de] || 0;
+  if (q > dispo) return toast(`${ACTS[de].ui} ne dispose que de ${fmt(dispo)}`, 'err');
+
+  const acts = a.a.slice();
+  acts[de] = dispo - q; acts[vers] = (+acts[vers] || 0) + q;
+  await store.saveArt(a.key, { a: acts });
+  await store.logMv({
+    type, code: a.code, key: a.key, lib: a.lib, qte: q,
+    de: ACTS[de].k, deUi: ACTS[de].ui, vers: ACTS[vers].k, versUi: ACTS[vers].ui,
+    act: ACTS[vers].k, actUi: ACTS[vers].ui,          // l'activité servie, pour l'historique
+    res: $('#prQui').value.trim(), ref: $('#prRef').value.trim(),
+    date: $('#prDate').value || today(),
+    detail: `${ACTS[de].ui} → ${ACTS[vers].ui}`
+  });
+  toast(type === 'pret' ? `Prêt de ${fmt(q)} × ${a.code} enregistré` : `Transfert de ${fmt(q)} × ${a.code} enregistré`, 'ok');
+  P.pick = null; ['prQ', 'prQte', 'prRef'].forEach(id => $('#' + id).value = '');
+  renderPrets(); renderBadge(); renderEtat();
+}
+
+/* Restitution d'un prêt : le chemin inverse, partiel ou total. */
+async function rendrePret(id) {
+  const p = S.mv.find(m => m.id === id); if (!p) return;
+  const reste = resteDe(p);
+  if (reste <= 0) return toast('Ce prêt est déjà soldé', 'ok');
+  const rep = prompt(`Restitution du prêt\n${p.code} — ${p.lib}\n${p.deUi} → ${p.versUi}\n\nQuantité à rendre (reste ${fmt(reste)}) :`, String(reste));
+  if (rep === null) return;
+  const q = Math.floor(toNum(rep));
+  if (!(q > 0)) return toast('Quantité invalide', 'err');
+  if (q > reste) return toast(`Le reste dû n'est que de ${fmt(reste)}`, 'err');
+  const a = S.arts[p.key]; if (!a) return toast('Article introuvable', 'err');
+  const iv = iAct(p.vers), id_ = iAct(p.de);
+  if (q > (+a.a[iv] || 0) && !confirm(`${ACTS[iv].ui} n'affiche que ${fmt(a.a[iv])}. Sa dotation passerait à ${fmt((+a.a[iv] || 0) - q)}.\nContinuer ?`)) return;
+
+  const acts = a.a.slice();
+  acts[iv] = (+acts[iv] || 0) - q; acts[id_] = (+acts[id_] || 0) + q;
+  await store.saveArt(a.key, { a: acts });
+  await store.logMv({
+    type: 'retour_pret', code: p.code, key: p.key, lib: p.lib, qte: q, ref: id,
+    de: p.vers, deUi: p.versUi, vers: p.de, versUi: p.deUi,
+    act: p.de, actUi: p.deUi, date: today(),
+    detail: `restitution · ${p.versUi} → ${p.deUi}`
+  });
+  toast(`${fmt(q)} × ${p.code} rendu${q < reste ? ` — reste ${fmt(reste - q)}` : ', prêt soldé'}`, 'ok');
+  renderPrets(); renderEtat();
+}
+
+/* ─────────────── affichage ─────────────── */
+function renderPrets() {
+  renderPretsOptions(); renderPrDispo();
+  const q = norm($('#prCherche')?.value || '').trim();
+  const filtre = l => !q || q.split(/\s+/).every(x => norm([l.code, l.lib, l.deUi, l.versUi, l.ref, l.res, l.parNom].filter(Boolean).join(' ')).includes(x));
+
+  const ouverts = pretsTous().filter(p => resteDe(p) > 0).filter(filtre);
+  const soldes = pretsTous().filter(p => resteDe(p) <= 0).filter(filtre);
+  const transferts = S.mv.filter(m => m.type === 'transfert' && !m.annule).filter(filtre);
+
+  $('#prKpis').innerHTML = [
+    ['Prêts en cours', fmt(ouverts.length)],
+    ['Quantité due', fmt(ouverts.reduce((s, p) => s + resteDe(p), 0))],
+    ['Prêts soldés', fmt(soldes.length)],
+    ['Transferts', fmt(transferts.length)]
+  ].map(([k, v]) => `<div class="kpi"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+
+  const vide = t => `<tbody><tr><td style="padding:22px;text-align:center;color:var(--muted);font-size:13px">${t}</td></tr></tbody>`;
+  $('#prEnCours').innerHTML = !ouverts.length ? vide(q ? 'Aucun prêt ne correspond.' : 'Aucun prêt en cours.')
+    : `<thead><tr><th>Date</th><th>Code</th><th>Article</th><th>Prêteur → bénéficiaire</th>
+        <th class="r">Prêté</th><th class="r">Rendu</th><th class="r">Reste dû</th><th>Motif</th><th></th></tr></thead><tbody>`
+      + ouverts.map(p => { const r = renduDe(p.id);
+        return `<tr class="eb-${r ? 'partiel' : 'rupture'}">
+          <td>${isoToFR(p.date || (p.ts || '').slice(0, 10))}</td>
+          <td><span class="code">${esc(p.code)}</span></td><td>${esc(p.lib || '')}</td>
+          <td style="font-size:12px">${esc(p.deUi)} → <b>${esc(p.versUi)}</b></td>
+          <td class="r">${fmt(p.qte)}</td><td class="r">${r ? fmt(r) : '—'}</td>
+          <td class="r"><b>${fmt(resteDe(p))}</b></td>
+          <td style="font-size:12px">${esc(p.ref || '—')}${p.res ? '<span class="eb-wh">' + esc(p.res) + '</span>' : ''}</td>
+          <td><button class="btn sm" data-rendre="${esc(p.id)}">Rendre</button></td></tr>`; }).join('') + '</tbody>';
+
+  const hist = [...transferts, ...soldes].sort((a, b) => String(b.ts || '').localeCompare(String(a.ts || ''))).slice(0, 60);
+  renderBadgePrets();
+  $('#prHisto').innerHTML = !hist.length ? vide('Rien d\'enregistré pour l\'instant.')
+    : `<thead><tr><th>Date</th><th>Type</th><th>Code</th><th>Article</th><th>De → vers</th><th class="r">Quantité</th><th>Motif</th><th>Saisi par</th></tr></thead><tbody>`
+      + hist.map(m => `<tr>
+          <td>${isoToFR(m.date || (m.ts || '').slice(0, 10))}</td>
+          <td><span class="pill ${m.type === 'transfert' ? 'agl' : 'ok'}">${m.type === 'transfert' ? 'Transfert' : 'Prêt soldé'}</span></td>
+          <td><span class="code">${esc(m.code)}</span></td><td>${esc(m.lib || '')}</td>
+          <td style="font-size:12px">${esc(m.deUi || '')} → <b>${esc(m.versUi || '')}</b></td>
+          <td class="r">${fmt(m.qte)}</td><td style="font-size:12px">${esc(m.ref || '—')}</td>
+          <td><span class="pill">${esc(m.parNom || m.par || '')}</span></td></tr>`).join('') + '</tbody>';
+}
+
+function renderBadgePrets() {
+  const b = $('#badgePret'); if (b) b.textContent = pretsTous().filter(p => resteDe(p) > 0).length;
+}
+
+function exportPrets() {
+  const L = pretsTous();
+  if (!L.length && !S.mv.some(m => m.type === 'transfert')) return toast('Rien à exporter', 'err');
+  const head = ['Date', 'Type', 'Code article', 'Article', 'Service prêteur', 'Service bénéficiaire', 'Quantité',
+                'Rendu', 'Reste dû', 'Soldé', 'Motif / référence', 'Ressource', 'Saisi par'];
+  const rows = L.map(p => { const r = renduDe(p.id);
+    return [p.date || (p.ts || '').slice(0, 10), 'Prêt', p.code, p.lib || '', p.deUi, p.versUi, +p.qte || 0,
+            r, resteDe(p), resteDe(p) <= 0 ? 'oui' : 'non', p.ref || '', p.res || '', p.parNom || p.par || '']; })
+    .concat(S.mv.filter(m => m.type === 'transfert' && !m.annule).map(m =>
+      [m.date || (m.ts || '').slice(0, 10), 'Transfert', m.code, m.lib || '', m.deUi || '', m.versUi || '', +m.qte || 0,
+       '', '', 'sans objet', m.ref || '', m.res || '', m.parNom || m.par || '']))
+    .sort((a, b) => String(b[0]).localeCompare(String(a[0])));
+  const det = [['Prêt — date', 'Code article', 'Prêteur', 'Bénéficiaire', 'Restitution — date', 'Quantité rendue', 'Saisi par']];
+  L.forEach(p => S.mv.filter(m => m.type === 'retour_pret' && m.ref === p.id && !m.annule)
+    .forEach(m => det.push([p.date || '', p.code, p.deUi, p.versUi, m.date || (m.ts || '').slice(0, 10), +m.qte || 0, m.parNom || m.par || ''])));
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet([head, ...rows]);
+  ws['!cols'] = head.map(h => ({ wch: Math.min(Math.max(h.length + 2, 11), 30) }));
+  XLSX.utils.book_append_sheet(wb, ws, 'Prêts et transferts');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(det), 'Restitutions');
+  XLSX.writeFile(wb, `Prets_transferts_${today()}.xlsx`);
+}
+
+function initPrets() {
+  renderPretsOptions();
+  $('#prDate').value = today();
+  attachSearch('#prQ', '#prRes', a => { P.pick = a; $('#prQ').value = a.code + ' — ' + (a.lib || ''); renderPrDispo(); $('#prQte').focus(); });
+  $('#prDe').addEventListener('change', renderPrDispo);
+  $('#prType').addEventListener('change', () => {
+    const pret = $('#prType').value === 'pret';
+    $('#prGo').textContent = pret ? 'Enregistrer le prêt' : 'Enregistrer le transfert';
+    $('#prNote').textContent = pret
+      ? "Le prêt reste dû : il apparaît dans « Prêts en cours » jusqu'à sa restitution."
+      : 'Le transfert est définitif : la dotation change de service sans retour attendu.';
+  });
+  $('#prType').dispatchEvent(new Event('change'));
+  $('#prGo').onclick = async () => {
+    const b = $('#prGo'); if (b.disabled) return;
+    const t = b.textContent; b.disabled = true; b.textContent = 'Un instant…';
+    try { await delai(enregistrerPret(), 30000, 'enregistrement'); }
+    catch (e) { console.error(e); toast('Non enregistré : ' + ((e && e.message) || e), 'err'); }
+    finally { b.disabled = false; b.textContent = t; }
+  };
+  $('#prEnCours').addEventListener('click', e => {
+    const r = e.target.closest('[data-rendre]'); if (r) rendrePret(r.dataset.rendre);
+  });
+  $('#prCherche').addEventListener('input', renderPrets);
+  $('#prExport').onclick = exportPrets;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   TABLEAU DE BORD
+   Une seule page qui rassemble les indicateurs des autres onglets, sur
+   une période choisie. Rien n'est recalculé différemment ici : on
+   réutilise les mêmes fonctions (delais, tauxService, conformite,
+   resteDe…), pour qu'un chiffre affiché ici soit toujours identique à
+   celui de l'onglet d'origine.
+   ══════════════════════════════════════════════════════════════════ */
+
+const D = { mois: '' };                       // '' = toute la période
+
+const dansMois = (d, m) => !m || String(d || '').slice(0, 7) === m;
+const moyenne2 = a => { const v = a.filter(x => x != null); return v.length ? v.reduce((x, y) => x + y, 0) / v.length : null; };
+
+function moisConnus() {
+  const m = new Set();
+  Object.values(S.bons || {}).forEach(b => b && b.h && b.h.charge && m.add(String(b.h.charge).slice(0, 7)));
+  S.mv.forEach(x => { const d = x.date || (x.ts || '').slice(0, 10); if (d) m.add(d.slice(0, 7)); });
+  return [...m].filter(x => x.length === 7).sort().reverse();
+}
+
+function carte(k, v, u, n, alerte) {
+  return `<div class="kpi${alerte ? ' kpi-alerte' : ''}"${n != null ? ` title="Calculé sur ${n} élément(s)"` : ''}>
+    <div class="k">${esc(k)}</div><div class="v">${v == null ? '—' : v}${u ? ` <span style="font-size:12px;color:var(--muted)">${esc(u)}</span>` : ''}
+    ${n != null && n > 0 ? `<span class="kpi-n">sur ${fmt(n)}</span>` : ''}</div></div>`;
+}
+/* Petite barre de proportion, sans bibliothèque. */
+function barres(lignes) {
+  const max = Math.max(1, ...lignes.map(l => l[1]));
+  return `<div class="barres">` + lignes.map(([lib, v, sousTitre]) => `<div class="bar">
+    <div class="bar-l">${esc(lib)}${sousTitre ? `<span>${esc(sousTitre)}</span>` : ''}</div>
+    <div class="bar-t"><i style="width:${Math.max(2, Math.round(v / max * 100))}%"></i></div>
+    <div class="bar-v">${fmt(v)}</div></div>`).join('') + `</div>`;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   GRAPHIQUES
+   Dessinés en SVG à la main, sans bibliothèque : une dépendance de
+   moins à charger depuis un CDN, et un rendu net à l'impression.
+   ══════════════════════════════════════════════════════════════════ */
+
+const G_ORANGE = '#FF7900', G_NAVY = '#071B2F', G_VERT = '#1F8A4C', G_ROUGE = '#C0263D', G_GRIS = '#D9DFE6';
+
+/* Histogramme : une à deux séries par mois. */
+function svgBarres(labels, series, { h = 180, suffixe = '' } = {}) {
+  if (!labels.length) return '<div class="note">Pas encore de données sur cette période.</div>';
+  const W = 760, M = { t: 14, r: 10, b: 26, l: 38 }, iw = W - M.l - M.r, ih = h - M.t - M.b;
+  const max = Math.max(1, ...series.flatMap(s => s.v));
+  const pas = iw / labels.length, lg = Math.min(26, pas * 0.34);
+  const y = v => M.t + ih - (v / max) * ih;
+  const grille = [0, .5, 1].map(f => `<line x1="${M.l}" y1="${y(max * f)}" x2="${W - M.r}" y2="${y(max * f)}" stroke="${G_GRIS}" stroke-width="1"/>
+    <text x="${M.l - 6}" y="${y(max * f) + 3.5}" text-anchor="end" font-size="10" fill="#7B8794">${fmt(Math.round(max * f))}</text>`).join('');
+  const barres = labels.map((l, i) => series.map((s, k) => {
+    const x = M.l + i * pas + pas / 2 - (series.length * lg) / 2 + k * lg;
+    const hh = Math.max(1, (s.v[i] / max) * ih);
+    return `<rect x="${x}" y="${M.t + ih - hh}" width="${lg - 2}" height="${hh}" rx="2" fill="${s.c}">
+      <title>${esc(l)} · ${esc(s.n)} : ${fmt(s.v[i])}${suffixe}</title></rect>`;
+  }).join('')).join('');
+  const axe = labels.map((l, i) => `<text x="${M.l + i * pas + pas / 2}" y="${h - 8}" text-anchor="middle" font-size="9" fill="#7B8794">${esc(l)}</text>`).join('');
+  const leg = series.map(s => `<span><i style="background:${s.c}"></i>${esc(s.n)}</span>`).join('');
+  return `<div class="g-leg">${leg}</div><svg viewBox="0 0 ${W} ${h}" class="g-svg" preserveAspectRatio="xMidYMid meet">${grille}${barres}${axe}</svg>`;
+}
+
+/* Courbe : une série par mois, avec les points survolables. */
+function svgLigne(labels, valeurs, { h = 210, W = 420, couleur = G_ORANGE, suffixe = '', nom = '' } = {}) {
+  const pts = valeurs.map((v, i) => [i, v]).filter(p => p[1] != null);
+  if (pts.length < 1) return '<div class="note">Pas encore de données sur cette période.</div>';
+  const M = { t: 14, r: 12, b: 28, l: 42 }, iw = W - M.l - M.r, ih = h - M.t - M.b;
+  const max = Math.max(1, ...pts.map(p => p[1])), pas = labels.length > 1 ? iw / (labels.length - 1) : 0;
+  const X = i => M.l + i * pas, Y = v => M.t + ih - (v / max) * ih;
+  const grille = [0, .5, 1].map(f => `<line x1="${M.l}" y1="${Y(max * f)}" x2="${W - M.r}" y2="${Y(max * f)}" stroke="${G_GRIS}" stroke-width="1"/>
+    <text x="${M.l - 6}" y="${Y(max * f) + 4}" text-anchor="end" font-size="11" fill="#7B8794">${fmt(Math.round(max * f))}</text>`).join('');
+  const d = pts.map((p, k) => `${k ? 'L' : 'M'}${X(p[0])},${Y(p[1])}`).join(' ');
+  const aire = `${d} L${X(pts[pts.length - 1][0])},${M.t + ih} L${X(pts[0][0])},${M.t + ih} Z`;
+  const ronds = pts.map(p => `<circle cx="${X(p[0])}" cy="${Y(p[1])}" r="3.5" fill="#fff" stroke="${couleur}" stroke-width="2">
+    <title>${esc(labels[p[0]])} · ${nom} ${fmt(Math.round(p[1] * 10) / 10)}${suffixe}</title></circle>`).join('');
+  const axe = labels.map((l, i) => `<text x="${X(i)}" y="${h - 9}" text-anchor="middle" font-size="11" fill="#7B8794">${esc(l)}</text>`).join('');
+  return `<svg viewBox="0 0 ${W} ${h}" class="g-svg" preserveAspectRatio="xMidYMid meet">${grille}
+    <path d="${aire}" fill="${couleur}" opacity=".10"/><path d="${d}" fill="none" stroke="${couleur}" stroke-width="2.5" stroke-linejoin="round"/>${ronds}${axe}</svg>`;
+}
+
+/* Anneau : répartition en parts, avec légende chiffrée. */
+function svgAnneau(parts) {
+  const tot = parts.reduce((s, p) => s + p.v, 0);
+  if (!tot) return '<div class="note">Pas encore de données sur cette période.</div>';
+  const R = 54, r = 33, cx = 70, cy = 70;
+  let a = -Math.PI / 2;
+  const arcs = parts.filter(p => p.v > 0).map(p => {
+    const ang = p.v / tot * Math.PI * 2, b = a + ang, grand = ang > Math.PI ? 1 : 0;
+    const P = (rad, ang) => [cx + rad * Math.cos(ang), cy + rad * Math.sin(ang)].map(n => n.toFixed(2)).join(',');
+    const d = `M${P(R, a)} A${R},${R} 0 ${grand} 1 ${P(R, b)} L${P(r, b)} A${r},${r} 0 ${grand} 0 ${P(r, a)} Z`;
+    a = b;
+    return `<path d="${d}" fill="${p.c}"><title>${esc(p.n)} : ${fmt(p.v)} (${Math.round(p.v / tot * 100)} %)</title></path>`;
+  }).join('');
+  const leg = parts.filter(p => p.v > 0).map(p => `<span><i style="background:${p.c}"></i>${esc(p.n)} <b>${fmt(p.v)}</b></span>`).join('');
+  return `<div class="g-anneau"><svg viewBox="0 0 140 140" class="g-donut">${arcs}
+    <text x="70" y="66" text-anchor="middle" font-size="22" font-weight="700" fill="${G_NAVY}">${fmt(tot)}</text>
+    <text x="70" y="82" text-anchor="middle" font-size="9" fill="#7B8794">au total</text></svg>
+    <div class="g-leg vert">${leg}</div></div>`;
+}
+
+/* Les douze derniers mois présents dans les données, bornés à la période. */
+function moisSerie() {
+  const m = new Set();
+  Object.values(S.bons || {}).forEach(b => { const d = b && b.h && b.h.charge; if (d) m.add(String(d).slice(0, 7)); });
+  let L = [...m].filter(x => x.length === 7).sort();
+  if (D.mois) L = L.filter(x => x === D.mois);
+  return L.slice(-12);
+}
+
+function renderGraphes() {
+  const mois = moisSerie();
+  const labels = mois.map(m => { const [a, x] = m.split('-'); return MOIS_FR[+x - 1].slice(0, 4) + ' ' + a.slice(2); });
+  const parMois = mois.map(m => Object.values(S.bons || {}).filter(b => b && String(b.h?.charge || '').slice(0, 7) === m));
+
+  $('#dsGBons').innerHTML = svgBarres(labels, [
+    { n: 'Bons chargés', c: G_ORANGE, v: parMois.map(L => L.length) },
+    { n: 'Clôturés', c: G_NAVY, v: parMois.map(L => L.filter(b => b.h.cloture).length) }
+  ]);
+
+  $('#dsGTaux').innerHTML = svgLigne(labels,
+    parMois.map(L => L.length ? L.reduce((s, b) => s + tauxService(b), 0) / L.length * 100 : null),
+    { couleur: G_VERT, suffixe: ' %', nom: 'taux de service' });
+
+  $('#dsGDelai').innerHTML = svgLigne(labels,
+    parMois.map(L => { const v = L.map(b => delais(b)['charge>cloture']).filter(x => x != null); return v.length ? v.reduce((a, c) => a + c, 0) / v.length : null; }),
+    { couleur: G_ORANGE, suffixe: ' j ouvrés', nom: 'bout en bout' });
+
+  const bons = Object.values(S.bons || {}).filter(b => b && dansMois(b.h && b.h.charge, D.mois));
+  $('#dsGEtapes').innerHTML = svgAnneau(ETAPES.map((e, i) => ({
+    n: e.court, v: bons.filter(b => etapeDe(b).k === e.k).length,
+    c: ['#9AA7B4', '#FFB266', G_ORANGE, '#C98BE0', '#5B9BD5', '#4BAF7F', G_VERT][i] || G_GRIS
+  })).filter(p => p.v));
+
+  const lig = Object.values(S.bons || {}).filter(b => b && dansMois(b.h && b.h.charge, D.mois))
+    .flatMap(b => [...(b.lignes || []).map(() => 'servie'), ...(b.reliquats || []).map(r => r.etat ? 'rupture_close' : 'rupture')]);
+  $('#dsGLignes').innerHTML = svgAnneau([
+    { n: 'Lignes servies', v: lig.filter(x => x === 'servie').length, c: G_VERT },
+    { n: 'Ruptures ouvertes', v: lig.filter(x => x === 'rupture').length, c: G_ROUGE },
+    { n: 'Ruptures clôturées', v: lig.filter(x => x === 'rupture_close').length, c: '#9AA7B4' }
+  ]);
+
+  const rec = S.mv.filter(m => m.type === 'reception' && !m.annule && dansMois(m.date || (m.ts || '').slice(0, 10), D.mois) && m.qteAnn != null);
+  $('#dsGConf').innerHTML = svgAnneau([
+    { n: 'Lignes conformes', v: rec.filter(m => +m.qte === +m.qteAnn).length, c: G_VERT },
+    { n: 'Manquantes', v: rec.filter(m => +m.qte < +m.qteAnn).length, c: G_ROUGE },
+    { n: 'En excédent', v: rec.filter(m => +m.qte > +m.qteAnn).length, c: G_ORANGE }
+  ]);
+}
+
+function renderDash() {
+  /* période */
+  const sel = $('#dsMois');
+  if (sel) {
+    const dispo = moisConnus();
+    if (D.mois && !dispo.includes(D.mois)) D.mois = '';
+    sel.innerHTML = `<option value="">Toute la période</option>` + dispo.map(m => `<option value="${m}"${D.mois === m ? ' selected' : ''}>${moisLib(m)}</option>`).join('');
+    sel.value = D.mois;
+  }
+  const M = D.mois;
+  const bons = Object.values(S.bons || {}).filter(b => b && dansMois(b.h && b.h.charge, M));
+  const mvs = S.mv.filter(m => !m.annule && dansMois(m.date || (m.ts || '').slice(0, 10), M));
+  $('#dsPortee').innerHTML = '<b>Délais en jours ouvrés</b> (samedi et dimanche exclus) · ' + (M
+    ? `${moisLib(M)} — ${fmt(bons.length)} bon(s), ${fmt(mvs.length)} mouvement(s)`
+    : `Toute la période — ${fmt(bons.length)} bon(s), ${fmt(mvs.length)} mouvement(s)`);
+
+  /* ── expressions de besoin ── */
+  const clos = bons.filter(b => b.h.cloture);
+  const ouverts = bons.filter(b => !b.h.cloture);
+  const retard = ouverts.filter(b => (joursOuvres(b.h.charge, today()) || 0) > 5);
+  const lignesD = bons.reduce((s, b) => s + lignesDde(b), 0);
+  const lignesS = bons.reduce((s, b) => s + lignesSrv(b), 0);
+  const ts = bons.length ? moyenne2(bons.map(tauxService)) * 100 : null;
+  $('#dsEb').innerHTML =
+    carte('Bons chargés', fmt(bons.length)) +
+    carte('Clôturés', fmt(clos.length)) +
+    carte('En cours', fmt(ouverts.length)) +
+    carte('Ouverts depuis plus de 5 jours ouvrés', fmt(retard.length), '', null, retard.length > 0) +
+    carte('Lignes demandées', fmt(lignesD)) +
+    carte('Lignes servies', fmt(lignesS)) +
+    carte('Taux de service', ts == null ? null : ts.toFixed(1).replace('.', ','), '%', bons.length, ts != null && ts < 90);
+
+  const phases = PHASES.map(([x, z, ui]) => {
+    const v = bons.map(b => delais(b)[x + '>' + z]).filter(d => d != null);
+    return [ui, v.length ? v.reduce((a, c) => a + c, 0) / v.length : null, v.length];
+  });
+  $('#dsDelais').innerHTML = phases.map(([ui, v, n]) =>
+    carte(ui, v == null ? null : v.toFixed(1).replace('.', ','), 'j', n)).join('');
+
+  /* ── l'utilisateur : ce qu'il a fait, et ce qui l'attend ── */
+  const moi = S.user ? S.user.cuid : '';
+  const heure = new Date().getHours();
+  const mesMv = mvs.filter(m => m.par === moi);
+  const mesBons = bons.filter(b => b.par === moi);
+  const aFaire = Object.values(S.bons || {}).filter(b => b && b.h && !b.h.cloture);
+  const aMoi = aFaire.filter(b => b.par === moi);
+  $('#dsHello').innerHTML = `<div class="ds-av">${esc(initiales(S.user ? S.user.nom : '?'))}</div>
+    <div><b>${heure < 12 ? 'Bonjour' : heure < 18 ? 'Bon après-midi' : 'Bonsoir'} ${esc((S.user && S.user.nom || '').split(' ')[0])}</b>
+    <span>${aMoi.length ? `${fmt(aMoi.length)} de tes bons ${aMoi.length>1?'sont encore ouverts':'est encore ouvert'}` : 'aucun de tes bons n\'est en attente'}
+      · ${fmt(aFaire.length)} bon(s) ouvert(s) au total${S.user && S.user.role === 'admin' ? ' · administrateur' : ''}</span></div>`;
+  $('#dsMoi').innerHTML =
+    carte('Mes bons chargés', fmt(mesBons.length)) +
+    carte('Mes bons clôturés', fmt(mesBons.filter(b => b.h.cloture).length)) +
+    carte('Mes bons encore ouverts', fmt(aMoi.length), '', null, aMoi.length > 0) +
+    carte('Mes accords', fmt(mesMv.filter(m => m.type === 'accord').length)) +
+    carte('Mes réceptions et retours', fmt(mesMv.filter(m => m.type === 'reception' || m.type === 'retour').length)) +
+    carte('Mes mouvements', fmt(mesMv.length));
+
+  const parQui = {};
+  mvs.forEach(m => { const k = m.par || '?'; (parQui[k] = parQui[k] || { nom: m.parNom || m.par, n: 0, acc: 0, rec: 0, cor: 0 }); const x = parQui[k];
+    x.n++; if (m.type === 'accord') x.acc++; if (m.type === 'reception' || m.type === 'retour') x.rec++; if (m.type === 'correction' || m.type === 'annulation') x.cor++; });
+  bons.forEach(b => { const k = b.par || '?'; (parQui[k] = parQui[k] || { nom: b.parNom || b.par, n: 0, acc: 0, rec: 0, cor: 0 }); parQui[k].bons = (parQui[k].bons || 0) + 1; });
+  const qui = Object.entries(parQui).sort((a, b) => b[1].n - a[1].n);
+  $('#dsQui').innerHTML = !qui.length
+    ? `<tbody><tr><td style="padding:20px;text-align:center;color:var(--muted);font-size:13px">Aucune activité sur la période.</td></tr></tbody>`
+    : `<thead><tr><th>Utilisateur</th><th class="r">Bons</th><th class="r">Accords</th><th class="r">Réceptions / retours</th><th class="r">Corrections</th><th class="r">Mouvements</th></tr></thead><tbody>`
+      + qui.map(([k, x]) => `<tr${k === moi ? ' class="ds-moi"' : ''}><td>${esc(x.nom || k)}${k === moi ? ' <span class="pill">toi</span>' : ''}</td>
+          <td class="r">${fmt(x.bons || 0)}</td><td class="r">${fmt(x.acc)}</td><td class="r">${fmt(x.rec)}</td>
+          <td class="r">${fmt(x.cor)}</td><td class="r"><b>${fmt(x.n)}</b></td></tr>`).join('') + '</tbody>';
+
+  /* ── ruptures ── */
+  const rup = [];
+  bons.forEach(b => (b.reliquats || []).forEach((r, i) => {
+    const d = dispoEb(S.arts[r.key], ACTS.findIndex(x => x.k === b.act));
+    rup.push({ b, r, srv: d ? d.servable : 0, glob: d ? d.glob : 0, ouvert: !r.etat });
+  }));
+  const rOuv = rup.filter(x => x.ouvert);
+  $('#dsRup').innerHTML =
+    carte('Ruptures ouvertes', fmt(rOuv.length), '', null, rOuv.length > 0) +
+    carte('Articles distincts', fmt(new Set(rOuv.map(x => x.r.code)).size)) +
+    carte('Servables aujourd\'hui', fmt(rOuv.filter(x => x.srv >= x.r.manquant).length)) +
+    carte('Clôturées', fmt(rup.length - rOuv.length));
+
+  /* ── réceptions ── */
+  const recs = {};
+  mvs.filter(m => m.type === 'reception').forEach(m => { const id = m.docId || ('~' + m.id); (recs[id] = recs[id] || []).push(m); });
+  const ligRec = Object.values(recs).flat();
+  const c = conformite(ligRec);
+  const testes = ligRec.filter(m => m.dtq && m.drtq);
+  $('#dsRec').innerHTML =
+    carte('Réceptions', fmt(Object.keys(recs).length)) +
+    carte('Lignes reçues', fmt(ligRec.length)) +
+    carte('Quantité reçue', fmt(ligRec.reduce((s, m) => s + (+m.qte || 0), 0))) +
+    carte('Non conformes', fmt(c.nc), '', c.mes, c.nc > 0) +
+    carte('Taux de non-conformité', c.taux == null ? null : (c.taux * 100).toFixed(1).replace('.', ','), '%', c.mes, c.taux > 0) +
+    carte('Manquants', fmt(c.manq)) + carte('Excédents', fmt(c.exc)) +
+    carte('Délai des tests qualité', testes.length ? moyenne2(testes.map(m => joursOuvres(m.dtq, m.drtq))).toFixed(1).replace('.', ',') : null, 'j', testes.length);
+
+  /* ── retours, prêts, transferts ── */
+  const rets = {};
+  mvs.filter(m => m.type === 'retour').forEach(m => { const id = m.docId || ('~' + m.id); (rets[id] = rets[id] || []).push(m); });
+  const ligRet = Object.values(rets).flat();
+  const pretsP = mvs.filter(m => m.type === 'pret');
+  const dus = pretsTous().filter(p => resteDe(p) > 0);
+  $('#dsFlux').innerHTML =
+    carte('Retours', fmt(Object.keys(rets).length)) +
+    carte('Quantité retournée', fmt(ligRet.reduce((s, m) => s + (+m.qte || 0), 0))) +
+    carte('Prêts de la période', fmt(pretsP.length)) +
+    carte('Prêts en cours', fmt(dus.length), '', null, dus.length > 0) +
+    carte('Quantité due', fmt(dus.reduce((s, p) => s + resteDe(p), 0))) +
+    carte('Transferts', fmt(mvs.filter(m => m.type === 'transfert').length));
+
+  /* ── stock, à l'instant présent ── */
+  const arts = S.order.map(k => S.arts[k]);
+  const glob = arts.reduce((s, a) => s + globalOf(a), 0);
+  const att = arts.reduce((s, a) => s + (+a.att || 0), 0);
+  $('#dsStock').innerHTML =
+    carte('Stock global', fmt(glob)) +
+    carte('À dispatcher', fmt(att), '', null, att > 0) +
+    carte('Physique KM4', fmt(arts.reduce((s, a) => s + (+a.km4 || 0), 0))) +
+    carte('Physique AGL', fmt(arts.reduce((s, a) => s + (+a.agl || 0), 0))) +
+    carte('Références au catalogue', fmt(arts.length)) +
+    carte('Références à zéro', fmt(arts.filter(a => globalOf(a) <= 0).length)) +
+    carte('Dernier inventaire', S.meta.lastTx || '—');
+
+  /* ── répartitions ── */
+  const parAct = ACTS.map((a, i) => [a.ui, arts.reduce((s, x) => s + (+x.a[i] || 0), 0)]).filter(l => l[1] > 0).sort((x, y) => y[1] - x[1]);
+  $('#dsParAct').innerHTML = parAct.length ? barres(parAct) : '<div class="note">Aucune dotation.</div>';
+
+  const parEdl = {};
+  bons.forEach(b => { const e = b.edl || '—'; (parEdl[e] = parEdl[e] || []).push(b); });
+  const edls = Object.entries(parEdl).map(([e, L]) => {
+    const d = L.map(b => delais(b)['charge>cloture']).filter(x => x != null);
+    return { e, n: L.length, lig: L.reduce((s, b) => s + lignesDde(b), 0), ts: moyenne2(L.map(tauxService)) * 100, bout: d.length ? moyenne2(d) : null, nb: d.length };
+  }).sort((a, b) => b.n - a.n).slice(0, 8);
+  $('#dsEdl').innerHTML = !edls.length
+    ? `<tbody><tr><td style="padding:20px;text-align:center;color:var(--muted);font-size:13px">Aucun bon sur la période.</td></tr></tbody>`
+    : `<thead><tr><th>Prestataire</th><th class="r">Bons</th><th class="r">Lignes</th><th class="r">Taux de service</th><th class="r">Délai total</th></tr></thead><tbody>`
+      + edls.map(x => `<tr><td>${esc(x.e)}</td><td class="r">${fmt(x.n)}</td><td class="r">${fmt(x.lig)}</td>
+          <td class="r"><b class="taux ${x.ts >= 100 ? 't-ok' : x.ts >= 50 ? 't-moy' : 't-bas'}">${(x.ts || 0).toFixed(0)}&nbsp;%</b></td>
+          <td class="r">${x.bout == null ? '<span class="muted">—</span>' : x.bout.toFixed(1).replace('.', ',') + ' j'}</td></tr>`).join('') + '</tbody>';
+
+  const manq = {};
+  rOuv.forEach(({ r }) => { manq[r.code] = manq[r.code] || { lib: r.lib, q: 0, n: 0 }; manq[r.code].q += r.manquant; manq[r.code].n++; });
+  const top = Object.entries(manq).sort((a, b) => b[1].q - a[1].q).slice(0, 8);
+  $('#dsManq').innerHTML = !top.length
+    ? `<tbody><tr><td style="padding:20px;text-align:center;color:var(--muted);font-size:13px">Aucune rupture ouverte.</td></tr></tbody>`
+    : `<thead><tr><th>Code</th><th>Article</th><th class="r">Bons</th><th class="r">Total manquant</th></tr></thead><tbody>`
+      + top.map(([code, x]) => `<tr><td><span class="code">${esc(code)}</span></td><td>${esc(x.lib)}</td>
+          <td class="r">${fmt(x.n)}</td><td class="r"><b>${fmt(x.q)}</b></td></tr>`).join('') + '</tbody>';
+
+  renderGraphes();
+  const parType = Object.entries(mvs.reduce((o, m) => { o[m.type] = (o[m.type] || 0) + 1; return o; }, {}))
+    .map(([t, n]) => [MVLBL[t] || t, n]).sort((a, b) => b[1] - a[1]);
+  $('#dsMv').innerHTML = parType.length ? barres(parType) : '<div class="note">Aucun mouvement sur la période.</div>';
+}
+
+function exportDash() {
+  const lignes = [['Indicateur', 'Valeur', 'Unité', 'Périmètre']];
+  const per = D.mois ? moisLib(D.mois) : 'toute la période';
+  document.querySelectorAll('#p-dash .kpis').forEach(bloc => {
+    const titre = bloc.previousElementSibling && bloc.previousElementSibling.textContent.trim();
+    bloc.querySelectorAll('.kpi').forEach(k => {
+      const nom = k.querySelector('.k').textContent.trim();
+      const v = k.querySelector('.v').cloneNode(true);
+      v.querySelectorAll('.kpi-n').forEach(x => x.remove());
+      const u = v.querySelector('span') ? v.querySelector('span').textContent.trim() : '';
+      v.querySelectorAll('span').forEach(x => x.remove());
+      lignes.push([(titre ? titre + ' · ' : '') + nom, v.textContent.trim(), u, per]);
+    });
+  });
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(lignes);
+  ws['!cols'] = [{ wch: 46 }, { wch: 14 }, { wch: 8 }, { wch: 22 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'Tableau de bord');
+  XLSX.writeFile(wb, `Tableau_de_bord_${D.mois || today()}.xlsx`);
+}
+
+function initDash() {
+  $('#dsMois').addEventListener('change', () => { D.mois = $('#dsMois').value; renderDash(); });
+  $('#dsExport').onclick = exportDash;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   SUIVI DES BONS DE L'INTÉRIEUR
+   Même matière que le Suivi EB, mais restreinte aux bons dont la zone
+   est « Intérieur », et centrée sur les dates qui intéressent le
+   service transport : remise au transport, traitement, fin de
+   traitement, enlèvement, clôture. Un bon reste unique : on le fait
+   avancer d'ici comme depuis le Suivi EB.
+   ══════════════════════════════════════════════════════════════════ */
+
+const I = { mois:'', cherche:'', etape:'' };
+const COLS_INT = [
+  ['transport','Remise au transport'], ['preparation','Traitement'],
+  ['traite','Fin de traitement'], ['enleve','Enlèvement'], ['cloture','Clôture']
+];
+
+function bonsInterieur(){
+  const q = norm(I.cherche||'').trim();
+  return bonsTries().filter(b=>{
+    if(!estInterieur(b)) return false;
+    if(I.mois && String(b.h?.charge||'').slice(0,7)!==I.mois) return false;
+    if(I.etape==='ouverts' && b.h?.cloture) return false;
+    if(I.etape && I.etape!=='ouverts' && etapeDe(b).k!==I.etape) return false;
+    if(q && !q.split(/\s+/).every(m=>texteBon(b).includes(m))) return false;
+    return true;
+  });
+}
+
+function renderInterieur(){
+  if(!$('#inTab')) return;
+  const tous = bonsTries().filter(estInterieur);
+  /* filtres */
+  const selM=$('#inMois');
+  const mois=[...new Set(tous.map(b=>String(b.h?.charge||'').slice(0,7)).filter(x=>x.length===7))].sort().reverse();
+  if(I.mois && !mois.includes(I.mois)) I.mois='';
+  selM.innerHTML=`<option value="">Tous les mois</option>`+mois.map(m=>`<option value="${m}"${I.mois===m?' selected':''}>${moisLib(m)}</option>`).join('');
+  const selE=$('#inEtape');
+  const cpt=k=>tous.filter(b=>etapeDe(b).k===k).length;
+  selE.innerHTML=`<option value="">Toutes les étapes</option><option value="ouverts">Non clôturés (${tous.filter(b=>!b.h?.cloture).length})</option>`
+    + ETAPES.slice(1).map(e=>`<option value="${e.k}"${I.etape===e.k?' selected':''}>${esc(e.court)} (${cpt(e.k)})</option>`).join('');
+  selE.value=I.etape;
+
+  const L=bonsInterieur();
+  $('#inPortee').innerHTML = '<b>Délais en jours ouvrés</b> (samedi et dimanche exclus) · '
+    + (I.mois||I.etape||I.cherche ? `${L.length} bon(s) sur ${tous.length} de l'intérieur` : `${tous.length} bon(s) de l'intérieur`);
+
+  const moy=a=>{ const v=a.filter(x=>x!=null); return v.length?v.reduce((x,y)=>x+y,0)/v.length:null; };
+  const cartes=[['Bons de l\'intérieur',L.length,'',null],
+                ['En cours',L.filter(b=>!b.h?.cloture).length,'',null],
+                ['Clôturés',L.filter(b=>b.h?.cloture).length,'',null],
+                ['Au transport, non enlevés',L.filter(b=>b.h?.transport && !b.h?.enleve).length,'',null]]
+    .concat(PHASES_INT.map(([x,z,ui])=>{
+      const v=L.map(b=>delais(b)[x+'>'+z]).filter(d=>d!=null);
+      return [ui, v.length?v.reduce((a,c)=>a+c,0)/v.length:null,'j',v.length];
+    }));
+  $('#inKpis').innerHTML = cartes.map(([k,v,u,n])=>`<div class="kpi"${n?` title="Calculé sur ${n} bon(s)"`:''}>
+      <div class="k">${esc(k)}</div><div class="v">${v==null?'—':(u?(+v).toFixed(1).replace('.',','):fmt(v))}${u?` <span style="font-size:12px;color:var(--muted)">${u}</span>`:''}`
+      + (n?`<span class="kpi-n">sur ${n}</span>`:'')+`</div></div>`).join('');
+
+  const t=$('#inTab');
+  if(!L.length){
+    t.innerHTML=`<tbody><tr><td style="padding:26px;text-align:center;color:var(--muted);font-size:13px">${
+      tous.length?'Aucun bon ne correspond à ces critères.':'Aucun bon de l\'intérieur. La zone se choisit à la saisie de l\'EB.'}</td></tr></tbody>`;
+    return;
+  }
+  t.innerHTML=`<thead><tr><th>Référence</th><th>EDL</th><th>Projet</th><th>Site</th>`
+    + COLS_INT.map(c=>`<th>${c[1]}</th>`).join('')
+    + `<th>Étape</th><th class="r">Délai total</th><th></th></tr></thead><tbody>`
+    + L.map(b=>{
+      const d=delais(b), su=prochaine(b), i=etapeCourante(b);
+      const cls = i===etapesDe(b).length-1 ? 'ok' : b.h?.transport ? 'partiel' : 'rupture';
+      const btn = su ? (su.k==='impression'
+          ? `<button class="btn sm" data-iprint="${esc(b.ref)}">Imprimer l'accord</button>`
+          : `<button class="btn sm" data-inext="${esc(b.ref)}" data-k="${su.k}">${esc(su.verbe)}</button>`) : '';
+      return `<tr class="eb-${cls}">
+        <td><span class="code">${esc(b.ref)}</span></td>
+        <td>${esc(b.edl||'')}</td><td>${esc(b.projet||'—')}</td><td>${esc(b.site||'—')}</td>`
+        + COLS_INT.map(([k])=>`<td>${b.h?.[k]?isoToFR(String(b.h[k]).slice(0,10)):'<span class="muted">—</span>'}</td>`).join('')
+        + `<td><span class="pill ${i===etapesDe(b).length-1?'ok':i<=1?'':'warn'}">${esc(etapeDe(b).court)}</span></td>
+        <td class="r">${d['charge>cloture']!=null?d['charge>cloture']+' j':(d.age!=null?d.age+' j':'—')}</td>
+        <td style="white-space:nowrap">${btn} <button class="btn sm ghost" data-iopen="${esc(b.ref)}" title="Ouvrir dans le Suivi EB">Détail</button></td></tr>`;
+    }).join('') + '</tbody>';
+}
+
+function exportInterieur(){
+  const L=bonsInterieur();
+  if(!L.length) return toast('Aucun bon à exporter','err');
+  const head=['Référence','N° OF / BLM',"N° EB d'origine",'Projet','Activité','EDL','Site','Zone','Date de réception']
+    .concat(COLS_INT.map(c=>c[1])).concat(PHASES_INT.map(p=>p[2]+' (j ouvrés)'))
+    .concat(['Étape','Lignes demandées','Lignes servies','Taux de service','Saisi par']);
+  const rows=L.map(b=>{ const d=delais(b);
+    return [b.ref,b.of||'',b.ebOrigine||'',b.projet||'',b.actUi,b.edl,b.site||'','Intérieur',b.h?.charge||'']
+      .concat(COLS_INT.map(([k])=>(b.h?.[k]||'').slice(0,10)))
+      .concat(PHASES_INT.map(([x,z])=>d[x+'>'+z]??''))
+      .concat([etapeDe(b).court,lignesDde(b),lignesSrv(b),Math.round(tauxService(b)*100)/100,b.parNom||b.par||'']); });
+  const wb=XLSX.utils.book_new(), ws=XLSX.utils.aoa_to_sheet([head,...rows]);
+  ws['!cols']=head.map(h=>({wch:Math.min(Math.max(h.length+2,12),30)}));
+  XLSX.utils.book_append_sheet(wb,ws,'Bons intérieur');
+  XLSX.writeFile(wb,`Bons_interieur_${I.mois||today()}.xlsx`);
+}
+
+function initInterieur(){
+  let t=null;
+  $('#inCherche').addEventListener('input',()=>{ clearTimeout(t); t=setTimeout(()=>{ I.cherche=$('#inCherche').value; renderInterieur(); },180); });
+  $('#inEtape').addEventListener('change',()=>{ I.etape=$('#inEtape').value; renderInterieur(); });
+  $('#inMois').addEventListener('change',()=>{ I.mois=$('#inMois').value; renderInterieur(); });
+  $('#inExport').onclick=exportInterieur;
+  $('#inTab').addEventListener('click',e=>{
+    const n=e.target.closest('[data-inext]'); if(n){ e.preventDefault(); return franchir(n.dataset.inext,n.dataset.k); }
+    const p=e.target.closest('[data-iprint]'); if(p){ e.preventDefault(); return imprimerAccord(p.dataset.iprint,true); }
+    const o=e.target.closest('[data-iopen]');
+    if(o){ E.detail=o.dataset.iopen; E.cherche=''; E.mois=''; E.etape=''; $('#ebCherche').value='';
+           allerOnglet('suivi'); renderSuivi();
+           const c=$('#ebDetail'); if(c && c.scrollIntoView) c.scrollIntoView({behavior:'smooth',block:'start'}); }
+  });
 }
 
 function initEb(){
@@ -3702,12 +4696,18 @@ function initEb(){
   });
   $('#ebMois').addEventListener('change',()=>{ E.mois=$('#ebMois').value; E.detail=null; renderSuivi(); });
   $('#ebEtape').addEventListener('change',()=>{ E.etape=$('#ebEtape').value; renderSuivi(); });
+  $('#ebZoneF').addEventListener('change',()=>{ E.zone=$('#ebZoneF').value; renderSuivi(); });
   let tCherche=null;
   $('#ebCherche').addEventListener('input',()=>{ clearTimeout(tCherche);
     tCherche=setTimeout(()=>{ E.cherche=$('#ebCherche').value;
       const L=bonsFiltres(); if(L.length===1) E.detail=L[0].ref;   // un seul résultat : on l'ouvre
       renderSuivi(); },180); });
+  $('#ebChrono').addEventListener('change', e=>{
+    const i=e.target.closest('[data-etape]');
+    if(i) corrigerDate(i.dataset.ref, i.dataset.etape, i.value);
+  });
   $('#ebOfSave').onclick=()=>enregistrerOf($('#ebOfSave').dataset.ref);
+  $('#ebZoneBon').addEventListener('change',()=>changerZone($('#ebZoneBon').dataset.ref, $('#ebZoneBon').value));
   $('#ebOf').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); enregistrerOf($('#ebOfSave').dataset.ref); } });
   $('#ebSuppr').onclick=()=>supprimerBon($('#ebSuppr').dataset.ref);
   $('#rpCherche').addEventListener('input',renderRuptures);
@@ -3724,6 +4724,9 @@ function initEb(){
 }
 
 initEb();
+initPrets();
+initDash();
+initInterieur();
 initFiches();
 renderEb();
 
