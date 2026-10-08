@@ -786,6 +786,9 @@ tr.ds-moi td{background:#FFF7EF}
 
       <!-- ================= SUIVI EB ================= -->
       <section class="panel" id="p-suivi">
+        <div class="banner info"><span>✎</span><div><b>Corriger un bon :</b> clique sur sa ligne dans le tableau — son détail s'ouvre juste en dessous.
+          Dans ce détail, chaque article porte un bouton <b>Corriger</b> à droite : il change la quantité, la désignation ou l'entrepôt,
+          reprend le stock et signale que le <b>bon de livraison est à rééditer</b>. Les dates d'étape se corrigent au même endroit.</div></div>
         <div class="filtre-mois">
           <label class="fld" style="margin:0;flex:1;min-width:240px"><span>Rechercher un bon</span>
             <input class="inp" id="ebCherche" spellcheck="false" autocomplete="off"
@@ -818,7 +821,40 @@ tr.ds-moi td{background:#FFF7EF}
             <button class="btn sm ghost danger" id="ebSuppr" hidden>Supprimer ce bon</button>
           </div>
           <div class="chrono" id="ebChrono"></div>
+          <div id="ebBlAlerte"></div>
           <div class="tscroll"><table id="ebDTab"></table></div>
+
+          <!-- correction d'une ligne accordée : quantité, article, entrepôt -->
+          <div id="ebCorr" hidden style="border-top:1px solid var(--line);padding:14px 16px;background:#FCFDFE">
+            <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+              <b id="coTitre" style="font-size:13px">Corriger la ligne</b>
+              <span class="note" style="margin:0">le stock est repris et le bon de livraison se régularise</span>
+              <div style="flex:1"></div>
+              <button class="btn sm ghost" id="coCancel">Abandonner</button>
+            </div>
+            <div class="eb-grid">
+              <label class="fld" style="grid-column:span 2;position:relative"><span>Article — laisser vide pour ne pas changer la désignation</span>
+                <input class="inp mono" id="coQ" placeholder="Code ou libellé du bon article…" autocomplete="off" spellcheck="false">
+                <div class="results" id="coRes" hidden></div>
+                <div class="note" id="coArt" style="margin:4px 0 0"></div></label>
+              <label class="fld"><span>Quantité demandée</span><input class="inp num" id="coDde" type="number" min="0" step="1"></label>
+              <label class="fld"><span>Quantité accordée</span><input class="inp num" id="coAcc" type="number" min="0" step="1">
+                <div class="note" id="coDispo" style="margin:4px 0 0"></div></label>
+              <label class="fld"><span>Entrepôt</span><select class="inp" id="coWh"></select></label>
+              <label class="fld" style="grid-column:span 2"><span>Motif — obligatoire</span>
+                <input class="inp" id="coMotif" list="coMotifs" placeholder="Ex. quantité mal saisie, article erroné sur l'EB…"></label>
+              <datalist id="coMotifs">
+                <option value="Quantité mal saisie"></option><option value="Article erroné sur l'EB"></option>
+                <option value="Écart constaté à l'enlèvement"></option><option value="Désignation corrigée par le prescripteur"></option>
+                <option value="Entrepôt de retrait modifié"></option>
+              </datalist>
+            </div>
+            <div class="dis-f">
+              <button class="btn primary" id="coGo">Appliquer la correction</button>
+              <div style="flex:1"></div>
+              <span class="cap" id="coResume"></span>
+            </div>
+          </div>
         </div>
 
       </section>
@@ -3594,6 +3630,9 @@ async function ebAccorder(){
 
   for(const l of E.lignes){
     const a = S.arts[l.keyServi]; if(!a) continue;
+    /* Index de la ligne dans le bon : il permet de retrouver exactement les
+       mouvements d'une ligne quand on la corrige plus tard. */
+    const li = lignes.length;
     const acts = (patchs[a.key]?.a || a.a).slice();
     const whs  = { km4:(patchs[a.key]?.km4 ?? (+a.km4||0)), agl:(patchs[a.key]?.agl ?? (+a.agl||0)) };
     let reste = l.accorde; const prel = [];
@@ -3603,7 +3642,7 @@ async function ebAccorder(){
       if(pris<=0) continue;
       acts[pool] = (+acts[pool]||0) - pris; reste -= pris;
       prel.push({ pool, ui:ACTS[pool].ui, q:pris });
-      mvs.push({ type:'accord', code:a.code, key:a.key, lib:a.lib, wh:l.wh||'',
+      mvs.push({ type:'accord', code:a.code, key:a.key, lib:a.lib, wh:l.wh||'', li,
                  act:ACTS[pool].k, actUi:ACTS[pool].ui, qte:pris,
                  ref, res:$('#ebEdl').value.trim().toUpperCase(), who:act.ui, date:today(),
                  detail: l.sub ? `substitution de ${l.code} — ${l.lib}` : '' });
@@ -3772,12 +3811,18 @@ function delais(b){
   d.age = b.h.cloture ? null : joursOuvres(b.h.charge, today());
   return d;
 }
+/* Une ligne servie en partie porte déjà la quantité demandée en entier, et son
+   reste part en reliquat : additionner les deux comptait le manque deux fois
+   et écrasait le taux de service (12 demandés, 8 servis donnaient 50 % au lieu
+   de 67 %). Seuls les reliquats sans ligne — ceux dont rien n'a pu être servi —
+   s'ajoutent à la demande. */
+const relOrphelins = b => (b.reliquats||[]).filter(r => !(b.lignes||[]).some(l => l.key===r.key));
 function tauxService(b){
-  const dde=(b.lignes||[]).reduce((s,l)=>s+l.demande,0)+(b.reliquats||[]).reduce((s,l)=>s+l.manquant,0);
+  const dde=(b.lignes||[]).reduce((s,l)=>s+l.demande,0)+relOrphelins(b).reduce((s,r)=>s+r.manquant,0);
   const acc=(b.lignes||[]).reduce((s,l)=>s+l.accorde,0);
   return dde?acc/dde:1;
 }
-const lignesDde = b => (b.lignes||[]).length + (b.reliquats||[]).length;
+const lignesDde = b => (b.lignes||[]).length + relOrphelins(b).length;
 const lignesSrv = b => (b.lignes||[]).length;
 const bonsTries = () => Object.values(S.bons||{}).filter(Boolean)
   .sort((a,b)=>String(b.h?.accord||'').localeCompare(String(a.h?.accord||'')));
@@ -3850,8 +3895,20 @@ function construireAccord(b){
   doc.setTextColor(20).setFont('courier','bold').setFontSize(14);
   doc.text(b.ref,W-M,M+15,{align:'right'});
   doc.setDrawColor(20).setLineWidth(.5).line(M,M+19,W-M,M+19);
+  /* Un bon corrigé circule parfois à côté de son édition précédente : il doit
+     dire lui-même laquelle fait foi. */
+  const corrs=b.corrections||[];
+  let y0=M+24;
+  if(corrs.length){
+    const le=isoToFR(String(b.majBl||'').slice(0,10)) || isoToFR(corrs[corrs.length-1].le);
+    doc.setFillColor(255,243,230).setDrawColor(230,170,100).setLineWidth(.3);
+    doc.rect(M,y0,W-2*M,9,'FD');
+    doc.setFont('helvetica','bold').setFontSize(8).setTextColor(150,70,0);
+    doc.text(`ÉDITION CORRIGÉE DU ${le} — ANNULE ET REMPLACE LES ÉDITIONS PRÉCÉDENTES`, M+3, y0+5.8);
+    y0+=13;
+  }
 
-  doc.autoTable({ startY:M+24, margin:{left:M,right:M}, theme:'grid',
+  doc.autoTable({ startY:y0, margin:{left:M,right:M}, theme:'grid',
     styles:{font:'helvetica',fontSize:8,cellPadding:1.6,lineColor:[175,175,175],lineWidth:.1},
     columnStyles:{0:{cellWidth:28,fontStyle:'bold',fillColor:[240,240,240]},1:{cellWidth:63},
                   2:{cellWidth:30,fontStyle:'bold',fillColor:[240,240,240]},3:{cellWidth:'auto'}},
@@ -3862,7 +3919,9 @@ function construireAccord(b){
           ['Accordé le',isoToFR((b.h.accord||'').slice(0,10)),'Accordé par',b.parNom||'—']] });
 
   const corps=(b.lignes||[]).map((l,i)=>[String(i+1).padStart(2,'0'), l.code,
-    l.subDe?`${l.lib}\n(en remplacement de ${l.subDe.code} — ${l.subDe.lib})`:l.lib,
+    (l.subDe?`${l.lib}\n(en remplacement de ${l.subDe.code} — ${l.subDe.lib})`:l.lib)
+      + (l.corr?`\n(ligne corrigée le ${isoToFR(l.corr.le)}${l.corr.avant && l.corr.avant.code!==l.code?` — était ${l.corr.avant.code}`:''}${
+           l.corr.avant && l.corr.avant.accorde!==l.accorde?` — était ${nbPdf(l.corr.avant.accorde)}`:''})`:''),
     nbPdf(l.demande), nbPdf(l.accorde), l.wh||'—']);
   const dep=corps.length;
   (b.reliquats||[]).forEach(r=>corps.push(['',r.code,r.lib+' — non servi, en reliquat',nbPdf(r.manquant),'0','—']));
@@ -3879,6 +3938,17 @@ function construireAccord(b){
                   3:{cellWidth:18,halign:'right'},4:{cellWidth:18,halign:'right',fontStyle:'bold'},5:{cellWidth:18}},
     didParseCell:h=>{ if(h.section==='body'&&h.row.index>=dep) h.cell.styles.textColor=[170,0,30]; } });
 
+  /* Journal des corrections, en clair sous le tableau : celui qui reçoit le
+     bon doit pouvoir vérifier ce qui a bougé depuis la première édition. */
+  if(corrs.length){
+    doc.autoTable({ startY:doc.lastAutoTable.finalY+5, margin:{left:M,right:M}, theme:'grid',
+      head:[['Corrections apportées','Ligne','Motif','Le','Par']],
+      body:corrs.map(c=>[c.resume||'—', String(c.ligne||''), c.motif||'—', isoToFR(c.le), c.par||'—']),
+      styles:{font:'helvetica',fontSize:7,cellPadding:1.4,lineColor:[200,170,140],lineWidth:.1,textColor:[110,60,10]},
+      headStyles:{fillColor:[255,243,230],textColor:[150,70,0],fontStyle:'bold',lineColor:[220,180,140]},
+      columnStyles:{0:{cellWidth:'auto'},1:{cellWidth:12,halign:'center'},2:{cellWidth:42},3:{cellWidth:20},4:{cellWidth:30}} });
+  }
+
   /* Le bon sert de bon de livraison : les traits de signature descendent vers
      le bas de page, pour laisser la place aux cachets au-dessus. Position
      fixe tant que le tableau le permet, sinon page suivante. */
@@ -3894,7 +3964,8 @@ function construireAccord(b){
   /* Pied de page sur CHAQUE page, avec la référence et la pagination : un bon
      de livraison peut circuler page par page, chacune doit être identifiable. */
   const n=doc.internal.getNumberOfPages();
-  const pied=`Édité avec ARCH le ${new Date().toLocaleString('fr-FR')} — ${(b.lignes||[]).length} ligne(s) accordée(s) — ${b.parNom||''}`;
+  const pied=`Édité avec ARCH le ${new Date().toLocaleString('fr-FR')} — ${(b.lignes||[]).length} ligne(s) accordée(s) — ${b.parNom||''}`
+    + (corrs.length?` — édition corrigée n° ${corrs.length+1}`:'');
   for(let i=1;i<=n;i++){
     doc.setPage(i);
     doc.setFont('helvetica','normal').setFontSize(6.5).setTextColor(140);
@@ -3908,7 +3979,12 @@ async function imprimerAccord(ref, horodate){
   let doc;
   try{ await chargerPdf(); doc=construireAccord(b); }
   catch(err){ return toast('Accord PDF indisponible : '+err.message,'err'); }
-  if(horodate && !b.h.impression){ b.h.impression=new Date().toISOString(); await store.saveBon(ref,b); renderSuivi(); }
+  /* On garde la date de la dernière édition : c'est elle qui dit si le bon de
+     livraison en circulation est à jour, pas la date d'impression — celle-ci
+     ne se pose qu'une fois et sert à mesurer le délai. */
+  b.blEdite=new Date().toISOString();
+  if(horodate && !b.h.impression) b.h.impression=b.blEdite;
+  await store.saveBon(ref,b); renderSuivi(); renderInterieur();
   try{
     const w=window.open(doc.output('bloburl'),'_blank');
     if(w) return toast(`${ref} — accord ouvert, Ctrl+P pour imprimer`,'ok');
@@ -3941,6 +4017,14 @@ function pastilleEtape(b){
   const L=etapesSeq(b), i=etapeCourante(b);
   const cls = i===L.length-1 ? 'ok' : i<=1 ? '' : 'warn';
   return `<span class="pill ${cls}">${esc(L[i].court)}</span>`;
+}
+/* Le bon de livraison est-il à jour ? true s'il l'est, false s'il a été
+   corrigé depuis sa dernière édition, null s'il n'a jamais été édité. */
+function blAJour(b){
+  if(!b.majBl) return true;
+  const edite = b.blEdite || b.h?.impression || '';
+  if(!edite) return null;
+  return String(b.majBl) <= String(edite);
 }
 /* Bouton d'une étape libre encore à saisir (remise au transport). */
 function btnLibre(b, attr='next'){
@@ -3983,7 +4067,9 @@ function renderSuivi(){
             : `<button class="btn sm" data-next="${esc(b.ref)}" data-k="${su.k}">${esc(su.verbe)}</button>`) : '')
           + btnLibre(b)
           + (i>1?` <button class="btn sm ghost" data-undo="${esc(b.ref)}" title="Annuler la dernière étape">&#8629;</button>`:'')
-          + (i>=2?` <button class="btn sm ghost" data-re="${esc(b.ref)}" title="Réimprimer l'accord">&#9113;</button>`:'');
+          + (i>=2?(blAJour(b)===false
+              ? ` <button class="btn sm" data-re="${esc(b.ref)}" title="Le bon a été corrigé : rééditer le bon de livraison" style="background:#B8203C;border-color:#B8203C;color:#fff">Rééditer le BL</button>`
+              : ` <button class="btn sm ghost" data-re="${esc(b.ref)}" title="Réimprimer l'accord">&#9113;</button>`):'');
         return `<tr data-open="${esc(b.ref)}" style="cursor:pointer">
           <td><span class="code">${esc(b.ref)}</span></td>
           <td>${estInterieur(b)?'<span class="pill agl">Intérieur</span>':'<span class="pill">Abidjan</span>'}</td>
@@ -3993,7 +4079,8 @@ function renderSuivi(){
           <td class="r">${lignesSrv(b)}${(b.reliquats||[]).length?` <span style="color:#B8203C">+${b.reliquats.length}</span>`:''}</td>
           <td class="r"><b class="taux ${ts===100?'t-ok':ts>=50?'t-moy':'t-bas'}">${ts}&nbsp;%</b></td>
           <td>${isoToFR(b.h.charge)}</td>
-          <td>${pastilleEtape(b)}${estInterieur(b)&&b.h.transport?'<span class="eb-wh" style="white-space:normal">transport '+isoToFR(String(b.h.transport).slice(0,10))+'</span>':''}</td>
+          <td>${pastilleEtape(b)}${estInterieur(b)&&b.h.transport?'<span class="eb-wh" style="white-space:normal">transport '+isoToFR(String(b.h.transport).slice(0,10))+'</span>':''}${
+            blAJour(b)===false?'<span class="eb-sub" style="white-space:normal">BL à rééditer</span>':''}</td>
           <td>${jauge(b)}</td>
           <td class="r">${d['charge>cloture']!=null?d['charge>cloture']+' j':(d.age!=null?d.age+' j':'—')}</td>
           <td style="min-width:200px">${btns}</td></tr>`;
@@ -4028,19 +4115,38 @@ function renderSuivi(){
           : (on?isoToFR(val):'—')}</div>
         <div class="pas-j">${ph!=null?(e.libre?'':'+')+ph+' j':''}</div></div>`;
     }).join('');
-    $('#ebDTab').innerHTML=`<thead><tr><th>Code</th><th>Article</th><th class="r">Demandé</th><th class="r">Accordé</th><th>Puisé sur</th><th>Entrepôt</th></tr></thead><tbody>`
-      + (b.lignes||[]).map(l=>`<tr class="eb-${l.accorde>=l.demande?'ok':'partiel'}">
+    /* Le bon de livraison est reconstruit à partir des lignes : après une
+       correction il suffit de le rééditer, mais encore faut-il le savoir. */
+    $('#ebBlAlerte').innerHTML = blAJour(b)===false
+      ? `<div class="banner warn" style="margin:0 16px 12px"><span>⚠</span><div>Ce bon a été corrigé le ${esc(isoToFR(String(b.majBl).slice(0,10)))} :
+          le bon de livraison imprimé n'est plus à jour.
+          <button class="btn sm" data-re="${esc(b.ref)}" style="margin-left:8px">Rééditer le bon de livraison</button></div></div>`
+      : '';
+
+    $('#ebDTab').innerHTML=`<thead><tr><th>Code</th><th>Article</th><th class="r">Demandé</th><th class="r">Accordé</th><th>Puisé sur</th><th>Entrepôt</th><th>Correction</th></tr></thead><tbody>`
+      + (b.lignes||[]).map((l,i)=>`<tr class="eb-${l.accorde>=l.demande?'ok':'partiel'}">
           <td><span class="code">${esc(l.code)}</span>${l.subDe?`<span class="eb-sub">remplace <s>${esc(l.subDe.code)}</s></span>`:''}</td>
-          <td>${esc(l.lib)}${l.subDe?`<span class="eb-sub">demandé : ${esc(l.subDe.lib)}</span>`:''}</td>
+          <td>${esc(l.lib)}${l.subDe?`<span class="eb-sub">demandé : ${esc(l.subDe.lib)}</span>`:''}
+              ${l.corr?`<span class="eb-wh" style="white-space:normal">corrigée le ${esc(isoToFR(l.corr.le))}${l.corr.motif?' · '+esc(l.corr.motif):''}${(()=>{
+                 const v=l.corr.avant||{}, d=[];
+                 if(v.code && v.code!==l.code) d.push('article '+v.code);
+                 if(v.accorde!=null && v.accorde!==l.accorde) d.push(fmt(v.accorde)+' accordé');
+                 if(v.demande!=null && v.demande!==l.demande) d.push(fmt(v.demande)+' demandé');
+                 if(v.wh && v.wh!==l.wh) d.push(v.wh);
+                 return d.length?` (avant : ${esc(d.join(', '))})`:'';
+               })()}</span>`:''}</td>
           <td class="r">${fmt(l.demande)}</td><td class="r">${fmt(l.accorde)}</td>
           <td style="font-size:11.5px">${(l.prel||[]).map(p=>esc(p.ui)+' ('+fmt(p.q)+')').join('<br>')}</td>
-          <td>${l.wh?`<span class="pill ${l.wh.toLowerCase()}">${esc(l.wh)}</span>`:'—'}</td></tr>`).join('')
+          <td>${l.wh?`<span class="pill ${l.wh.toLowerCase()}">${esc(l.wh)}</span>`:'—'}</td>
+          <td>${modif?`<button class="btn sm ghost" data-corr="${esc(b.ref)}" data-i="${i}" title="Corriger la quantité, la désignation ou l'entrepôt">Corriger</button>`:''}</td></tr>`).join('')
       + (b.reliquats||[]).map(r=>`<tr class="eb-${r.etat?'ok':'rupture'}"><td><span class="code">${esc(r.code)}</span></td><td>${esc(r.lib)}</td>
           <td class="r">${fmt(r.manquant)}</td><td class="r">0</td>
-          <td colspan="2">${r.etat==='transfere'?`<span class="pill ok">reportée sur ${esc(r.vers)}</span>`
+          <td colspan="3">${r.etat==='transfere'?`<span class="pill ok">reportée sur ${esc(r.vers)}</span>`
             :r.etat==='abandonne'?`<span class="pill">abandonnée${r.motif?' · '+esc(r.motif):''}</span>`
             :'<span class="pill" style="border-color:#F0B6C2;background:#FCEBEF;color:#B8203C">rupture ouverte</span>'}</td></tr>`).join('')
       + '</tbody>';
+    /* Une correction ouverte sur un autre bon n'a plus lieu d'être. */
+    if(C.ref && C.ref!==b.ref) fermerCorrection();
   }
 }
 
@@ -4171,6 +4277,191 @@ async function rouvrirRupture(ref, i){
   toast(`Rupture ${r.code} rouverte`,'ok'); renderRuptures(); renderBadgeEb();
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   CORRECTION D'UNE LIGNE ACCORDÉE
+   Une erreur de quantité ou de désignation se découvre souvent après
+   coup, au moment où le prestataire enlève. Corriger la ligne fait
+   trois choses d'un coup :
+   — le stock est repris : l'ancienne quantité retourne sur les
+     dotations et l'entrepôt d'où elle venait, la nouvelle en ressort ;
+   — le journal suit : les mouvements d'accord de cette ligne sont
+     réécrits à la valeur corrigée, donc l'Historique et l'annulation
+     restent justes, et une ligne « Correction » garde la trace ;
+   — le bon de livraison se régularise : il est reconstruit à partir
+     des lignes, il suffit de le rééditer. Tant qu'il ne l'a pas été,
+     le suivi affiche « BL à rééditer ».
+   ══════════════════════════════════════════════════════════════════ */
+
+const C = { ref:null, idx:null, key:null };     // correction en cours
+
+/* Les mouvements d'accord qui portent cette ligne. Les bons créés avant
+   l'arrivée de l'index de ligne se retrouvent par leur code article. */
+const mvsDeLigne = (ref, idx, key) =>
+  S.mv.filter(m => m.type==='accord' && m.ref===ref && !m.annule
+                && (m.li!=null ? m.li===idx : m.key===key));
+
+/* Disponible pour servir cette ligne : les dotations mobilisables du nouvel
+   article, plus ce que la ligne tient déjà quand l'article ne change pas. */
+function dispoCorrection(b, l, key){
+  const a=S.arts[key]; if(!a) return 0;
+  const ai=Math.max(0, ACTS.findIndex(x=>x.k===b.act));
+  const pools=[...new Set([...(l.prel||[]).map(p=>p.pool), ai, 0])];
+  const dejaTenu = (key===l.key) ? (l.accorde||0) : 0;
+  return pools.reduce((s,p)=>s+Math.max(0,+a.a[p]||0),0) + dejaTenu;
+}
+
+function ouvrirCorrection(ref, idx){
+  const b=S.bons[ref], l=b && (b.lignes||[])[idx]; if(!l) return;
+  if(!(S.user && (S.user.role==='admin' || b.par===S.user.cuid)))
+    return toast("Seul l'auteur du bon ou un administrateur peut corriger ses lignes",'err');
+  C.ref=ref; C.idx=idx; C.key=null;
+  $('#coTitre').textContent=`Corriger la ligne ${idx+1} du bon ${ref}`;
+  $('#coQ').value=''; $('#coMotif').value='';
+  $('#coDde').value=l.demande; $('#coAcc').value=l.accorde;
+  $('#ebCorr').hidden=false;
+  majCorrection();
+  const z=$('#ebCorr'); if(z.scrollIntoView) z.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function fermerCorrection(){ C.ref=null; C.idx=null; C.key=null; const e=$('#ebCorr'); if(e) e.hidden=true; }
+
+/* Rafraîchit l'article retenu, les entrepôts possibles et le disponible. */
+function majCorrection(){
+  const b=S.bons[C.ref], l=b && (b.lignes||[])[C.idx]; if(!l) return fermerCorrection();
+  const key=C.key||l.key, a=S.arts[key];
+  $('#coArt').innerHTML = a
+    ? (key===l.key
+        ? `Article inchangé : <b>${esc(a.code)}</b> — ${esc(a.lib||'')}`
+        : `Nouvel article : <b>${esc(a.code)}</b> — ${esc(a.lib||'')} <button class="btn sm ghost" id="coRaz" style="margin-left:6px">Revenir à ${esc(l.code)}</button>`)
+    : '<span style="color:var(--danger)">Article introuvable</span>';
+  const raz=$('#coRaz'); if(raz) raz.onclick=()=>{ C.key=null; $('#coQ').value=''; majCorrection(); };
+
+  const sel=$('#coWh'), sites=a?sitesPour(a):WH.slice();
+  const courant = sites.includes(l.wh)?l.wh:sites[0];
+  sel.innerHTML=sites.map(s=>`<option value="${s}">${s}</option>`).join('');
+  sel.value = sel.dataset.ref===C.ref+'#'+C.idx ? (sites.includes(sel.value)?sel.value:courant) : courant;
+  sel.dataset.ref=C.ref+'#'+C.idx;
+
+  const max=dispoCorrection(b,l,key);
+  const acc=Math.max(0,Math.floor(toNum($('#coAcc').value)));
+  const dde=Math.max(0,Math.floor(toNum($('#coDde').value)));
+  $('#coDispo').innerHTML = `Mobilisable : <b>${fmt(max)}</b>`
+    + (acc>max?` — <span style="color:var(--danger)">${fmt(acc-max)} de trop</span>`:'')
+    + (dde>acc?` · reliquat ${fmt(dde-acc)}`:'');
+
+  const chg=[];
+  if(key!==l.key) chg.push(`article ${l.code} → ${a?a.code:'?'}`);
+  if(dde!==l.demande) chg.push(`demandé ${fmt(l.demande)} → ${fmt(dde)}`);
+  if(acc!==l.accorde) chg.push(`accordé ${fmt(l.accorde)} → ${fmt(acc)}`);
+  if(sel.value!==(l.wh||'')) chg.push(`entrepôt ${l.wh||'—'} → ${sel.value}`);
+  const r=$('#coResume');
+  r.textContent = acc>max ? 'Quantité supérieure au disponible' : chg.length ? chg.join(' · ') : "Rien n'a changé";
+  r.classList.toggle('bad', acc>max);
+  $('#coGo').disabled = acc>max || !chg.length;
+}
+
+async function appliquerCorrection(){
+  const b=S.bons[C.ref], l=b && (b.lignes||[])[C.idx]; if(!l) return;
+  const ref=C.ref, idx=C.idx;
+  const newKey=C.key||l.key, a=S.arts[newKey];
+  if(!a) return toast('Article introuvable','err');
+  const dde=Math.max(0,Math.floor(toNum($('#coDde').value)));
+  const acc=Math.max(0,Math.floor(toNum($('#coAcc').value)));
+  const wh=$('#coWh').value||'';
+  const motif=$('#coMotif').value.trim();
+  if(!motif){ $('#coMotif').focus(); return toast('Le motif est obligatoire','err'); }
+  if(acc>dde && !confirm(`La quantité accordée (${fmt(acc)}) dépasse la quantité demandée (${fmt(dde)}).\n\nContinuer ?`)) return;
+
+  const avant={ code:l.code, lib:l.lib, demande:l.demande, accorde:l.accorde, wh:l.wh||'' };
+
+  /* 1. On rend tout ce que la ligne tenait, sur l'ancien article. */
+  const patchs={};
+  const etat=k=>{ const x=S.arts[k]; return patchs[k] || { a:(x.a||[]).map(v=>+v||0), km4:+x.km4||0, agl:+x.agl||0 }; };
+  const anc=etat(l.key);
+  (l.prel||[]).forEach(p=>{ anc.a[p.pool]=(+anc.a[p.pool]||0)+(+p.q||0); });
+  const cAnc=compteur(l.wh); if(cAnc) anc[cAnc]=(+anc[cAnc]||0)+(+l.accorde||0);
+  patchs[l.key]=anc;
+
+  /* 2. On reprend la nouvelle quantité, dans l'ordre des dotations déjà
+        utilisées puis l'activité du bon puis le commun. */
+  const nouv=etat(newKey);
+  const ai=Math.max(0, ACTS.findIndex(x=>x.k===b.act));
+  const ordre=[...new Set([...(newKey===l.key ? (l.prel||[]).map(p=>p.pool) : []), ai, 0])];
+  let reste=acc; const prel=[];
+  for(const pool of ordre){
+    if(reste<=0) break;
+    const pris=Math.min(reste, Math.max(0,+nouv.a[pool]||0));
+    if(pris<=0) continue;
+    nouv.a[pool]=(+nouv.a[pool]||0)-pris; reste-=pris;
+    prel.push({ pool, ui:ACTS[pool].ui, q:pris });
+  }
+  if(reste>0){
+    return toast(`Il manque ${fmt(reste)} unité(s) sur les dotations mobilisables`,'err');
+  }
+  const cNew=compteur(wh);
+  if(cNew){
+    const apres=(+nouv[cNew]||0)-acc;
+    if(apres<0 && !confirm(`${wh} n'affiche pas assez de ${a.code} : le magasin passera à ${fmt(apres)}.\n\nValider quand même ?`)) return;
+    nouv[cNew]=apres;
+  }
+  patchs[newKey]=nouv;
+
+  /* 3. La ligne elle-même. */
+  const lignes=(b.lignes||[]).slice();
+  lignes[idx]={ ...l, key:newKey, code:a.code, lib:a.lib, demande:dde, accorde:acc, wh, prel,
+                corr:{ le:today(), par:S.user?S.user.nom:'', motif, avant } };
+
+  /* 4. Le reliquat de cette ligne suit la nouvelle quantité. Une rupture déjà
+        reportée ou abandonnée n'est pas touchée : elle vit sa vie ailleurs. */
+  let reliquats=(b.reliquats||[]).slice();
+  const manquant=Math.max(0, dde-acc);
+  const j=reliquats.findIndex(r=>!r.etat && (r.key===l.key || r.key===newKey));
+  let noteRel='';
+  if(j>=0){
+    if(manquant>0) reliquats[j]={ ...reliquats[j], key:newKey, code:a.code, lib:a.lib, manquant };
+    else { reliquats.splice(j,1); noteRel=' · rupture soldée'; }
+  } else if(manquant>0){
+    reliquats.push({ key:newKey, code:a.code, lib:a.lib, manquant }); noteRel=' · rupture ouverte';
+  }
+  const figee=(b.reliquats||[]).find(r=>r.etat && (r.key===l.key||r.key===newKey));
+
+  /* 5. Écriture : stock, puis bon, puis journal. */
+  await store.saveMany(patchs);
+
+  /* Les mouvements d'accord de la ligne sont réécrits à la valeur corrigée :
+     l'Historique montre ce qui est réellement sorti, et l'annulation d'un
+     accord rend la bonne quantité. */
+  const anciens=mvsDeLigne(ref, idx, l.key);
+  const detailMv=`corrigée le ${isoToFR(today())} — ${motif}`;
+  for(let i=0;i<Math.max(anciens.length, prel.length);i++){
+    const m=anciens[i], p=prel[i];
+    if(m && p) await store.patchMv(m.id, { qte:p.q, act:ACTS[p.pool].k, actUi:ACTS[p.pool].ui,
+                                           code:a.code, key:newKey, lib:a.lib, wh, li:idx, corrige:true, detail:detailMv });
+    else if(m)  await store.patchMv(m.id, { qte:0, corrige:true, detail:detailMv+' — prélèvement supprimé' });
+    else if(p)  await store.logMv({ type:'accord', code:a.code, key:newKey, lib:a.lib, wh, li:idx,
+                                    act:ACTS[p.pool].k, actUi:ACTS[p.pool].ui, qte:p.q, ref,
+                                    res:b.edl, who:b.actUi, date:today(), corrige:true, detail:detailMv });
+  }
+
+  const resume=[];
+  if(newKey!==l.key) resume.push(`article ${avant.code} → ${a.code}`);
+  if(dde!==avant.demande) resume.push(`demandé ${fmt(avant.demande)} → ${fmt(dde)}`);
+  if(acc!==avant.accorde) resume.push(`accordé ${fmt(avant.accorde)} → ${fmt(acc)}`);
+  if(wh!==avant.wh) resume.push(`entrepôt ${avant.wh||'—'} → ${wh||'—'}`);
+
+  b.lignes=lignes; b.reliquats=reliquats;
+  b.majBl=new Date().toISOString();
+  b.corrections=[...(b.corrections||[]), { le:today(), par:S.user?S.user.nom:'', ligne:idx+1, motif, resume:resume.join(' · ') }];
+  await store.saveBon(ref, b);
+
+  await store.logMv({ type:'correction', code:a.code, key:newKey, lib:a.lib, ref, date:today(),
+    qte:acc-avant.accorde, detail:`Ligne ${idx+1} — ${resume.join(' · ')} — ${motif}${noteRel}` });
+
+  fermerCorrection();
+  toast(`${ref} — ligne ${idx+1} corrigée, bon de livraison à rééditer`,'ok');
+  if(figee) toast(`Une rupture de ${a.code} est déjà ${figee.etat==='transfere'?'reportée':'abandonnée'} : elle n'a pas été touchée`,'err');
+  renderSuivi(); renderInterieur(); renderRuptures(); renderBadge(); renderBadgeEb(); renderEtat();
+}
+
 /* ─────────────────────────── OF / BLM et suppression ─────────────────────────── */
 /* La zone se corrige après coup : les bons saisis avant son arrivée sont tous
    marqués Abidjan, et certains partent en réalité à l'intérieur. Changer la
@@ -4228,25 +4519,44 @@ function exportSuivi(){
   if(!L.length) return toast('Aucun bon à exporter','err');
   const head=['Référence','Zone','N° OF / BLM',"N° EB origine",'Projet','Activité','EDL','Site','Service demandeur','Date validation']
     .concat(ETAPES.map(e=>e.ui)).concat(PHASES.map(p=>p[2]))
-    .concat(['Lignes demandées','Lignes servies','Lignes en reliquat','Qté demandée','Qté accordée','Taux de service','Étape','Saisi par']);
-  const rows=L.map(b=>{ const d=delais(b);
+    .concat(['Lignes demandées','Lignes servies','Lignes en reliquat','Qté demandée','Qté accordée','Taux de service','Étape','Saisi par',
+             'Corrections','Dernière correction','BL à rééditer']);
+  const rows=L.map(b=>{ const d=delais(b), c=b.corrections||[];
     return [b.ref,estInterieur(b)?'Intérieur':'Abidjan',b.of||'',b.ebOrigine||'',b.projet||'',b.actUi,b.edl,b.site||'',b.demandeur||'',b.validation||'']
       .concat(ETAPES.map(e=>(b.h[e.k]||'').slice(0,10)))
       .concat(PHASES.map(([x,z])=>d[x+'>'+z]??''))
       .concat([lignesDde(b),lignesSrv(b),(b.reliquats||[]).length,
-        (b.lignes||[]).reduce((s,l)=>s+l.demande,0)+(b.reliquats||[]).reduce((s,l)=>s+l.manquant,0),
+        /* Même périmètre que le taux de service : un reliquat issu d'une ligne
+           servie en partie est déjà compté dans la quantité demandée. */
+        (b.lignes||[]).reduce((s,l)=>s+l.demande,0)+relOrphelins(b).reduce((s,r)=>s+r.manquant,0),
         (b.lignes||[]).reduce((s,l)=>s+l.accorde,0),
-        Math.round(tauxService(b)*100)/100, etapeDe(b).court, b.parNom||b.par||'']);
+        Math.round(tauxService(b)*100)/100, etapeDe(b).court, b.parNom||b.par||'',
+        c.length, c.length?c[c.length-1].le:'', blAJour(b)===false?'oui':'']);
   });
-  const det=[['Référence','EDL','Code','Article','Demandé','Accordé','Entrepôt','Puisé sur','Substitution de']];
+  /* Les lignes portent leur propre correction : code et quantités d'avant, pour
+     qu'un contrôle puisse refaire le chemin sans ouvrir l'outil. */
+  const det=[['Référence','EDL','Code','Article','Demandé','Accordé','Entrepôt','Puisé sur','Substitution de',
+              'Corrigée le','Motif de la correction','Article avant','Demandé avant','Accordé avant','Entrepôt avant','Corrigée par']];
   L.forEach(b=>{
-    (b.lignes||[]).forEach(l=>det.push([b.ref,b.edl,l.code,l.lib,l.demande,l.accorde,l.wh||'',(l.prel||[]).map(p=>p.ui).join(' + '),l.subDe?l.subDe.code+' — '+l.subDe.lib:'']));
-    (b.reliquats||[]).forEach(r=>det.push([b.ref,b.edl,r.code,r.lib,r.manquant,0,'','RELIQUAT','']));
+    (b.lignes||[]).forEach(l=>{ const c=l.corr, v=(c&&c.avant)||{};
+      det.push([b.ref,b.edl,l.code,l.lib,l.demande,l.accorde,l.wh||'',(l.prel||[]).map(p=>p.ui).join(' + '),l.subDe?l.subDe.code+' — '+l.subDe.lib:'',
+        c?c.le:'', c?c.motif||'':'', c?v.code||'':'', c&&v.demande!=null?v.demande:'', c&&v.accorde!=null?v.accorde:'', c?v.wh||'':'', c?c.par||'':'']); });
+    (b.reliquats||[]).forEach(r=>det.push([b.ref,b.edl,r.code,r.lib,r.manquant,0,'','RELIQUAT','','','','','','','','']));
   });
+  /* Une feuille dédiée : une correction = une ligne, pour le contrôle interne. */
+  const corr=[['Référence','EDL','Ligne','Correction','Motif','Le','Par','BL réédité depuis']];
+  L.forEach(b=>(b.corrections||[]).forEach(c=>corr.push([b.ref,b.edl,c.ligne||'',c.resume||'',c.motif||'',c.le||'',c.par||'',
+    blAJour(b)===false?'non':'oui'])));
+
   const wb=XLSX.utils.book_new();
-  const ws1=XLSX.utils.aoa_to_sheet([head,...rows]); ws1['!cols']=head.map(h=>({wch:Math.min(Math.max(h.length+2,11),26)}));
+  const col=h=>h.map(x=>({wch:Math.min(Math.max(String(x).length+2,11),30)}));
+  const ws1=XLSX.utils.aoa_to_sheet([head,...rows]); ws1['!cols']=col(head);
   XLSX.utils.book_append_sheet(wb,ws1,'Suivi EB');
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(det),'Lignes');
+  const ws2=XLSX.utils.aoa_to_sheet(det); ws2['!cols']=col(det[0]);
+  XLSX.utils.book_append_sheet(wb,ws2,'Lignes');
+  const ws3=XLSX.utils.aoa_to_sheet(corr.length>1?corr:[...corr,['—','','','Aucune correction sur ce périmètre','','','','']]);
+  ws3['!cols']=col(corr[0]);
+  XLSX.utils.book_append_sheet(wb,ws3,'Corrections');
   XLSX.writeFile(wb,`Suivi_EB_${E.mois||today()}.xlsx`);
 }
 function exportReliquats(){
@@ -4962,12 +5272,13 @@ function exportInterieur(){
   if(!L.length) return toast('Aucun bon à exporter','err');
   const head=['Référence','N° OF / BLM',"N° EB d'origine",'Projet','Activité','EDL','Site','Zone','Date de réception']
     .concat(COLS_INT.map(c=>c[1])).concat(PHASES_INT.map(p=>p[2]+' (j ouvrés)'))
-    .concat(['Étape','Lignes demandées','Lignes servies','Taux de service','Saisi par']);
+    .concat(['Étape','Lignes demandées','Lignes servies','Taux de service','Saisi par','Corrections','BL à rééditer']);
   const rows=L.map(b=>{ const d=delais(b);
     return [b.ref,b.of||'',b.ebOrigine||'',b.projet||'',b.actUi,b.edl,b.site||'','Intérieur',b.h?.charge||'']
       .concat(COLS_INT.map(([k])=>(b.h?.[k]||'').slice(0,10)))
       .concat(PHASES_INT.map(([x,z])=>d[x+'>'+z]??''))
-      .concat([etapeDe(b).court,lignesDde(b),lignesSrv(b),Math.round(tauxService(b)*100)/100,b.parNom||b.par||'']); });
+      .concat([etapeDe(b).court,lignesDde(b),lignesSrv(b),Math.round(tauxService(b)*100)/100,b.parNom||b.par||'',
+               (b.corrections||[]).length, blAJour(b)===false?'oui':'']); });
   const wb=XLSX.utils.book_new(), ws=XLSX.utils.aoa_to_sheet([head,...rows]);
   ws['!cols']=head.map(h=>({wch:Math.min(Math.max(h.length+2,12),30)}));
   XLSX.utils.book_append_sheet(wb,ws,'Bons intérieur');
@@ -5067,6 +5378,26 @@ function initEb(){
     const i=e.target.closest('[data-etape]');
     if(i) corrigerDate(i.dataset.ref, i.dataset.etape, i.value);
   });
+
+  /* correction d'une ligne accordée */
+  $('#ebDTab').addEventListener('click', e=>{
+    const c=e.target.closest('[data-corr]');
+    if(c){ e.preventDefault(); ouvrirCorrection(c.dataset.corr, +c.dataset.i); }
+  });
+  $('#ebBlAlerte').addEventListener('click', e=>{
+    const r=e.target.closest('[data-re]'); if(r){ e.preventDefault(); imprimerAccord(r.dataset.re,false); }
+  });
+  attachSearch('#coQ','#coRes', a=>{ C.key=kOf(a.code); $('#coQ').value=a.code+' — '+(a.lib||''); majCorrection(); });
+  ['#coDde','#coAcc'].forEach(s=>$(s).addEventListener('input',majCorrection));
+  $('#coWh').addEventListener('change',majCorrection);
+  $('#coCancel').onclick=fermerCorrection;
+  $('#coGo').onclick=async()=>{
+    const b=$('#coGo'); if(b.disabled) return;
+    const t=b.textContent; b.disabled=true; b.textContent='Un instant…';
+    try{ await delai(appliquerCorrection(), 40000, 'correction de la ligne'); }
+    catch(err){ console.error(err); toast('Correction non enregistrée : '+((err&&err.message)||err),'err'); }
+    finally{ b.disabled=false; b.textContent=t; }
+  };
   $('#ebOfSave').onclick=()=>enregistrerOf($('#ebOfSave').dataset.ref);
   $('#ebZoneBon').addEventListener('change',()=>changerZone($('#ebZoneBon').dataset.ref, $('#ebZoneBon').value));
   $('#ebOf').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); enregistrerOf($('#ebOfSave').dataset.ref); } });
