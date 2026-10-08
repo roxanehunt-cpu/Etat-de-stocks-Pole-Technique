@@ -471,6 +471,9 @@ tr.ds-moi td{background:#FFF7EF}
 .ds-t{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px}
 .ds-t:first-of-type{margin-top:4px}
 .ds-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:16px;margin-top:22px}
+.zone-bloc{border:1px solid var(--line-s);border-radius:10px;padding:12px 12px 4px;margin-bottom:12px;background:#FCFDFE}
+.zone-t{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;margin-bottom:10px}
+.zone-t .muted{font-weight:400;font-size:11.5px}
 .barres{display:flex;flex-direction:column;gap:9px}
 .bar{display:grid;grid-template-columns:minmax(0,1fr) 120px 72px;align-items:center;gap:12px;font-size:12.5px}
 .bar-l{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -610,10 +613,11 @@ tr.ds-moi td{background:#FFF7EF}
       <button class="navbtn" data-tab="retour"><span class="n">07</span> Retours</button>
       <button class="navbtn" data-tab="prets"><span class="n">08</span> Prêts &amp; transferts <span class="badge" id="badgePret">0</span></button>
       <button class="navbtn" data-tab="transmission"><span class="n">09</span> Inventaire physique</button>
-      <button class="navbtn" data-tab="dispatch"><span class="n">10</span> À dispatcher <span class="badge" id="badgeDis">0</span></button>
-      <button class="navbtn" data-tab="etat"><span class="n">11</span> État de stock</button>
-      <button class="navbtn" data-tab="histo"><span class="n">12</span> Historique</button>
-      <button class="navbtn" data-tab="users" id="navUsers" hidden><span class="n">13</span> Utilisateurs</button>
+      <button class="navbtn" data-tab="ajust"><span class="n">10</span> Ajustement de stock</button>
+      <button class="navbtn" data-tab="dispatch"><span class="n">11</span> À dispatcher <span class="badge" id="badgeDis">0</span></button>
+      <button class="navbtn" data-tab="etat"><span class="n">12</span> État de stock</button>
+      <button class="navbtn" data-tab="histo"><span class="n">13</span> Historique</button>
+      <button class="navbtn" data-tab="users" id="navUsers" hidden><span class="n">14</span> Utilisateurs</button>
     </div>
     <div class="railfoot">
       <div class="me" id="me" hidden>
@@ -650,6 +654,18 @@ tr.ds-moi td{background:#FFF7EF}
         <div class="kpis" id="dsEb"></div>
         <h3 class="ds-t">Délais moyens par phase</h3>
         <div class="kpis" id="dsDelais"></div>
+
+        <h3 class="ds-t">Délais par zone</h3>
+        <div class="note" id="dsZNote" style="margin:-6px 0 12px"></div>
+        <div class="zone-bloc">
+          <div class="zone-t"><span class="pill">Abidjan</span> <span class="muted">livraison au magasin</span></div>
+          <div class="kpis" id="dsZAbj" data-titre="Zone Abidjan"></div>
+        </div>
+        <div class="zone-bloc">
+          <div class="zone-t"><span class="pill agl">Intérieur</span> <span class="muted">passage par le service transport</span></div>
+          <div class="kpis" id="dsZInt" data-titre="Zone Intérieur"></div>
+        </div>
+
         <h3 class="ds-t">Ruptures</h3>
         <div class="kpis" id="dsRup"></div>
         <h3 class="ds-t">Réceptions et conformité</h3>
@@ -672,6 +688,10 @@ tr.ds-moi td{background:#FFF7EF}
           <div class="card">
             <div class="card-h"><h3>Délai bout en bout par mois</h3><span class="note" style="margin:0">jours ouvrés</span></div>
             <div class="card-b" id="dsGDelai"></div>
+          </div>
+          <div class="card" style="grid-column:1/-1">
+            <div class="card-h"><h3>Délai bout en bout : Abidjan contre Intérieur</h3><span class="note" style="margin:0">jours ouvrés, par mois</span></div>
+            <div class="card-b" id="dsGZone"></div>
           </div>
           <div class="card">
             <div class="card-h"><h3>Où en sont les bons</h3></div>
@@ -805,7 +825,7 @@ tr.ds-moi td{background:#FFF7EF}
 
       <!-- ================= RUPTURES ================= -->
       <section class="panel" id="p-interieur">
-        <div class="banner info"><span>⛟</span><div>Les bons dont la zone est <b>Intérieur</b> passent par le service transport avant d'être préparés. Ils figurent aussi dans le Suivi EB : cet onglet n'en est qu'une lecture dédiée, avec les dates et les délais qui comptent pour l'expédition.</div></div>
+        <div class="banner info"><span>⛟</span><div>Les bons dont la zone est <b>Intérieur</b> passent par le service transport. Cette remise se saisit <b>quand le transport passe</b> : elle ne dépend ni de la mise en préparation ni de la fin du traitement, et n'attend pas son tour dans le parcours. Ces bons figurent aussi dans le Suivi EB : cet onglet n'en est qu'une lecture dédiée, avec les dates et les délais qui comptent pour l'expédition.</div></div>
 
         <div class="filtre-mois">
           <label class="fld" style="margin:0;flex:1;min-width:220px"><span>Rechercher un bon</span>
@@ -1030,6 +1050,31 @@ tr.ds-moi td{background:#FFF7EF}
         </div>
       </section>
 
+      <!-- ================= AJUSTEMENT DE STOCK ================= -->
+      <section class="panel" id="p-ajust">
+        <div class="banner warn"><span>±</span><div>À utiliser quand l'inventaire n'est pas terminé et qu'une quantité est visiblement fausse. L'ajustement <b>écrit directement</b> la valeur corrigée, sans passer par une réception ni un accord. Chaque correction est journalisée avec son motif dans l'Historique et reste annulable.</div></div>
+
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-h"><h3>Article à corriger</h3>
+            <div style="flex:1"></div>
+            <span class="note" style="margin:0">un article à la fois</span></div>
+          <div class="card-b">
+            <label class="fld" style="max-width:420px;position:relative;margin-bottom:0"><span>Rechercher</span>
+              <input class="inp mono" id="ajQ" placeholder="Code ou libellé…" autocomplete="off" spellcheck="false">
+              <div class="results" id="ajRes" hidden></div></label>
+          </div>
+        </div>
+
+        <div id="ajBody"></div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-h"><h3>Derniers ajustements</h3>
+            <div style="flex:1"></div>
+            <button class="btn sm dark" id="ajExp">Exporter</button></div>
+          <div class="tscroll" style="max-height:360px"><table id="ajTab"></table></div>
+        </div>
+      </section>
+
       <!-- ================= DISPATCH ================= -->
       <section class="panel" id="p-dispatch">
         <div class="banner info"><span>⤨</span><div>Quantités entrées en stock mais pas encore affectées. Répartis-les entre les activités, le reliquat reste en file.</div></div>
@@ -1066,7 +1111,7 @@ tr.ds-moi td{background:#FFF7EF}
               <option value="">Tous les types</option><option value="accord">Accords</option>
               <option value="reception">Réceptions</option><option value="dispatch">Dispatchings</option>
               <option value="retour">Retours</option>
-              <option value="transmission">Inventaires physiques</option><option value="pret">Prêts</option>
+              <option value="transmission">Inventaires physiques</option><option value="ajustement">Ajustements de stock</option><option value="pret">Prêts</option>
               <option value="transfert">Transferts</option><option value="retour_pret">Retours de prêt</option><option value="actualisation">Actualisations</option>
               <option value="base">Chargements de base</option><option value="annulation">Annulations</option>
             </select>
@@ -1188,6 +1233,7 @@ const VUES = [
   { k:'retour',       ui:'Retours' },
   { k:'prets',        ui:'Prêts & transferts' },
   { k:'transmission', ui:'Inventaire physique' },   // clé conservée : droits déjà attribués
+  { k:'ajust',        ui:'Ajustement de stock' },
   { k:'dispatch',     ui:'À dispatcher' },
   { k:'etat',         ui:'État de stock' },
   { k:'histo',        ui:'Historique' }
@@ -1195,7 +1241,7 @@ const VUES = [
 const PROFILS = {
   consultation: ['dash','etat','histo','suivi','interieur','ruptures'],
   dispatch:     ['etat','dispatch','histo'],
-  magasin:      ['dash','eb','suivi','interieur','ruptures','reception','retour','prets','etat','histo'],
+  magasin:      ['dash','eb','suivi','interieur','ruptures','reception','retour','prets','ajust','etat','histo'],
   complet:      VUES.map(v=>v.k)
 };
 // Un compte sans liste de vues (créé avant cette version) garde l'accès complet.
@@ -1743,6 +1789,7 @@ const TITLES = {
   reception:['Réceptions','Entrer les quantités reçues et les affecter aux activités'],
   retour:['Retours de stock','Matériel qui revient du terrain et repart en dispatching'],
   transmission:['Inventaire physique','Charger les extractions KM4 et AGL, traiter les écarts'],
+  ajust:['Ajustement de stock','Corriger une quantité article par article, en attendant l\'inventaire'],
   dispatch:['À dispatcher','Répartir les quantités non encore affectées'],
   etat:['État de stock','Vue consolidée et export pour les prescripteurs'],
   histo:['Historique','Tous les mouvements, annulation possible'],
@@ -1763,6 +1810,7 @@ $$('.navbtn').forEach(b=>b.onclick=()=>{
   if(t==='reception'){ renderListe('reception'); renderRcFours(); }
   if(t==='retour'){ renderListe('retour'); $('#rtWhoList').innerHTML=ressourcesConnues().map(r=>`<option value="${esc(r)}"></option>`).join(''); }
   if(t==='dispatch') renderDispatch();
+  if(t==='ajust') renderAjust();
   if(t==='etat'){ renderMajBanner(); renderEtat(); }
   window.scrollTo(0,0);
 });
@@ -2625,6 +2673,207 @@ function renderDispatch(){
   });
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   AJUSTEMENT DE STOCK
+   Les inventaires physiques écrasent KM4 et AGL, mais ils ne tombent
+   pas tous les jours. Entre deux inventaires, une quantité peut être
+   visiblement fausse : un article sorti sans bon, une saisie doublée,
+   un comptage partiel. Cet onglet corrige la valeur directement,
+   compteur par compteur, avec un motif obligatoire.
+
+   Deux familles de compteurs, et la différence compte :
+   — les DOTATIONS par activité et la file À DISPATCHER forment le
+     stock global (c'est la colonne « Vérification » du fichier) ;
+   — KM4, AGL et ABOBO ne font que localiser ce stock.
+   Corriger KM4 ne change donc pas le global, et corriger une dotation
+   ne change pas le physique : les deux écrans d'écart le montrent.
+
+   Chaque ajustement garde l'état complet de l'article avant écriture,
+   donc il s'annule exactement, sans recalcul.
+   ══════════════════════════════════════════════════════════════════ */
+
+const AJ = { key:null };
+
+/* L'état des compteurs d'un article, tel qu'il est écrit en base. */
+const ajEtat = a => ({ km4:+a.km4||0, agl:+a.agl||0, att:+a.att||0, a:(a.a||[]).map(x=>+x||0) });
+
+function renderAjust(){
+  const host=$('#ajBody'); if(!host) return;
+  renderAjustListe();
+  const a = AJ.key && S.arts[AJ.key];
+  if(!a){
+    host.innerHTML=`<div class="card"><div class="empty"><strong>Aucun article sélectionné</strong>Cherche un code ou un libellé ci-dessus pour afficher ses compteurs.</div></div>`;
+    return;
+  }
+  const e=ajEtat(a), site=siteImpose(a);
+  const ligne=(id,lbl,val,aide)=>`<label><span>${esc(lbl)}</span>
+    <input type="number" step="1" data-aj="${id}" value="${val}">
+    <div class="muted mono" style="font-size:10px;text-align:right;margin-top:2px">actuel ${fmt(val)}</div>
+    ${aide?`<div class="muted" style="font-size:10px;margin-top:1px">${esc(aide)}</div>`:''}</label>`;
+
+  host.innerHTML=`<div class="dis">
+    <div class="dis-h">
+      <span class="code">${esc(a.code)}</span>
+      <span class="l">${esc(a.lib||'—')}</span>
+      ${a.fam?`<span class="pill">${esc(a.fam)}</span>`:''}
+      ${site?`<span class="pill warn">stocké à ${esc(site)}</span>`:''}
+      <div style="flex:1"></div>
+      <button class="btn sm ghost" data-aj="close">Changer d'article</button>
+    </div>
+
+    <div class="note" style="margin:0 0 8px"><b>Stock global</b> = somme des dotations + file à dispatcher.
+      KM4, AGL et ABOBO localisent ce stock, ils ne le définissent pas.</div>
+
+    <div style="font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:12px 0 6px">Dotations par activité et file d'attente</div>
+    <div class="dis-g">
+      ${ACTS.map((act,i)=>ligne('a'+i, act.ui, e.a[i], '')).join('')}
+      ${ligne('att','À dispatcher', e.att, 'non encore affecté')}
+    </div>
+
+    <div style="font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:16px 0 6px">Stock physique par entrepôt</div>
+    <div class="dis-g" style="grid-template-columns:repeat(auto-fit,minmax(130px,200px))">
+      ${ligne('km4','Physique KM4', e.km4, '')}
+      ${ligne('agl','Physique AGL', e.agl, '')}
+      ${site?`<div class="muted" style="font-size:11px;align-self:center">${esc(site)} est un lieu de retrait : il n'a pas de compteur.</div>`:''}
+    </div>
+
+    <div class="kpis" id="ajEcarts" style="margin:14px 0 4px"></div>
+
+    <div class="eb-grid" style="margin-top:4px">
+      <label class="fld"><span>Date de l'ajustement</span><input class="inp" id="ajDate" type="date" value="${today()}"></label>
+      <label class="fld" style="grid-column:span 2"><span>Motif — obligatoire</span>
+        <input class="inp" id="ajMotif" list="ajMotifs" placeholder="Ex. recomptage partiel du 07/10, sortie sans bon régularisée…"></label>
+      <datalist id="ajMotifs">
+        <option value="Recomptage partiel"></option><option value="Sortie sans bon régularisée"></option>
+        <option value="Saisie doublée"></option><option value="Erreur de code article"></option>
+        <option value="Casse constatée"></option><option value="Écart d'inventaire en cours"></option>
+      </datalist>
+    </div>
+    <div class="dis-f">
+      <button class="btn primary" data-aj="go" disabled>Appliquer l'ajustement</button>
+      <button class="btn sm ghost" data-aj="reset">Remettre les valeurs actuelles</button>
+      <div style="flex:1"></div>
+      <span class="cap" data-aj="resume"></span>
+    </div>
+  </div>`;
+
+  const ins=[...host.querySelectorAll('input[data-aj]')];
+  const lu=()=>{
+    const v={}; ins.forEach(i=>v[i.dataset.aj]=Math.round(toNum(i.value)));
+    return { km4:v.km4, agl:v.agl, att:v.att, a:ACTS.map((_,i)=>v['a'+i]) };
+  };
+  const recalc=()=>{
+    const n=lu();
+    const gA=e.a.reduce((s,x)=>s+x,0)+e.att, gN=n.a.reduce((s,x)=>s+x,0)+n.att;
+    const pA=e.km4+e.agl, pN=n.km4+n.agl;
+    const chg=[];
+    ACTS.forEach((act,i)=>{ if(n.a[i]!==e.a[i]) chg.push(`${act.ui} ${fmt(e.a[i])} → ${fmt(n.a[i])}`); });
+    if(n.att!==e.att) chg.push(`À dispatcher ${fmt(e.att)} → ${fmt(n.att)}`);
+    if(n.km4!==e.km4) chg.push(`KM4 ${fmt(e.km4)} → ${fmt(n.km4)}`);
+    if(n.agl!==e.agl) chg.push(`AGL ${fmt(e.agl)} → ${fmt(n.agl)}`);
+    const neg = n.a.some(x=>x<0) || n.km4<0 || n.agl<0;
+
+    const c=(k,v,u,alerte)=>`<div class="kpi"><div class="k">${esc(k)}</div><div class="v"${alerte?' style="color:var(--danger)"':''}>${v}${u?` <span style="font-size:12px;color:var(--muted)">${u}</span>`:''}</div></div>`;
+    const sgn=d=>(d>0?'+':'')+fmt(d);
+    $('#ajEcarts').innerHTML =
+      c('Stock global',fmt(gN),'', false) +
+      c('Écart sur le global', gN===gA?'0':sgn(gN-gA),'', gN!==gA) +
+      c('Physique KM4 + AGL',fmt(pN),'', false) +
+      c('Vérification global − physique', (gN-pN)===0?'0':sgn(gN-pN),'', gN-pN!==0) +
+      c('Compteurs modifiés', fmt(chg.length),'', false);
+
+    const r=host.querySelector('[data-aj=resume]');
+    r.innerHTML = neg ? 'Une quantité est négative' : chg.length ? esc(chg.join(' · ')) : 'Rien n\'a changé';
+    r.classList.toggle('bad', neg);
+    host.querySelector('[data-aj=go]').disabled = neg || !chg.length;
+    return { n, chg, gA, gN };
+  };
+  ins.forEach(i=>i.addEventListener('input',recalc));
+  recalc();
+
+  host.querySelector('[data-aj=close]').onclick=()=>{ AJ.key=null; $('#ajQ').value=''; renderAjust(); };
+  host.querySelector('[data-aj=reset]').onclick=()=>{ renderAjust(); };
+  host.querySelector('[data-aj=go]').onclick=async()=>{
+    const { n, chg, gA, gN } = recalc();
+    if(!chg.length) return;
+    const motif=$('#ajMotif').value.trim();
+    if(!motif){ $('#ajMotif').focus(); return toast('Le motif est obligatoire','err'); }
+    const date=$('#ajDate').value||today();
+    if(date>today()) return toast('Date dans le futur','err');
+    if(!confirm(`Appliquer l'ajustement sur ${a.code} ?\n\n${chg.join('\n')}\n\nStock global : ${fmt(gA)} → ${fmt(gN)}\nMotif : ${motif}`)) return;
+
+    await store.saveArt(AJ.key, { a:n.a, att:n.att, km4:n.km4, agl:n.agl });
+    await store.logMv({ type:'ajustement', code:a.code, key:AJ.key, lib:a.lib,
+      qte:gN-gA, date, detail:`${motif} — ${chg.join(' · ')}`, motif, avant:e, apres:n });
+    toast(`Ajustement enregistré · ${a.code}`,'ok');
+    renderAjust(); renderBadge(); renderEtat();
+  };
+}
+
+/* Le journal des ajustements, lisible et annulable depuis cet onglet. */
+function ajustements(){
+  return S.mv.filter(m=>m.type==='ajustement')
+    .sort((x,y)=>String(y.ts||'').localeCompare(String(x.ts||''))).slice(0,200);
+}
+function renderAjustListe(){
+  const t=$('#ajTab'); if(!t) return;
+  const L=ajustements();
+  if(!L.length){
+    t.innerHTML=`<tbody><tr><td class="empty"><strong>Aucun ajustement</strong>Les corrections apparaîtront ici.</td></tr></tbody>`;
+    return;
+  }
+  t.innerHTML=`<thead><tr><th>Date</th><th>Code</th><th>Article</th><th class="r">Écart global</th><th>Motif et détail</th><th>Par</th><th></th></tr></thead><tbody>`
+    + L.map(m=>`<tr${m.annule?' style="opacity:.5"':''}>
+        <td style="white-space:nowrap">${esc(isoToFR(m.date)||String(m.ts||'').slice(0,10))}</td>
+        <td><span class="code">${esc(m.code||'')}</span></td>
+        <td>${esc(m.lib||'')}</td>
+        <td class="r mono" style="font-weight:600;color:${(+m.qte||0)<0?'var(--danger)':(+m.qte||0)>0?'var(--ok)':'inherit'}">${m.qte!=null?((+m.qte>0?'+':'')+fmt(m.qte)):''}</td>
+        <td style="font-size:11.5px;color:var(--muted)">${esc(m.detail||'')}</td>
+        <td style="font-size:11.5px">${esc(m.parNom||m.par||'')}</td>
+        <td>${m.annule?'<span class="muted" style="font-size:11px">annulé</span>'
+            :(S.user && (S.user.role==='admin'||m.par===S.user.cuid))
+              ?`<button class="btn ghost sm" data-ajundo="${esc(m.id)}">Annuler</button>`:''}</td></tr>`).join('')
+    + '</tbody>';
+  t.querySelectorAll('[data-ajundo]').forEach(b=>b.onclick=()=>undoAjust(b.dataset.ajundo));
+}
+/* L'annulation réécrit l'état d'avant, tel qu'il a été conservé : aucun
+   recalcul, donc aucune dérive même si d'autres mouvements ont eu lieu depuis.
+   C'est volontaire — l'ajustement est une écriture directe, son annulation
+   aussi. Le message prévient. */
+async function undoAjust(id){
+  const m=S.mv.find(x=>x.id===id); if(!m || m.annule) return;
+  const a=S.arts[m.key]; if(!a) return toast('Article introuvable','err');
+  if(!m.avant) return toast('Cet ajustement est trop ancien pour être annulé automatiquement','err');
+  if(!confirm(`Annuler cet ajustement ?\n${m.code} — ${m.detail||''}\n\nLes compteurs reprendront exactement les valeurs d'avant l'ajustement. Les mouvements enregistrés depuis ne seront pas rejoués.`)) return;
+  const av=m.avant;
+  await store.saveArt(m.key, { a:(av.a||[]).map(x=>+x||0), att:+av.att||0, km4:+av.km4||0, agl:+av.agl||0 });
+  m.annule=true;
+  if(store.mode==='firebase'){ try{ await FB.update('mouvements/'+id,{annule:true}); }catch(e){} }
+  await store.logMv({ type:'annulation', code:m.code, key:m.key, lib:m.lib, qte:m.qte!=null?-m.qte:null, date:today(),
+    detail:"annule l'ajustement du "+String(m.ts||'').slice(0,10) });
+  toast('Ajustement annulé','ok');
+  renderAjust(); renderBadge(); renderEtat(); renderHisto();
+}
+function exportAjust(){
+  const L=ajustements();
+  if(!L.length) return toast('Aucun ajustement à exporter','err');
+  const head=['Horodatage','Date','Code','Article','Écart sur le global','Motif','Détail',
+    'Global avant','Global après','KM4 avant','KM4 après','AGL avant','AGL après','À dispatcher avant','À dispatcher après','Saisi par','Annulé'];
+  const g=s=>s?((s.a||[]).reduce((x,y)=>x+(+y||0),0)+(+s.att||0)):'';
+  const rows=L.map(m=>[m.ts||'',m.date||'',m.code||'',m.lib||'',m.qte??'',m.motif||'',m.detail||'',
+    g(m.avant),g(m.apres),m.avant?.km4??'',m.apres?.km4??'',m.avant?.agl??'',m.apres?.agl??'',
+    m.avant?.att??'',m.apres?.att??'',m.parNom||m.par||'',m.annule?'oui':'']);
+  const ws=XLSX.utils.aoa_to_sheet([head,...rows]);
+  ws['!cols']=head.map(h=>({wch:Math.min(Math.max(h.length+2,11),40)}));
+  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Ajustements');
+  XLSX.writeFile(wb,`Ajustements_${today()}.xlsx`);
+}
+function initAjust(){
+  if(!$('#ajQ')) return;
+  attachSearch('#ajQ','#ajRes', a=>{ AJ.key=kOf(a.code); $('#ajQ').value=a.code; renderAjust(); });
+  $('#ajExp').onclick=exportAjust;
+}
+
 /* ─────────────────────────── état de stock ─────────────────────────── */
 function etFiltered(){
   const q=norm($('#etQ').value), fam=$('#etFam').value, nz=$('#etNz').checked;
@@ -2989,7 +3238,7 @@ function setupDropBase(){
 
 const MVLBL={accord:'Accord',reception:'Réception',retour:'Retour',dispatch:'Dispatching',
              transmission:'Inventaire physique',actualisation:'Actualisation',base:'Chargement de base',annulation:'Annulation',
-             suppression:'Suppression bon',compte:'Suppression compte',correction:'Correction',
+             suppression:'Suppression bon',compte:'Suppression compte',correction:'Correction',ajustement:'Ajustement',
              pret:'Prêt',transfert:'Transfert',retour_pret:'Retour de prêt'};
 function histoFiltre(){
   const t=$('#hsType').value, who=$('#hsWho').value;
@@ -3031,7 +3280,7 @@ function renderHisto(){
     <tbody>${list.map(m=>`<tr>
       <td class="mono muted" style="white-space:nowrap">${esc((m.ts||'').slice(0,16).replace('T',' '))}</td>
       <td style="white-space:nowrap">${m.par?`<span class="pill" title="${esc(m.par)}">${esc(m.parNom||m.par)}</span>`:'<span class="muted">—</span>'}</td>
-      <td><span class="pill ${m.type==='accord'?'ok':m.type==='reception'?'km4':(m.type==='retour'||m.type==='retour_pret')?'agl':m.type==='pret'?'warn':m.type==='transfert'?'km4':(m.type==='annulation'||m.type==='suppression'||m.type==='compte'||m.type==='correction')?'warn':''}">${MVLBL[m.type]||m.type}</span></td>
+      <td><span class="pill ${m.type==='accord'?'ok':m.type==='reception'?'km4':(m.type==='retour'||m.type==='retour_pret')?'agl':m.type==='pret'?'warn':m.type==='transfert'?'km4':(m.type==='annulation'||m.type==='suppression'||m.type==='compte'||m.type==='correction'||m.type==='ajustement')?'warn':''}">${MVLBL[m.type]||m.type}</span></td>
       <td style="white-space:nowrap">${m.ref
           ? (S.bons && S.bons[m.ref]
               ? `<a href="#" class="lien code" data-bon="${esc(m.ref)}" title="Ouvrir le bon dans le Suivi EB">${esc(m.ref)}</a>`
@@ -3043,11 +3292,14 @@ function renderHisto(){
       <td class="num mono" style="font-weight:600">${m.qte!=null?fmt(m.qte):''}</td>
       <td>${(m.type==='accord'&&!m.annule&&(S.user?.role==='admin'||m.par===S.user?.cuid))
               ?`<button class="btn ghost sm" data-undo="${m.id}">Annuler</button>`
+              :(m.type==='ajustement'&&!m.annule&&m.avant&&(S.user?.role==='admin'||m.par===S.user?.cuid))
+              ?`<button class="btn ghost sm" data-ajundo="${m.id}">Annuler</button>`
               :m.annule?'<span class="muted" style="font-size:11px">annulé</span>':''}</td>
     </tr>`).join('') || '<tr><td colspan="10" class="empty">Aucun mouvement ne correspond à ces filtres.</td></tr>'}</tbody>`;
   if(tous.length>400) $('#hsTab').insertAdjacentHTML('beforeend',
     `<tfoot><tr><td colspan="9" class="muted" style="padding:10px">${fmt(tous.length-400)} mouvement(s) supplémentaires — affine les filtres ou exporte.</td></tr></tfoot>`);
   $('#hsTab').querySelectorAll('[data-undo]').forEach(b=>b.onclick=()=>undoAccord(b.dataset.undo));
+  $('#hsTab').querySelectorAll('[data-ajundo]').forEach(b=>b.onclick=()=>undoAjust(b.dataset.ajundo));
   $('#hsTab').querySelectorAll('[data-bon]').forEach(a=>a.onclick=e=>{
     e.preventDefault();
     const ref=a.dataset.bon, b=S.bons[ref]; if(!b) return;
@@ -3104,6 +3356,7 @@ function renderAll(){
   if($('#p-dash').classList.contains('on')) renderDash();
   if($('#p-etat').classList.contains('on')) renderEtat();
   if($('#p-dispatch').classList.contains('on')) renderDispatch();
+  if($('#p-ajust') && $('#p-ajust').classList.contains('on')) renderAjust();
   if($('#p-reception').classList.contains('on')) renderListe('reception');
   if($('#p-retour').classList.contains('on')) renderListe('retour');
 }
@@ -3129,21 +3382,27 @@ const ETAPES = [
   { k:'charge',      ui:'Chargement EB',      court:'Chargé',         verbe:null },
   { k:'accord',      ui:'Accord selon dispo', court:'Accordé',        verbe:null },
   { k:'impression',  ui:'Impression accord',  court:'Imprimé',        verbe:"Imprimer l'accord" },
-  /* Étape réservée aux bons de l'intérieur : le matériel passe par le service
-     transport avant d'être préparé pour l'expédition. */
-  { k:'transport',   ui:'Remise au service transport', court:'Au transport', verbe:'Remise au transport', zone:'interieur' },
+  /* Étape réservée aux bons de l'intérieur, et HORS PARCOURS : la remise au
+     service transport se fait quand le transport passe, ce qui n'a aucun lien
+     avec la mise en préparation ni avec la fin du traitement. Elle se saisit
+     donc librement dès l'accord, avant ou après la préparation, sans bloquer
+     ni être bloquée par les autres étapes. */
+  { k:'transport',   ui:'Remise au service transport', court:'Au transport', verbe:'Remise au transport', zone:'interieur', libre:true },
   { k:'preparation', ui:'Mise en préparation',court:'En préparation', verbe:'En préparation' },
   { k:'traite',      ui:'Traitement terminé', court:'Traité',         verbe:'Traitement fini' },
   { k:'enleve',      ui:'EB enlevé',          court:'Enlevé',         verbe:'Enlèvement' },
   { k:'cloture',     ui:'Clôture EB',         court:'Clôturé',        verbe:'Clôturer' }
 ];
-/* Les étapes de l'intérieur ont leurs propres intervalles : c'est le suivi que
-   demande le service transport. */
+/* Les bons de l'intérieur suivent le même parcours que ceux d'Abidjan ; la
+   remise au transport s'y ajoute comme une date à part. Ses délais se mesurent
+   donc par rapport à l'accord et à l'enlèvement, jamais par rapport à la
+   préparation ou au traitement. */
 const PHASES_INT = [
   ['accord','transport','Accord → remise au transport'],
-  ['transport','preparation','Remise au transport → traitement'],
-  ['preparation','traite','Traitement → fin de traitement'],
+  ['impression','preparation','Impression → mise en préparation'],
+  ['preparation','traite','Préparation → fin de traitement'],
   ['traite','enleve','Fin de traitement → enlèvement'],
+  ['transport','enleve','Remise au transport → enlèvement'],
   ['enleve','cloture','Enlèvement → clôture'],
   ['charge','cloture','Bout en bout']
 ];
@@ -3402,37 +3661,65 @@ function ebVider(){
 }
 
 /* ─────────────────────────── étapes ─────────────────────────── */
-/* Le parcours dépend de la zone : un bon de l'intérieur passe par le service
-   transport, un bon d'Abidjan non. Toutes les fonctions de progression
-   travaillent donc sur les étapes du bon, pas sur la liste générale. */
+/* Deux listes, et la distinction compte :
+   — etapesDe(b) : toutes les étapes visibles pour ce bon, dans l'ordre
+     d'affichage, remise au transport comprise pour l'intérieur ;
+   — etapesSeq(b) : le seul parcours qui s'enchaîne, donc sans les étapes
+     libres. L'étape courante, l'étape suivante et la jauge se lisent toujours
+     là-dessus : c'est pourquoi un bon dont le traitement est fini affiche
+     « Traité » tant qu'il n'est pas enlevé, dans les deux zones. */
 const estInterieur = b => (b && b.zone) === 'interieur';
-const etapesDe = b => ETAPES.filter(e => !e.zone || e.zone === (b && b.zone));
-const etapeIdx = (k, b) => etapesDe(b).findIndex(e => e.k === k);
-const etapeCourante = b => { const L=etapesDe(b); let i=0; L.forEach((e,k)=>{ if(b.h && b.h[e.k]) i=k; }); return i; };
-const etapeDe = b => etapesDe(b)[etapeCourante(b)];
-const prochaine = b => { const L=etapesDe(b), i=etapeCourante(b); return i<L.length-1 ? L[i+1] : null; };
+const etapesDe  = b => ETAPES.filter(e => !e.zone || e.zone === (b && b.zone));
+const etapesSeq = b => etapesDe(b).filter(e => !e.libre);
+/* Étapes libres encore à saisir : la remise au transport d'un bon de
+   l'intérieur, qui s'enregistre dès que l'accord est donné. */
+const etapesLibres = b => etapesDe(b).filter(e => e.libre && b && b.h && !b.h[e.k] && b.h.accord);
+const etapeIdx = (k, b) => etapesSeq(b).findIndex(e => e.k === k);
+const etapeCourante = b => { const L=etapesSeq(b); let i=0; L.forEach((e,k)=>{ if(b.h && b.h[e.k]) i=k; }); return i; };
+const etapeDe = b => etapesSeq(b)[etapeCourante(b)];
+const prochaine = b => { const L=etapesSeq(b), i=etapeCourante(b); return i<L.length-1 ? L[i+1] : null; };
+const etapeParCle = (k, b) => etapesDe(b).find(e => e.k === k) || ETAPES.find(e => e.k === k);
 
 async function franchir(ref, k){
   const b=S.bons[ref]; if(!b) return;
-  if(etapeIdx(k,b)!==etapeCourante(b)+1) return toast('Étape précédente non franchie','err');
+  const libre = (etapeParCle(k,b)||{}).libre;
+  if(libre){
+    /* Une étape libre ne dépend que de l'accord : ni la préparation ni la fin
+       du traitement ne la conditionnent. */
+    if(!b.h.accord) return toast("L'accord n'est pas encore donné",'err');
+    if(b.h[k]) return toast('Date déjà saisie — la corriger dans le détail du bon','err');
+  }
+  else if(etapeIdx(k,b)!==etapeCourante(b)+1) return toast('Étape précédente non franchie','err');
   b.h[k]=new Date().toISOString();
   /* Le franchissement n'est pas journalisé dans « mouvements » : il ne touche
      pas au stock, et quatre lignes par bon noieraient l'Historique. Les
      horodatages vivent sur le bon lui-même, visibles dans le Suivi EB. */
   await store.saveBon(ref,b);
-  toast(`${ref} — ${etapesDe(b)[etapeIdx(k,b)].ui}`,'ok'); renderSuivi(); renderInterieur();
+  toast(`${ref} — ${etapeParCle(k,b).ui}`,'ok'); renderSuivi(); renderInterieur();
 }
 /* Corriger la date d'une étape. Une étape ne peut pas être datée avant celle
    qui la précède ni après celle qui la suit : sinon un délai deviendrait
    négatif, et les moyennes seraient faussées sans qu'on le voie. */
 async function corrigerDate(ref, k, val){
   const b=S.bons[ref]; if(!b) return;
-  const L=etapesDe(b), i=etapeIdx(k,b), e=L[i];
+  const e=etapeParCle(k,b); if(!e) return;
+  const L=etapesSeq(b), i=etapeIdx(k,b);
   const avant=b.h[k] ? String(b.h[k]).slice(0,10) : '';
   if(val===avant) return;
   if(!(S.user && (S.user.role==='admin' || b.par===S.user.cuid))){ renderSuivi(); return toast("Seul l'auteur du bon ou un administrateur peut corriger ses dates",'err'); }
 
-  if(!val){
+  if(e.libre){
+    /* Étape libre : aucun ordre à respecter vis-à-vis des autres étapes. On
+       vérifie seulement qu'elle est postérieure à l'accord et pas dans le
+       futur. Elle s'efface sans toucher au reste du parcours. */
+    if(val){
+      if(!b.h.accord) { renderSuivi(); return toast("L'accord n'est pas encore donné",'err'); }
+      const acc=String(b.h.accord).slice(0,10);
+      if(val<acc) { renderSuivi(); return toast(`Date antérieure à l'accord (${isoToFR(acc)})`,'err'); }
+      if(val>today()) { renderSuivi(); return toast('Date dans le futur','err'); }
+    }
+  }
+  else if(!val){
     if(L.slice(i+1).some(x=>b.h[x.k])) { renderSuivi(); return toast('Efface d\'abord les étapes suivantes','err'); }
     if(i===0) { renderSuivi(); return toast('La date de chargement est obligatoire','err'); }
   } else {
@@ -3454,11 +3741,13 @@ async function corrigerDate(ref, k, val){
 
 async function annulerEtape(ref){
   const b=S.bons[ref]; if(!b) return;
-  const i=etapeCourante(b);
+  /* L'index se lit sur le parcours du bon, pas sur la liste générale : sinon
+     on effaçait l'étape d'à côté. */
+  const L=etapesSeq(b), i=etapeCourante(b);
   if(i<2) return toast("L'accord s'annule depuis l'Historique, ligne par ligne",'err');
-  b.h[ETAPES[i].k]='';
+  b.h[L[i].k]='';
   await store.saveBon(ref,b);
-  toast(`${ref} — retour à « ${ETAPES[i-1].court} »`,'ok'); renderSuivi();
+  toast(`${ref} — retour à « ${L[i-1].court} »`,'ok'); renderSuivi(); renderInterieur();
 }
 
 const jours = (a,b) => (!a||!b) ? null : Math.round((new Date(b.slice(0,10))-new Date(a.slice(0,10)))/864e5);
@@ -3514,7 +3803,7 @@ function renderEtapes(){
   const n=k=>bonsTries().filter(b=>etapeDe(b).k===k).length;
   sel.innerHTML=`<option value="">Toutes les étapes</option>`
     + `<option value="ouverts">Non clôturés (${bonsTries().filter(b=>!b.h?.cloture).length})</option>`
-    + ETAPES.slice(1).map(e=>`<option value="${e.k}">${esc(e.court)} (${n(e.k)})</option>`).join('');
+    + ETAPES.filter(e=>e.k!=='charge' && !e.libre).map(e=>`<option value="${e.k}">${esc(e.court)} (${n(e.k)})</option>`).join('');
   sel.value=E.etape;
 }
 const MOIS_FR = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
@@ -3643,8 +3932,19 @@ function renderEb(){
 /* ─────────────────────────── rendu : suivi ─────────────────────────── */
 function jauge(b){
   const i=etapeCourante(b);
-  const L=etapesDe(b);
+  const L=etapesSeq(b);
   return `<span class="jauge" title="${esc(L[i].ui)}">`+L.map((e,k)=>`<i class="${k<=i?'on':''}"></i>`).join('')+'</span>';
+}
+/* Pastille d'étape : toujours l'étape courante du parcours du bon. Un bon dont
+   le traitement est fini et qui attend le prestataire affiche « Traité ». */
+function pastilleEtape(b){
+  const L=etapesSeq(b), i=etapeCourante(b);
+  const cls = i===L.length-1 ? 'ok' : i<=1 ? '' : 'warn';
+  return `<span class="pill ${cls}">${esc(L[i].court)}</span>`;
+}
+/* Bouton d'une étape libre encore à saisir (remise au transport). */
+function btnLibre(b, attr='next'){
+  return etapesLibres(b).map(e=>` <button class="btn sm ghost" data-${attr}="${esc(b.ref)}" data-k="${e.k}" title="${esc(e.ui)} — indépendante du traitement">${esc(e.verbe)}</button>`).join('');
 }
 function renderSuivi(){
   renderMois(); renderEtapes();
@@ -3681,6 +3981,7 @@ function renderSuivi(){
         const btns=(su ? (su.k==='impression'
             ? `<button class="btn sm" data-print="${esc(b.ref)}">Imprimer l'accord</button>`
             : `<button class="btn sm" data-next="${esc(b.ref)}" data-k="${su.k}">${esc(su.verbe)}</button>`) : '')
+          + btnLibre(b)
           + (i>1?` <button class="btn sm ghost" data-undo="${esc(b.ref)}" title="Annuler la dernière étape">&#8629;</button>`:'')
           + (i>=2?` <button class="btn sm ghost" data-re="${esc(b.ref)}" title="Réimprimer l'accord">&#9113;</button>`:'');
         return `<tr data-open="${esc(b.ref)}" style="cursor:pointer">
@@ -3692,10 +3993,10 @@ function renderSuivi(){
           <td class="r">${lignesSrv(b)}${(b.reliquats||[]).length?` <span style="color:#B8203C">+${b.reliquats.length}</span>`:''}</td>
           <td class="r"><b class="taux ${ts===100?'t-ok':ts>=50?'t-moy':'t-bas'}">${ts}&nbsp;%</b></td>
           <td>${isoToFR(b.h.charge)}</td>
-          <td><span class="pill ${i===6?'ok':i<=1?'':'warn'}">${ETAPES[i].court}</span></td>
+          <td>${pastilleEtape(b)}${estInterieur(b)&&b.h.transport?'<span class="eb-wh" style="white-space:normal">transport '+isoToFR(String(b.h.transport).slice(0,10))+'</span>':''}</td>
           <td>${jauge(b)}</td>
           <td class="r">${d['charge>cloture']!=null?d['charge>cloture']+' j':(d.age!=null?d.age+' j':'—')}</td>
-          <td style="white-space:nowrap">${btns}</td></tr>`;
+          <td style="min-width:200px">${btns}</td></tr>`;
       }).join('')+'</tbody>';
   }
 
@@ -3712,14 +4013,20 @@ function renderSuivi(){
     /* Les dates se corrigent : une clôture oubliée est souvent saisie le
        lendemain, et une date fausse fausse tous les délais. */
     const modif = S.user && (S.user.role==='admin' || b.par===S.user.cuid);
-    $('#ebChrono').innerHTML=etapesDe(b).map((e,k,L)=>{
-      const on=!!b.h[e.k], ph=k>0&&on?joursOuvres(b.h[L[k-1].k],b.h[e.k]):null;
+    /* Le « + N j » se compte depuis l'étape précédente du parcours. Une étape
+       libre n'a pas de précédente : son écart se compte depuis l'accord. */
+    const SEQ=etapesSeq(b);
+    $('#ebChrono').innerHTML=etapesDe(b).map(e=>{
+      const on=!!b.h[e.k];
+      const si=SEQ.findIndex(x=>x.k===e.k);
+      const dep = e.libre ? 'accord' : (si>0 ? SEQ[si-1].k : null);
+      const ph = (on && dep) ? joursOuvres(b.h[dep], b.h[e.k]) : null;
       const val=on?String(b.h[e.k]).slice(0,10):'';
-      return `<div class="pas${on?' on':''}"><div class="pas-l">${esc(e.ui)}</div>
+      return `<div class="pas${on?' on':''}"><div class="pas-l">${esc(e.ui)}${e.libre?'<span class="eb-sub">hors parcours · se saisit librement après l\'accord</span>':''}</div>
         <div class="pas-d">${modif
-          ? `<input class="inp pas-date" type="date" value="${val}" data-etape="${e.k}" data-ref="${esc(b.ref)}"${k===0?'':''}>`
+          ? `<input class="inp pas-date" type="date" value="${val}" data-etape="${e.k}" data-ref="${esc(b.ref)}">`
           : (on?isoToFR(val):'—')}</div>
-        <div class="pas-j">${ph!=null?'+'+ph+' j':''}</div></div>`;
+        <div class="pas-j">${ph!=null?(e.libre?'':'+')+ph+' j':''}</div></div>`;
     }).join('');
     $('#ebDTab').innerHTML=`<thead><tr><th>Code</th><th>Article</th><th class="r">Demandé</th><th class="r">Accordé</th><th>Puisé sur</th><th>Entrepôt</th></tr></thead><tbody>`
       + (b.lignes||[]).map(l=>`<tr class="eb-${l.accorde>=l.demande?'ok':'partiel'}">
@@ -3971,7 +4278,7 @@ function exportReliquats(){
 /* ─────────────────────────── branchements ─────────────────────────── */
 /* Tableaux qui deviennent des fiches sur téléphone : on recopie le titre de
    chaque colonne dans ses cellules, à chaque nouveau rendu du tableau. */
-const TABLES_FICHES = ['ebTab','ebBons','ebDTab','ebRel','rcTab','rtTab','rcListe','rtListe','hsTab','prEnCours','prHisto','dsEdl','dsManq','inTab','dsQui'];
+const TABLES_FICHES = ['ebTab','ebBons','ebDTab','ebRel','rcTab','rtTab','rcListe','rtListe','hsTab','prEnCours','prHisto','dsEdl','dsManq','inTab','dsQui','ajTab'];
 function etiqueter(t){
   const th=[...t.querySelectorAll('thead th')]; if(!th.length) return;
   const noms=[]; th.forEach(h=>{ for(let i=0;i<(+h.colSpan||1);i++) noms.push(h.textContent.trim()); });
@@ -4226,16 +4533,19 @@ const G_ORANGE = '#FF7900', G_NAVY = '#071B2F', G_VERT = '#1F8A4C', G_ROUGE = '#
 function svgBarres(labels, series, { h = 180, suffixe = '' } = {}) {
   if (!labels.length) return '<div class="note">Pas encore de données sur cette période.</div>';
   const W = 760, M = { t: 14, r: 10, b: 26, l: 38 }, iw = W - M.l - M.r, ih = h - M.t - M.b;
-  const max = Math.max(1, ...series.flatMap(s => s.v));
+  const max = Math.max(1, ...series.flatMap(s => s.v).filter(v => v != null));
   const pas = iw / labels.length, lg = Math.min(26, pas * 0.34);
   const y = v => M.t + ih - (v / max) * ih;
+  /* Une moyenne n'est pas un entier : on garde une décimale quand il y en a. */
+  const nb = v => Number.isInteger(v) ? fmt(v) : (+v).toFixed(1).replace('.', ',');
   const grille = [0, .5, 1].map(f => `<line x1="${M.l}" y1="${y(max * f)}" x2="${W - M.r}" y2="${y(max * f)}" stroke="${G_GRIS}" stroke-width="1"/>
     <text x="${M.l - 6}" y="${y(max * f) + 3.5}" text-anchor="end" font-size="10" fill="#7B8794">${fmt(Math.round(max * f))}</text>`).join('');
   const barres = labels.map((l, i) => series.map((s, k) => {
+    if (s.v[i] == null) return '';          // mois sans mesure : pas de barre fantôme
     const x = M.l + i * pas + pas / 2 - (series.length * lg) / 2 + k * lg;
     const hh = Math.max(1, (s.v[i] / max) * ih);
     return `<rect x="${x}" y="${M.t + ih - hh}" width="${lg - 2}" height="${hh}" rx="2" fill="${s.c}">
-      <title>${esc(l)} · ${esc(s.n)} : ${fmt(s.v[i])}${suffixe}</title></rect>`;
+      <title>${esc(l)} · ${esc(s.n)} : ${nb(s.v[i])}${suffixe}</title></rect>`;
   }).join('')).join('');
   const axe = labels.map((l, i) => `<text x="${M.l + i * pas + pas / 2}" y="${h - 8}" text-anchor="middle" font-size="9" fill="#7B8794">${esc(l)}</text>`).join('');
   const leg = series.map(s => `<span><i style="background:${s.c}"></i>${esc(s.n)}</span>`).join('');
@@ -4308,10 +4618,18 @@ function renderGraphes() {
     { couleur: G_ORANGE, suffixe: ' j ouvrés', nom: 'bout en bout' });
 
   const bons = Object.values(S.bons || {}).filter(b => b && dansMois(b.h && b.h.charge, D.mois));
-  $('#dsGEtapes').innerHTML = svgAnneau(ETAPES.map((e, i) => ({
+  /* La remise au transport n'est pas une étape du parcours : elle n'apparaît
+     donc pas ici, sinon elle resterait éternellement à zéro. */
+  $('#dsGEtapes').innerHTML = svgAnneau(ETAPES.filter(e => !e.libre).map((e, i) => ({
     n: e.court, v: bons.filter(b => etapeDe(b).k === e.k).length,
-    c: ['#9AA7B4', '#FFB266', G_ORANGE, '#C98BE0', '#5B9BD5', '#4BAF7F', G_VERT][i] || G_GRIS
+    c: ['#9AA7B4', '#FFB266', G_ORANGE, '#5B9BD5', '#4BAF7F', '#C98BE0', G_VERT][i] || G_GRIS
   })).filter(p => p.v));
+
+  /* Délai bout en bout, zone par zone : c'est là que l'écart se voit. */
+  $('#dsGZone').innerHTML = svgBarres(labels, [
+    { n: 'Abidjan', c: G_NAVY, v: parMois.map(L => moyenne2(L.filter(b => !estInterieur(b)).map(b => delais(b)['charge>cloture']))) },
+    { n: 'Intérieur', c: G_ORANGE, v: parMois.map(L => moyenne2(L.filter(estInterieur).map(b => delais(b)['charge>cloture']))) }
+  ], { suffixe: ' j' });
 
   const lig = Object.values(S.bons || {}).filter(b => b && dansMois(b.h && b.h.charge, D.mois))
     .flatMap(b => [...(b.lignes || []).map(() => 'servie'), ...(b.reliquats || []).map(r => r.etat ? 'rupture_close' : 'rupture')]);
@@ -4367,6 +4685,37 @@ function renderDash() {
   });
   $('#dsDelais').innerHTML = phases.map(([ui, v, n]) =>
     carte(ui, v == null ? null : v.toFixed(1).replace('.', ','), 'j', n)).join('');
+
+  /* ── les deux zones séparément ──
+     Un bon de l'intérieur et un bon d'Abidjan ne se comparent pas : le premier
+     passe par le transport et attend souvent plusieurs jours sur site. Les
+     moyennes mélangées cachaient l'écart, chaque zone a donc son bloc, avec
+     les phases qui lui correspondent. */
+  const bonsAbj = bons.filter(b => !estInterieur(b));
+  const bonsInt = bons.filter(estInterieur);
+  const blocZone = (L, ph) => ph.map(([x, z, ui]) => {
+    const v = L.map(b => delais(b)[x + '>' + z]).filter(d => d != null);
+    const m = v.length ? v.reduce((a, c) => a + c, 0) / v.length : null;
+    return carte(ui, m == null ? null : m.toFixed(1).replace('.', ','), 'j', v.length);
+  }).join('');
+  const enTete = (L, nom) => {
+    const c = L.filter(b => b.h.cloture);
+    const bb = moyenne2(L.map(b => delais(b)['charge>cloture']));
+    return carte(`Bons ${nom}`, fmt(L.length)) + carte('Clôturés', fmt(c.length))
+      + carte('En cours', fmt(L.length - c.length), '', null, L.length - c.length > 0)
+      + carte('Délai bout en bout', bb == null ? null : bb.toFixed(1).replace('.', ','), 'j', c.length);
+  };
+  $('#dsZAbj').innerHTML = enTete(bonsAbj, 'Abidjan') + blocZone(bonsAbj, PHASES.filter(p => p[0] !== 'charge' || p[1] !== 'cloture'));
+  $('#dsZInt').innerHTML = enTete(bonsInt, "de l'intérieur") + blocZone(bonsInt, PHASES_INT.filter(p => p[0] !== 'charge' || p[1] !== 'cloture'));
+  const ecart = (() => {
+    const a = moyenne2(bonsAbj.map(b => delais(b)['charge>cloture'])), i = moyenne2(bonsInt.map(b => delais(b)['charge>cloture']));
+    if (a == null || i == null) return 'Il faut au moins un bon clôturé dans chaque zone pour comparer les deux délais.';
+    const d = i - a;
+    return Math.abs(d) < 0.05
+      ? 'Les deux zones tiennent le même délai bout en bout.'
+      : `L'intérieur met <b>${Math.abs(d).toFixed(1).replace('.', ',')} jour(s) ouvré(s)</b> ${d > 0 ? 'de plus' : 'de moins'} qu'Abidjan, bout en bout.`;
+  })();
+  $('#dsZNote').innerHTML = ecart;
 
   /* ── l'utilisateur : ce qu'il a fait, et ce qui l'attend ── */
   const moi = S.user ? S.user.cuid : '';
@@ -4452,6 +4801,7 @@ function renderDash() {
     carte('Physique AGL', fmt(arts.reduce((s, a) => s + (+a.agl || 0), 0))) +
     carte('Références au catalogue', fmt(arts.length)) +
     carte('Références à zéro', fmt(arts.filter(a => globalOf(a) <= 0).length)) +
+    carte('Ajustements de la période', fmt(mvs.filter(m => m.type === 'ajustement').length), '', null, mvs.filter(m => m.type === 'ajustement').length > 0) +
     carte('Dernier inventaire', S.meta.lastTx || '—');
 
   /* ── répartitions ── */
@@ -4490,7 +4840,10 @@ function exportDash() {
   const lignes = [['Indicateur', 'Valeur', 'Unité', 'Périmètre']];
   const per = D.mois ? moisLib(D.mois) : 'toute la période';
   document.querySelectorAll('#p-dash .kpis').forEach(bloc => {
-    const titre = bloc.previousElementSibling && bloc.previousElementSibling.textContent.trim();
+    /* data-titre quand le bloc en porte un (les zones), sinon le titre de
+       section qui le précède. */
+    const titre = bloc.dataset.titre
+      || (bloc.previousElementSibling && bloc.previousElementSibling.textContent.trim());
     bloc.querySelectorAll('.kpi').forEach(k => {
       const nom = k.querySelector('.k').textContent.trim();
       const v = k.querySelector('.v').cloneNode(true);
@@ -4534,7 +4887,9 @@ function bonsInterieur(){
     if(!estInterieur(b)) return false;
     if(I.mois && String(b.h?.charge||'').slice(0,7)!==I.mois) return false;
     if(I.etape==='ouverts' && b.h?.cloture) return false;
-    if(I.etape && I.etape!=='ouverts' && etapeDe(b).k!==I.etape) return false;
+    if(I.etape==='~transport' && !b.h?.transport) return false;
+    if(I.etape==='~sanstransport' && (b.h?.transport || !b.h?.accord)) return false;
+    if(I.etape && I.etape[0]!=='~' && I.etape!=='ouverts' && etapeDe(b).k!==I.etape) return false;
     if(q && !q.split(/\s+/).every(m=>texteBon(b).includes(m))) return false;
     return true;
   });
@@ -4550,8 +4905,13 @@ function renderInterieur(){
   selM.innerHTML=`<option value="">Tous les mois</option>`+mois.map(m=>`<option value="${m}"${I.mois===m?' selected':''}>${moisLib(m)}</option>`).join('');
   const selE=$('#inEtape');
   const cpt=k=>tous.filter(b=>etapeDe(b).k===k).length;
+  /* La remise au transport n'est plus une étape du parcours : elle ne peut pas
+     être « l'étape courante » d'un bon. On la filtre donc sur la présence de
+     sa date, pas sur l'étape. */
   selE.innerHTML=`<option value="">Toutes les étapes</option><option value="ouverts">Non clôturés (${tous.filter(b=>!b.h?.cloture).length})</option>`
-    + ETAPES.slice(1).map(e=>`<option value="${e.k}"${I.etape===e.k?' selected':''}>${esc(e.court)} (${cpt(e.k)})</option>`).join('');
+    + ETAPES.filter(e=>e.k!=='charge' && !e.libre).map(e=>`<option value="${e.k}"${I.etape===e.k?' selected':''}>${esc(e.court)} (${cpt(e.k)})</option>`).join('')
+    + `<option value="~transport"${I.etape==='~transport'?' selected':''}>Remis au transport (${tous.filter(b=>b.h?.transport).length})</option>`
+    + `<option value="~sanstransport"${I.etape==='~sanstransport'?' selected':''}>Pas encore remis au transport (${tous.filter(b=>b.h?.accord && !b.h?.transport).length})</option>`;
   selE.value=I.etape;
 
   const L=bonsInterieur();
@@ -4582,17 +4942,18 @@ function renderInterieur(){
     + `<th>Étape</th><th class="r">Délai total</th><th></th></tr></thead><tbody>`
     + L.map(b=>{
       const d=delais(b), su=prochaine(b), i=etapeCourante(b);
-      const cls = i===etapesDe(b).length-1 ? 'ok' : b.h?.transport ? 'partiel' : 'rupture';
-      const btn = su ? (su.k==='impression'
+      const cls = i===etapesSeq(b).length-1 ? 'ok' : b.h?.transport ? 'partiel' : 'rupture';
+      const btn = (su ? (su.k==='impression'
           ? `<button class="btn sm" data-iprint="${esc(b.ref)}">Imprimer l'accord</button>`
-          : `<button class="btn sm" data-inext="${esc(b.ref)}" data-k="${su.k}">${esc(su.verbe)}</button>`) : '';
+          : `<button class="btn sm" data-inext="${esc(b.ref)}" data-k="${su.k}">${esc(su.verbe)}</button>`) : '')
+        + btnLibre(b,'inext');
       return `<tr class="eb-${cls}">
         <td><span class="code">${esc(b.ref)}</span></td>
         <td>${esc(b.edl||'')}</td><td>${esc(b.projet||'—')}</td><td>${esc(b.site||'—')}</td>`
         + COLS_INT.map(([k])=>`<td>${b.h?.[k]?isoToFR(String(b.h[k]).slice(0,10)):'<span class="muted">—</span>'}</td>`).join('')
-        + `<td><span class="pill ${i===etapesDe(b).length-1?'ok':i<=1?'':'warn'}">${esc(etapeDe(b).court)}</span></td>
+        + `<td>${pastilleEtape(b)}</td>
         <td class="r">${d['charge>cloture']!=null?d['charge>cloture']+' j':(d.age!=null?d.age+' j':'—')}</td>
-        <td style="white-space:nowrap">${btn} <button class="btn sm ghost" data-iopen="${esc(b.ref)}" title="Ouvrir dans le Suivi EB">Détail</button></td></tr>`;
+        <td style="min-width:170px">${btn} <button class="btn sm ghost" data-iopen="${esc(b.ref)}" title="Ouvrir dans le Suivi EB">Détail</button></td></tr>`;
     }).join('') + '</tbody>';
 }
 
@@ -4727,6 +5088,7 @@ initEb();
 initPrets();
 initDash();
 initInterieur();
+initAjust();
 initFiches();
 renderEb();
 
