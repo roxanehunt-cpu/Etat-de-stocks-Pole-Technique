@@ -3895,18 +3895,10 @@ function construireAccord(b){
   doc.setTextColor(20).setFont('courier','bold').setFontSize(14);
   doc.text(b.ref,W-M,M+15,{align:'right'});
   doc.setDrawColor(20).setLineWidth(.5).line(M,M+19,W-M,M+19);
-  /* Un bon corrigé circule parfois à côté de son édition précédente : il doit
-     dire lui-même laquelle fait foi. */
-  const corrs=b.corrections||[];
-  let y0=M+24;
-  if(corrs.length){
-    const le=isoToFR(String(b.majBl||'').slice(0,10)) || isoToFR(corrs[corrs.length-1].le);
-    doc.setFillColor(255,243,230).setDrawColor(230,170,100).setLineWidth(.3);
-    doc.rect(M,y0,W-2*M,9,'FD');
-    doc.setFont('helvetica','bold').setFontSize(8).setTextColor(150,70,0);
-    doc.text(`ÉDITION CORRIGÉE DU ${le} — ANNULE ET REMPLACE LES ÉDITIONS PRÉCÉDENTES`, M+3, y0+5.8);
-    y0+=13;
-  }
+  /* Le bon de livraison ne raconte pas son historique : il montre l'état
+     courant, corrections comprises. La trace des corrections vit dans l'outil
+     — détail du bon, Historique, export — là où un contrôle la cherche. */
+  const y0=M+24;
 
   doc.autoTable({ startY:y0, margin:{left:M,right:M}, theme:'grid',
     styles:{font:'helvetica',fontSize:8,cellPadding:1.6,lineColor:[175,175,175],lineWidth:.1},
@@ -3919,9 +3911,7 @@ function construireAccord(b){
           ['Accordé le',isoToFR((b.h.accord||'').slice(0,10)),'Accordé par',b.parNom||'—']] });
 
   const corps=(b.lignes||[]).map((l,i)=>[String(i+1).padStart(2,'0'), l.code,
-    (l.subDe?`${l.lib}\n(en remplacement de ${l.subDe.code} — ${l.subDe.lib})`:l.lib)
-      + (l.corr?`\n(ligne corrigée le ${isoToFR(l.corr.le)}${l.corr.avant && l.corr.avant.code!==l.code?` — était ${l.corr.avant.code}`:''}${
-           l.corr.avant && l.corr.avant.accorde!==l.accorde?` — était ${nbPdf(l.corr.avant.accorde)}`:''})`:''),
+    l.subDe?`${l.lib}\n(en remplacement de ${l.subDe.code} — ${l.subDe.lib})`:l.lib,
     nbPdf(l.demande), nbPdf(l.accorde), l.wh||'—']);
   const dep=corps.length;
   (b.reliquats||[]).forEach(r=>corps.push(['',r.code,r.lib+' — non servi, en reliquat',nbPdf(r.manquant),'0','—']));
@@ -3938,17 +3928,6 @@ function construireAccord(b){
                   3:{cellWidth:18,halign:'right'},4:{cellWidth:18,halign:'right',fontStyle:'bold'},5:{cellWidth:18}},
     didParseCell:h=>{ if(h.section==='body'&&h.row.index>=dep) h.cell.styles.textColor=[170,0,30]; } });
 
-  /* Journal des corrections, en clair sous le tableau : celui qui reçoit le
-     bon doit pouvoir vérifier ce qui a bougé depuis la première édition. */
-  if(corrs.length){
-    doc.autoTable({ startY:doc.lastAutoTable.finalY+5, margin:{left:M,right:M}, theme:'grid',
-      head:[['Corrections apportées','Ligne','Motif','Le','Par']],
-      body:corrs.map(c=>[c.resume||'—', String(c.ligne||''), c.motif||'—', isoToFR(c.le), c.par||'—']),
-      styles:{font:'helvetica',fontSize:7,cellPadding:1.4,lineColor:[200,170,140],lineWidth:.1,textColor:[110,60,10]},
-      headStyles:{fillColor:[255,243,230],textColor:[150,70,0],fontStyle:'bold',lineColor:[220,180,140]},
-      columnStyles:{0:{cellWidth:'auto'},1:{cellWidth:12,halign:'center'},2:{cellWidth:42},3:{cellWidth:20},4:{cellWidth:30}} });
-  }
-
   /* Le bon sert de bon de livraison : les traits de signature descendent vers
      le bas de page, pour laisser la place aux cachets au-dessus. Position
      fixe tant que le tableau le permet, sinon page suivante. */
@@ -3964,8 +3943,7 @@ function construireAccord(b){
   /* Pied de page sur CHAQUE page, avec la référence et la pagination : un bon
      de livraison peut circuler page par page, chacune doit être identifiable. */
   const n=doc.internal.getNumberOfPages();
-  const pied=`Édité avec ARCH le ${new Date().toLocaleString('fr-FR')} — ${(b.lignes||[]).length} ligne(s) accordée(s) — ${b.parNom||''}`
-    + (corrs.length?` — édition corrigée n° ${corrs.length+1}`:'');
+  const pied=`Édité avec ARCH le ${new Date().toLocaleString('fr-FR')} — ${(b.lignes||[]).length} ligne(s) accordée(s) — ${b.parNom||''}`;
   for(let i=1;i<=n;i++){
     doc.setPage(i);
     doc.setFont('helvetica','normal').setFontSize(6.5).setTextColor(140);
