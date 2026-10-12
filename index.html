@@ -472,6 +472,11 @@ tr.ds-moi td{background:#FFF7EF}
 .ds-t:first-of-type{margin-top:4px}
 .ds-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:16px;margin-top:22px}
 .zone-bloc{border:1px solid var(--line-s);border-radius:10px;padding:12px 12px 4px;margin-bottom:12px;background:#FCFDFE}
+.otif-reglage{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:12.5px;margin:-4px 0 12px;
+  padding:9px 12px;border:1px solid var(--line-s);border-radius:8px;background:var(--surface)}
+.otif-reglage label{display:flex;align-items:center;gap:6px;color:var(--muted)}
+.otif-reglage input{width:62px;padding:4px 7px;text-align:right}
+.otif-reglage .muted{font-size:11.5px}
 .zone-t{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;margin-bottom:10px}
 .zone-t .muted{font-weight:400;font-size:11.5px}
 .barres{display:flex;flex-direction:column;gap:9px}
@@ -655,6 +660,23 @@ tr.ds-moi td{background:#FFF7EF}
         <h3 class="ds-t">Délais moyens par phase</h3>
         <div class="kpis" id="dsDelais"></div>
 
+        <h3 class="ds-t">OTIF — On Time In Full</h3>
+        <div class="otif-reglage">
+          <span>Objectif de mise à disposition, en jours ouvrés —</span>
+          <label>Abidjan <input class="inp num" id="dsCibleAbj" type="number" min="1" max="30" step="1"></label>
+          <label>Intérieur <input class="inp num" id="dsCibleInt" type="number" min="1" max="30" step="1"></label>
+          <span class="muted" id="dsCibleNote"></span>
+        </div>
+        <div class="zone-bloc">
+          <div class="zone-t"><span class="pill ok">Magasin</span> <span class="muted">réception de l'EB → mise à disposition · ce que le pôle maîtrise</span></div>
+          <div class="kpis" id="dsOtifMag" data-titre="OTIF magasin"></div>
+        </div>
+        <div class="zone-bloc">
+          <div class="zone-t"><span class="pill warn">Bout en bout</span> <span class="muted">réception de l'EB → enlèvement · dépend aussi du passage du prestataire</span></div>
+          <div class="kpis" id="dsOtifBout" data-titre="OTIF bout en bout"></div>
+        </div>
+        <div class="note" id="dsOtifNote" style="margin:-4px 0 4px"></div>
+
         <h3 class="ds-t">Délais par zone</h3>
         <div class="note" id="dsZNote" style="margin:-6px 0 12px"></div>
         <div class="zone-bloc">
@@ -692,6 +714,10 @@ tr.ds-moi td{background:#FFF7EF}
           <div class="card" style="grid-column:1/-1">
             <div class="card-h"><h3>Délai bout en bout : Abidjan contre Intérieur</h3><span class="note" style="margin:0">jours ouvrés, par mois</span></div>
             <div class="card-b" id="dsGZone"></div>
+          </div>
+          <div class="card" style="grid-column:1/-1">
+            <div class="card-h"><h3>OTIF par mois</h3><span class="note" style="margin:0">On Time à la mise à disposition · In Full · OTIF</span></div>
+            <div class="card-b" id="dsGOtif"></div>
           </div>
           <div class="card">
             <div class="card-h"><h3>Où en sont les bons</h3></div>
@@ -3808,6 +3834,10 @@ function joursOuvres(a,b){
 }
 function delais(b){
   const d={}; [...PHASES,...PHASES_INT].forEach(([x,z])=>d[x+'>'+z]=joursOuvres(b.h[x],b.h[z]));
+  /* Les deux horloges de l'OTIF : de la réception de l'EB à la mise à
+     disposition, et de la réception à l'enlèvement. */
+  d['charge>traite'] = joursOuvres(b.h.charge, b.h.traite);
+  d['charge>enleve'] = joursOuvres(b.h.charge, b.h.enleve);
   d.age = b.h.cloture ? null : joursOuvres(b.h.charge, today());
   return d;
 }
@@ -4498,8 +4528,12 @@ function exportSuivi(){
   const head=['Référence','Zone','N° OF / BLM',"N° EB origine",'Projet','Activité','EDL','Site','Service demandeur','Date validation']
     .concat(ETAPES.map(e=>e.ui)).concat(PHASES.map(p=>p[2]))
     .concat(['Lignes demandées','Lignes servies','Lignes en reliquat','Qté demandée','Qté accordée','Taux de service','Étape','Saisi par',
-             'Corrections','Dernière correction','BL à rééditer']);
+             'Corrections','Dernière correction','BL à rééditer',
+             'Cible OTIF (j ouvrés)','Délai mise à disposition','On Time magasin','Délai enlèvement','On Time bout en bout','In Full','OTIF magasin','OTIF bout en bout']);
+  const oui=e=>e==='ok'?'oui':e==='retard'?'non':'';
   const rows=L.map(b=>{ const d=delais(b), c=b.corrections||[];
+    const oM=otifBon(b,'traite'), oB=otifBon(b,'enleve'), f=estInFull(b);
+    const combine=o=>o.etat==='encours'?'':(o.etat==='ok'&&f?'oui':'non');
     return [b.ref,estInterieur(b)?'Intérieur':'Abidjan',b.of||'',b.ebOrigine||'',b.projet||'',b.actUi,b.edl,b.site||'',b.demandeur||'',b.validation||'']
       .concat(ETAPES.map(e=>(b.h[e.k]||'').slice(0,10)))
       .concat(PHASES.map(([x,z])=>d[x+'>'+z]??''))
@@ -4509,7 +4543,9 @@ function exportSuivi(){
         (b.lignes||[]).reduce((s,l)=>s+l.demande,0)+relOrphelins(b).reduce((s,r)=>s+r.manquant,0),
         (b.lignes||[]).reduce((s,l)=>s+l.accorde,0),
         Math.round(tauxService(b)*100)/100, etapeDe(b).court, b.parNom||b.par||'',
-        c.length, c.length?c[c.length-1].le:'', blAJour(b)===false?'oui':'']);
+        c.length, c.length?c[c.length-1].le:'', blAJour(b)===false?'oui':'',
+        cibleOtif(b), d['charge>traite']??'', oui(oM.etat), d['charge>enleve']??'', oui(oB.etat),
+        f?'oui':'non', combine(oM), combine(oB)]);
   });
   /* Les lignes portent leur propre correction : code et quantités d'avant, pour
      qu'un contrôle puisse refaire le chemin sans ouvrir l'outil. */
@@ -4799,6 +4835,74 @@ function carte(k, v, u, n, alerte) {
     <div class="k">${esc(k)}</div><div class="v">${v == null ? '—' : v}${u ? ` <span style="font-size:12px;color:var(--muted)">${esc(u)}</span>` : ''}
     ${n != null && n > 0 ? `<span class="kpi-n">sur ${fmt(n)}</span>` : ''}</div></div>`;
 }
+/* ══════════════════════════════════════════════════════════════════
+   OTIF — On Time In Full
+   Deux moitiés, et il faut les deux pour qu'un bon compte.
+
+   IN FULL — binaire, pas une moyenne : le bon est servi en entier ou
+   il ne l'est pas. Une seule ligne rognée, un seul reliquat, et le bon
+   est hors « In Full », même à 99 %. C'est la définition standard, et
+   c'est elle qui rend l'indicateur exigeant : le taux de service moyen,
+   lui, reste affiché à côté pour voir de combien on rate.
+
+   ON TIME — l'horloge part à la réception de l'EB. Elle s'arrête à
+   deux endroits différents, et c'est tout l'enjeu :
+   — à la MISE À DISPOSITION (traitement terminé) : ce que le magasin
+     maîtrise vraiment ;
+   — à l'ENLÈVEMENT : ce que vit le prestataire, mais qui dépend du
+     moment où il se présente.
+   Afficher un seul des deux chiffres revient à se tromper de
+   responsable, donc l'outil calcule les deux côte à côte.
+
+   48 h se lisent en JOURS OUVRÉS, comme tous les délais de l'outil :
+   l'objectif par défaut est de 2 jours ouvrés, réglable, et séparé
+   pour Abidjan et pour l'intérieur — un bon de Bouaké ne se compare
+   pas à un bon de KM4.
+   ══════════════════════════════════════════════════════════════════ */
+
+const OTIF_DEF = { abidjan:2, interieur:2 };
+const cibleOtif = b => {
+  const o=(S.meta && S.meta.otif) || {};
+  return estInterieur(b) ? (+o.interieur || OTIF_DEF.interieur) : (+o.abidjan || OTIF_DEF.abidjan);
+};
+
+/* Un bon est « In Full » si tout ce qui a été demandé a été accordé :
+   aucune ligne rognée, aucun reliquat — qu'il ait été reporté ensuite sur
+   un complément ne change rien, il n'était pas complet ce jour-là. */
+const estInFull = b =>
+  (b.lignes||[]).every(l => (+l.accorde||0) >= (+l.demande||0))
+  && !(b.reliquats||[]).length;
+
+/* On Time à une étape donnée : la date existe et le délai tient la cible.
+   Tant que l'étape n'est pas franchie, le bon n'est ni à l'heure ni en
+   retard — il est en cours, sauf s'il a déjà dépassé la cible. */
+function otifBon(b, etape){
+  const fin=b.h && b.h[etape];
+  const cible=cibleOtif(b);
+  if(!fin){
+    const age=joursOuvres(b.h && b.h.charge, today());
+    return { etat: (age!=null && age>cible) ? 'retard' : 'encours', j:age, cible };
+  }
+  const j=joursOuvres(b.h.charge, fin);
+  return { etat: (j!=null && j<=cible) ? 'ok' : 'retard', j, cible };
+}
+
+/* Agrégat sur une liste de bons, pour une étape de référence. Seuls les bons
+   arrivés à cette étape entrent au dénominateur : un bon encore en cours n'est
+   pas un échec, il n'est pas encore jugeable — sauf s'il a dépassé la cible,
+   auquel cas il est déjà en retard et compte comme tel. */
+function otifAgr(L, etape){
+  const juges=L.filter(b=>{ const o=otifBon(b,etape); return o.etat!=='encours'; });
+  const ot=juges.filter(b=>otifBon(b,etape).etat==='ok');
+  const inf=L.filter(estInFull);
+  const otif=juges.filter(b=>otifBon(b,etape).etat==='ok' && estInFull(b));
+  const pc=(n,d)=>d?n/d*100:null;
+  return { n:L.length, juges:juges.length,
+           onTime:pc(ot.length,juges.length), inFull:pc(inf.length,L.length), otif:pc(otif.length,juges.length),
+           nOt:ot.length, nIf:inf.length, nOtif:otif.length,
+           retards:juges.length-ot.length, encours:L.length-juges.length };
+}
+
 /* Petite barre de proportion, sans bibliothèque. */
 function barres(lignes) {
   const max = Math.max(1, ...lignes.map(l => l[1]));
@@ -4933,6 +5037,14 @@ function renderGraphes() {
     { n: 'Manquantes', v: rec.filter(m => +m.qte < +m.qteAnn).length, c: G_ROUGE },
     { n: 'En excédent', v: rec.filter(m => +m.qte > +m.qteAnn).length, c: G_ORANGE }
   ]);
+
+  /* OTIF par mois : les trois courbes ensemble disent où ça casse — un On Time
+     haut avec un In Full bas, c'est le stock ; l'inverse, c'est le traitement. */
+  $('#dsGOtif').innerHTML = svgBarres(labels, [
+    { n: 'On Time', c: G_NAVY, v: parMois.map(L => otifAgr(L, 'traite').onTime) },
+    { n: 'In Full', c: G_ORANGE, v: parMois.map(L => otifAgr(L, 'traite').inFull) },
+    { n: 'OTIF', c: G_VERT, v: parMois.map(L => otifAgr(L, 'traite').otif) }
+  ], { suffixe: ' %' });
 }
 
 function renderDash() {
@@ -4973,6 +5085,41 @@ function renderDash() {
   });
   $('#dsDelais').innerHTML = phases.map(([ui, v, n]) =>
     carte(ui, v == null ? null : v.toFixed(1).replace('.', ','), 'j', n)).join('');
+
+  /* ── OTIF ──
+     Deux horloges, même départ : la réception de l'EB. L'une s'arrête à la
+     mise à disposition — ce que le magasin maîtrise — l'autre à l'enlèvement,
+     qui dépend aussi du passage du prestataire. */
+  const o = (S.meta && S.meta.otif) || {};
+  $('#dsCibleAbj').value = +o.abidjan || OTIF_DEF.abidjan;
+  $('#dsCibleInt').value = +o.interieur || OTIF_DEF.interieur;
+  $('#dsCibleNote').textContent =
+    `48 h = 2 jours ouvrés. Un bon est OTIF s'il est mis à disposition dans la cible de sa zone ET servi en totalité.`;
+
+  const pc = v => v == null ? null : v.toFixed(1).replace('.', ',');
+  const blocOtif = (L, etape) => {
+    const a = otifAgr(L, etape);
+    return carte('OTIF', pc(a.otif), '%', a.juges, a.otif != null && a.otif < 95)
+      + carte('On Time', pc(a.onTime), '%', a.juges, a.onTime != null && a.onTime < 95)
+      + carte('In Full', pc(a.inFull), '%', a.n, a.inFull != null && a.inFull < 95)
+      + carte('Bons jugés', fmt(a.juges))
+      + carte('Hors délai', fmt(a.retards), '', null, a.retards > 0)
+      + carte('Pas encore jugeables', fmt(a.encours));
+  };
+  $('#dsOtifMag').innerHTML = blocOtif(bons, 'traite');
+  $('#dsOtifBout').innerHTML = blocOtif(bons, 'enleve');
+
+  const aM = otifAgr(bons, 'traite'), aB = otifAgr(bons, 'enleve');
+  const aA = otifAgr(bons.filter(b => !estInterieur(b)), 'traite');
+  const aI = otifAgr(bons.filter(estInterieur), 'traite');
+  $('#dsOtifNote').innerHTML = !aM.juges
+    ? "Aucun bon n'est encore arrivé à la mise à disposition sur cette période : l'OTIF n'est pas mesurable."
+    : `Magasin <b>${pc(aM.otif)} %</b> contre <b>${aB.juges ? pc(aB.otif) + ' %' : '—'}</b> bout en bout`
+      + (aB.juges && aM.otif != null && aB.otif != null && aM.otif - aB.otif > 2
+          ? ` : <b>${pc(aM.otif - aB.otif)} points</b> se perdent entre la mise à disposition et l'enlèvement par le prestataire.` : '.')
+      + (aA.juges && aI.juges ? ` Par zone, à la mise à disposition : Abidjan <b>${pc(aA.otif)} %</b> (cible ${aA.n ? cibleOtif(bons.find(b => !estInterieur(b))) : ''} j), Intérieur <b>${pc(aI.otif)} %</b>.` : '')
+      + (aM.inFull != null && aM.onTime != null
+          ? ` Le point faible est ${aM.inFull < aM.onTime ? "la <b>complétude</b> — c'est le stock qui manque" : "le <b>délai</b> — le stock est là, le traitement traîne"}.` : '');
 
   /* ── les deux zones séparément ──
      Un bon de l'intérieur et un bon d'Abidjan ne se comparent pas : le premier
@@ -5100,13 +5247,17 @@ function renderDash() {
   bons.forEach(b => { const e = b.edl || '—'; (parEdl[e] = parEdl[e] || []).push(b); });
   const edls = Object.entries(parEdl).map(([e, L]) => {
     const d = L.map(b => delais(b)['charge>cloture']).filter(x => x != null);
-    return { e, n: L.length, lig: L.reduce((s, b) => s + lignesDde(b), 0), ts: moyenne2(L.map(tauxService)) * 100, bout: d.length ? moyenne2(d) : null, nb: d.length };
+    const a = otifAgr(L, 'traite');
+    return { e, n: L.length, lig: L.reduce((s, b) => s + lignesDde(b), 0), ts: moyenne2(L.map(tauxService)) * 100,
+             bout: d.length ? moyenne2(d) : null, nb: d.length, otif: a.otif, nOtif: a.juges };
   }).sort((a, b) => b.n - a.n).slice(0, 8);
   $('#dsEdl').innerHTML = !edls.length
     ? `<tbody><tr><td style="padding:20px;text-align:center;color:var(--muted);font-size:13px">Aucun bon sur la période.</td></tr></tbody>`
-    : `<thead><tr><th>Prestataire</th><th class="r">Bons</th><th class="r">Lignes</th><th class="r">Taux de service</th><th class="r">Délai total</th></tr></thead><tbody>`
+    : `<thead><tr><th>Prestataire</th><th class="r">Bons</th><th class="r">Lignes</th><th class="r">Taux de service</th><th class="r">OTIF</th><th class="r">Délai total</th></tr></thead><tbody>`
       + edls.map(x => `<tr><td>${esc(x.e)}</td><td class="r">${fmt(x.n)}</td><td class="r">${fmt(x.lig)}</td>
           <td class="r"><b class="taux ${x.ts >= 100 ? 't-ok' : x.ts >= 50 ? 't-moy' : 't-bas'}">${(x.ts || 0).toFixed(0)}&nbsp;%</b></td>
+          <td class="r">${x.otif == null ? '<span class="muted">—</span>'
+             : `<b class="taux ${x.otif >= 95 ? 't-ok' : x.otif >= 80 ? 't-moy' : 't-bas'}" title="Sur ${x.nOtif} bon(s) jugeable(s)">${x.otif.toFixed(0)}&nbsp;%</b>`}</td>
           <td class="r">${x.bout == null ? '<span class="muted">—</span>' : x.bout.toFixed(1).replace('.', ',') + ' j'}</td></tr>`).join('') + '</tbody>';
 
   const manq = {};
@@ -5151,6 +5302,17 @@ function exportDash() {
 function initDash() {
   $('#dsMois').addEventListener('change', () => { D.mois = $('#dsMois').value; renderDash(); });
   $('#dsExport').onclick = exportDash;
+  /* La cible est un réglage de service, pas une préférence d'écran : elle est
+     partagée par tout le monde et ne bouge que pour un administrateur. */
+  const majCible = async () => {
+    if (!(S.user && S.user.role === 'admin')) { renderDash(); return toast("Seul un administrateur peut changer la cible OTIF", 'err'); }
+    const n = v => Math.min(30, Math.max(1, Math.round(toNum(v)) || 1));
+    const otif = { abidjan: n($('#dsCibleAbj').value), interieur: n($('#dsCibleInt').value) };
+    await store.setMeta({ otif });
+    toast(`Cible OTIF : ${otif.abidjan} j ouvrés Abidjan, ${otif.interieur} j intérieur`, 'ok');
+    renderDash();
+  };
+  ['#dsCibleAbj', '#dsCibleInt'].forEach(s => $(s).addEventListener('change', majCible));
 }
 
 
