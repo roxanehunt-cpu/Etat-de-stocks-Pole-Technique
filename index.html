@@ -2422,14 +2422,31 @@ async function enregistrerDoc(kind, toutSupprimer){
         ici laisserait une dotation sans marchandise. On bloque. Le physique
         d'un entrepôt, lui, peut l'être si des accords l'ont déjà consommé —
         on prévient. */
-  const bloque=[], alerte=[];
+  const bloque=[], alerte=[]; let premierBloque=null;
   for(const [key,d] of Object.entries(delta)){
     const a=S.arts[key]; if(!a) continue;
-    if((+a.att||0)+d.att<0) bloque.push(`${a.code} : ${fmt(-d.att)} à retirer, mais seulement ${fmt(a.att)} encore à dispatcher`);
+    if((+a.att||0)+d.att<0){
+      bloque.push(`${a.code} : ${fmt(-d.att)} à retirer, mais seulement ${fmt(a.att)} encore à dispatcher`);
+      if(!premierBloque) premierBloque=a;
+    }
     for(const w of ['km4','agl']) if(d[w]<0 && (+a[w]||0)+d[w]<0)
       alerte.push(`${a.code} : ${w.toUpperCase()} passerait à ${fmt((+a[w]||0)+d[w])}`);
   }
-  if(bloque.length) return alert(`Correction impossible — une partie a déjà été dispatchée :\n\n${bloque.join('\n')}\n\nCorrige d'abord la répartition dans « À dispatcher », puis reviens ici.`);
+  /* La marchandise est déjà partie dans les dotations : il faut défaire dans
+     l'ordre inverse. On emmène directement sur les dispatchings de l'article
+     plutôt que de laisser chercher — l'onglet « À dispatcher » n'affiche pas
+     un article dont la file est à zéro. */
+  if(bloque.length){
+    const ok=confirm(`Correction impossible — une partie a déjà été dispatchée :\n\n${bloque.join('\n')}\n\n`
+      + `Marche à suivre :\n1. annuler le dispatching dans l'Historique\n2. revenir corriger cette ${K.nom}\n3. redispatcher\n\n`
+      + `Ouvrir l'Historique sur les dispatchings${premierBloque?' de '+premierBloque.code:''} ?`);
+    if(ok && premierBloque){
+      $('#hsType').value='dispatch'; $('#hsArt').value=premierBloque.code;
+      $('#hsWho').value=''; $('#hsDu').value=''; $('#hsAu').value='';
+      allerOnglet('histo'); renderHisto();
+    }
+    return;
+  }
   if(alerte.length && !confirm(`Attention :\n\n${alerte.join('\n')}\n\nContinuer ?`)) return;
   if(toutSupprimer && !confirm(`Supprimer toute la ${K.nom} ${f.edit.startsWith('~')?'':f.edit} (${f.orig.length} ligne(s)) ?\nLe stock sera remis à l'état d'avant.`)) return;
 
@@ -2721,14 +2738,18 @@ function renderDispatch(){
     card.querySelector('[data-r=go]').onclick=async()=>{
       const vals=ins.map(i=>Math.max(0,Math.floor(toNum(i.value))));
       const t=vals.reduce((s,v)=>s+v,0); if(t<=0) return;
-      const acts=a.a.slice(); const ligne=[];
+      const acts=a.a.slice(); const ligne=[], rep=[];
       for(let i=0;i<7;i++){ if(!vals[i]) continue;
         const d = neg? -vals[i] : vals[i];
         if(neg && vals[i]>(+acts[i]||0)) return toast(`${ACTS[i].ui} n'a que ${fmt(acts[i])} unités`,'err');
         acts[i]=(+acts[i]||0)+d; ligne.push(`${ACTS[i].ui} ${d>0?'+':''}${fmt(d)}`);
+        /* La répartition est enregistrée telle quelle sur le mouvement : c'est
+           elle qui permet d'annuler le dispatching plus tard, sans relire un
+           texte ni deviner quelle activité a reçu quoi. */
+        rep.push({ i, q:d });
       }
       await store.saveArt(key, { a:acts, att:(+a.att||0)+(neg?t:-t) });
-      await store.logMv({ type:'dispatch', code:a.code, key, lib:a.lib, qte:neg?-t:t, date:today(), detail:ligne.join(' · ') });
+      await store.logMv({ type:'dispatch', code:a.code, key, lib:a.lib, qte:neg?-t:t, date:today(), detail:ligne.join(' · '), rep });
       toast(`${neg?'Régularisation':'Affectation'} · ${esc(a.code)}`,'ok');
       renderDispatch(); renderBadge();
     };
@@ -3356,12 +3377,15 @@ function renderHisto(){
               ?`<button class="btn ghost sm" data-undo="${m.id}">Annuler</button>`
               :(m.type==='ajustement'&&!m.annule&&m.avant&&(S.user?.role==='admin'||m.par===S.user?.cuid))
               ?`<button class="btn ghost sm" data-ajundo="${m.id}">Annuler</button>`
+              :(m.type==='dispatch'&&!m.annule&&(S.user?.role==='admin'||m.par===S.user?.cuid))
+              ?`<button class="btn ghost sm" data-disundo="${m.id}" title="Remettre les quantités dans « À dispatcher »">Annuler</button>`
               :m.annule?'<span class="muted" style="font-size:11px">annulé</span>':''}</td>
     </tr>`).join('') || '<tr><td colspan="10" class="empty">Aucun mouvement ne correspond à ces filtres.</td></tr>'}</tbody>`;
   if(tous.length>400) $('#hsTab').insertAdjacentHTML('beforeend',
     `<tfoot><tr><td colspan="9" class="muted" style="padding:10px">${fmt(tous.length-400)} mouvement(s) supplémentaires — affine les filtres ou exporte.</td></tr></tfoot>`);
   $('#hsTab').querySelectorAll('[data-undo]').forEach(b=>b.onclick=()=>undoAccord(b.dataset.undo));
   $('#hsTab').querySelectorAll('[data-ajundo]').forEach(b=>b.onclick=()=>undoAjust(b.dataset.ajundo));
+  $('#hsTab').querySelectorAll('[data-disundo]').forEach(b=>b.onclick=()=>undoDispatch(b.dataset.disundo));
   $('#hsTab').querySelectorAll('[data-bon]').forEach(a=>a.onclick=e=>{
     e.preventDefault();
     const ref=a.dataset.bon, b=S.bons[ref]; if(!b) return;
@@ -3389,6 +3413,57 @@ async function undoAccord(id){
   if(store.mode==='firebase'){ try{ await FB.update('mouvements/'+id,{annule:true}); }catch(e){} }
   await store.logMv({ type:'annulation', code:m.code, key:m.key, lib:m.lib, qte:m.qte, wh:m.wh, actUi:m.actUi, date:today(), detail:'annule l\'accord du '+(m.ts||'').slice(0,10) });
   toast('Accord annulé, stock rétabli','ok'); renderHisto();
+}
+
+/* ─────────────────────────── annuler un dispatching ───────────────────────────
+   Corriger une réception dont la marchandise est déjà répartie était
+   impossible : la file « À dispatcher » serait passée sous zéro, et l'onglet
+   du même nom n'affiche pas un article à zéro — il n'y avait donc nulle part
+   où défaire la répartition. On remonte maintenant le fil dans l'ordre
+   inverse : annuler le dispatching ramène les quantités des dotations vers la
+   file, et la réception redevient corrigeable.
+
+   La répartition est lue sur le mouvement (champ « rep »). Les dispatchings
+   enregistrés avant cette version ne l'ont pas : on la relit alors dans leur
+   libellé, en reconnaissant le nom exact de chaque activité. */
+function repDeDispatch(m){
+  if(Array.isArray(m.rep) && m.rep.length) return m.rep.map(x=>({ i:+x.i, q:+x.q }));
+  const d=String(m.detail||''); if(!d) return null;
+  const out=[];
+  for(const part of d.split('·')){
+    const t=part.trim(); if(!t) continue;
+    const i=ACTS.findIndex(a=>t.startsWith(a.ui)); if(i<0) return null;
+    /* fmt() sépare les milliers par une espace fine insécable : on ne garde
+       que les chiffres et le signe. */
+    const n=t.slice(ACTS[i].ui.length).replace(/[^\d+-]/g,'');
+    if(!/^[+-]?\d+$/.test(n)) return null;
+    out.push({ i, q:parseInt(n,10) });
+  }
+  return out.length?out:null;
+}
+async function undoDispatch(id){
+  const m=S.mv.find(x=>x.id===id); if(!m || m.annule) return;
+  const a=S.arts[m.key]; if(!a) return toast('Article introuvable','err');
+  const rep=repDeDispatch(m);
+  if(!rep) return toast("Répartition illisible sur ce dispatching — passe par l'Ajustement de stock",'err');
+
+  /* Une dotation déjà consommée par un accord ne peut pas rendre ce qu'elle
+     n'a plus : on refuse plutôt que de la faire passer sous zéro. */
+  const acts=a.a.slice(), manque=[];
+  rep.forEach(({i,q})=>{ if(q>0 && q>(+acts[i]||0)) manque.push(`${ACTS[i].ui} : ${fmt(q)} à reprendre, ${fmt(acts[i])} disponible(s)`); });
+  if(manque.length) return alert(`Annulation impossible — une partie est déjà sortie :\n\n${manque.join('\n')}\n\nAnnule d'abord les accords concernés, ou corrige les quantités dans « Ajustement de stock ».`);
+
+  const detail=rep.map(({i,q})=>`${ACTS[i].ui} ${-q>0?'+':''}${fmt(-q)}`).join(' · ');
+  if(!confirm(`Annuler ce dispatching ?\n${m.code} — ${m.lib}\n\n${detail}\n\nLes quantités retournent dans « À dispatcher » et la réception redevient corrigeable.`)) return;
+
+  let t=0; rep.forEach(({i,q})=>{ acts[i]=(+acts[i]||0)-q; t+=q; });
+  await store.saveArt(m.key, { a:acts, att:(+a.att||0)+t });
+  m.annule=true;
+  if(store.mode==='firebase'){ try{ await FB.update('mouvements/'+id,{annule:true}); }catch(e){} }
+  await store.logMv({ type:'annulation', code:m.code, key:m.key, lib:m.lib, qte:-t, date:today(),
+    detail:`annule le dispatching du ${(m.ts||'').slice(0,10)} — ${detail}` });
+  toast(`Dispatching annulé · ${fmt(t)} unité(s) de retour dans « À dispatcher »`,'ok');
+  renderHisto(); renderDispatch(); renderBadge(); renderEtat();
 }
 $('#hsExp').onclick=()=>{
   const head=['Horodatage','Type','Bon / BC','Code','Article','Entrepôt','Activité','Quantité','Ressource',
