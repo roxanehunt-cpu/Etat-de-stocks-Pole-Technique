@@ -4154,7 +4154,7 @@ function renderSuivi(){
             :'<span class="pill" style="border-color:#F0B6C2;background:#FCEBEF;color:#B8203C">rupture ouverte</span>'}</td></tr>`).join('')
       + '</tbody>';
     /* Une correction ouverte sur un autre bon n'a plus lieu d'être. */
-    if(C.ref && C.ref!==b.ref) fermerCorrection();
+    if(C.ref && C.ref!==b.ref) fermerCorrectionLigne();
   }
 }
 
@@ -4318,7 +4318,7 @@ function dispoCorrection(b, l, key){
   return pools.reduce((s,p)=>s+Math.max(0,+a.a[p]||0),0) + dejaTenu;
 }
 
-function ouvrirCorrection(ref, idx){
+function ouvrirCorrectionLigne(ref, idx){
   const b=S.bons[ref], l=b && (b.lignes||[])[idx]; if(!l) return;
   if(!(S.user && (S.user.role==='admin' || b.par===S.user.cuid)))
     return toast("Seul l'auteur du bon ou un administrateur peut corriger ses lignes",'err');
@@ -4327,21 +4327,21 @@ function ouvrirCorrection(ref, idx){
   $('#coQ').value=''; $('#coMotif').value='';
   $('#coDde').value=l.demande; $('#coAcc').value=l.accorde;
   $('#ebCorr').hidden=false;
-  majCorrection();
+  majCorrectionLigne();
   const z=$('#ebCorr'); if(z.scrollIntoView) z.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
-function fermerCorrection(){ C.ref=null; C.idx=null; C.key=null; const e=$('#ebCorr'); if(e) e.hidden=true; }
+function fermerCorrectionLigne(){ C.ref=null; C.idx=null; C.key=null; const e=$('#ebCorr'); if(e) e.hidden=true; }
 
 /* Rafraîchit l'article retenu, les entrepôts possibles et le disponible. */
-function majCorrection(){
-  const b=S.bons[C.ref], l=b && (b.lignes||[])[C.idx]; if(!l) return fermerCorrection();
+function majCorrectionLigne(){
+  const b=S.bons[C.ref], l=b && (b.lignes||[])[C.idx]; if(!l) return fermerCorrectionLigne();
   const key=C.key||l.key, a=S.arts[key];
   $('#coArt').innerHTML = a
     ? (key===l.key
         ? `Article inchangé : <b>${esc(a.code)}</b> — ${esc(a.lib||'')}`
         : `Nouvel article : <b>${esc(a.code)}</b> — ${esc(a.lib||'')} <button class="btn sm ghost" id="coRaz" style="margin-left:6px">Revenir à ${esc(l.code)}</button>`)
     : '<span style="color:var(--danger)">Article introuvable</span>';
-  const raz=$('#coRaz'); if(raz) raz.onclick=()=>{ C.key=null; $('#coQ').value=''; majCorrection(); };
+  const raz=$('#coRaz'); if(raz) raz.onclick=()=>{ C.key=null; $('#coQ').value=''; majCorrectionLigne(); };
 
   const sel=$('#coWh'), sites=a?sitesPour(a):WH.slice();
   const courant = sites.includes(l.wh)?l.wh:sites[0];
@@ -4367,7 +4367,7 @@ function majCorrection(){
   $('#coGo').disabled = acc>max || !chg.length;
 }
 
-async function appliquerCorrection(){
+async function appliquerCorrectionLigne(){
   const b=S.bons[C.ref], l=b && (b.lignes||[])[C.idx]; if(!l) return;
   const ref=C.ref, idx=C.idx;
   const newKey=C.key||l.key, a=S.arts[newKey];
@@ -4464,7 +4464,7 @@ async function appliquerCorrection(){
   await store.logMv({ type:'correction', code:a.code, key:newKey, lib:a.lib, ref, date:today(),
     qte:acc-avant.accorde, detail:`Ligne ${idx+1} — ${resume.join(' · ')} — ${motif}${noteRel}` });
 
-  fermerCorrection();
+  fermerCorrectionLigne();
   toast(`${ref} — ligne ${idx+1} corrigée, bon de livraison à rééditer`,'ok');
   if(figee) toast(`Une rupture de ${a.code} est déjà ${figee.etat==='transfere'?'reportée':'abandonnée'} : elle n'a pas été touchée`,'err');
   renderSuivi(); renderInterieur(); renderRuptures(); renderBadge(); renderBadgeEb(); renderEtat();
@@ -5522,19 +5522,19 @@ function initEb(){
   /* correction d'une ligne accordée */
   $('#ebDTab').addEventListener('click', e=>{
     const c=e.target.closest('[data-corr]');
-    if(c){ e.preventDefault(); ouvrirCorrection(c.dataset.corr, +c.dataset.i); }
+    if(c){ e.preventDefault(); ouvrirCorrectionLigne(c.dataset.corr, +c.dataset.i); }
   });
   $('#ebBlAlerte').addEventListener('click', e=>{
     const r=e.target.closest('[data-re]'); if(r){ e.preventDefault(); imprimerAccord(r.dataset.re,false); }
   });
-  attachSearch('#coQ','#coRes', a=>{ C.key=kOf(a.code); $('#coQ').value=a.code+' — '+(a.lib||''); majCorrection(); });
-  ['#coDde','#coAcc'].forEach(s=>$(s).addEventListener('input',majCorrection));
-  $('#coWh').addEventListener('change',majCorrection);
-  $('#coCancel').onclick=fermerCorrection;
+  attachSearch('#coQ','#coRes', a=>{ C.key=kOf(a.code); $('#coQ').value=a.code+' — '+(a.lib||''); majCorrectionLigne(); });
+  ['#coDde','#coAcc'].forEach(s=>$(s).addEventListener('input',majCorrectionLigne));
+  $('#coWh').addEventListener('change',majCorrectionLigne);
+  $('#coCancel').onclick=fermerCorrectionLigne;
   $('#coGo').onclick=async()=>{
     const b=$('#coGo'); if(b.disabled) return;
     const t=b.textContent; b.disabled=true; b.textContent='Un instant…';
-    try{ await delai(appliquerCorrection(), 40000, 'correction de la ligne'); }
+    try{ await delai(appliquerCorrectionLigne(), 40000, 'correction de la ligne'); }
     catch(err){ console.error(err); toast('Correction non enregistrée : '+((err&&err.message)||err),'err'); }
     finally{ b.disabled=false; b.textContent=t; }
   };
